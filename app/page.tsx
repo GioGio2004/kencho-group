@@ -1,23 +1,33 @@
-import ContactSection from "./_components/ContactSection";
+import Amenities from "./_components/Amenities";
+import BeforeAfter from "./_components/BeforeAfter";
+import Contact, { Footer } from "./_components/Contact";
 import CustomCursor from "./_components/CustomCursor";
+import Gallery from "./_components/Gallery";
 import Hero from "./_components/Hero";
-import HeroMotion from "./_components/HeroMotion";
-import IntroSequence from "./_components/IntroSequence";
-import ProjectShowcase from "./_components/ProjectShowcase";
-import SectionReveals from "./_components/SectionReveals";
+import Location from "./_components/Location";
+import Manifesto from "./_components/Manifesto";
+import Residences from "./_components/Residences";
+import SiteHeader from "./_components/SiteHeader";
 import SmoothScroll from "./_components/SmoothScroll";
-
 export default function Home() {
   return (
-    <main id="top">
+    <>
       <SmoothScroll />
       <CustomCursor />
-      <HeroMotion />
-      <SectionReveals />
-      <Hero />
-      <ProjectShowcase />
-      <ContactSection />
-      <IntroSequence />
-    </main>
+      <SiteHeader />
+
+      <main>
+        <Hero />
+        <Manifesto />
+        <BeforeAfter />
+        <Residences />
+        <Gallery />
+        <Amenities />
+        <Location />
+        <Contact />
+      </main>
+
+      <Footer />
+    </>
   );
 }

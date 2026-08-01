@@ -1,61 +1,160 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------
+ * THEME — every colour and font in the project is declared here.
+ * ------------------------------------------------------------------ */
 :root {
-  --gold: #c9a24b;
-  --gold-bright: #e3c27e;
-  --gold-deep: #8c6a25;
-  --coal: #0f0e0c;
-  --charcoal: #17140f;
-  --cream: #faf6ee;
-  --paper: #edeae3;
-  --ink: #1c1811;
+  /* Surfaces, warm sand family */
+  --sand: #efe7dd;
+  --sand-deep: #e8dccf;
+  --shell: #f7f2ec;
+
+  /* Ink */
+  --ink: #2b2420;
+  --ink-70: rgba(43, 36, 32, 0.7);
+  --ink-55: rgba(43, 36, 32, 0.55);
+  --ink-40: rgba(43, 36, 32, 0.4);
+
+  /* The single accent — used sparingly */
+  --clay: #b0765a;
+  --clay-deep: #96604a;
+
+  /* Hairlines */
+  --line: rgba(43, 36, 32, 0.14);
+  --line-strong: rgba(43, 36, 32, 0.26);
+
+  /* -------------------------------------------------------------------
+   * LIQUID GLASS — the single place to tune the material.
+   * tint: raise the alpha for milkier glass, lower for clearer.
+   * blur: 14px default; drop to 10px if low-end phones struggle.
+   * ---------------------------------------------------------------- */
+  --glass-tint: rgba(239, 231, 221, 0.28);
+  --glass-tint-strong: rgba(239, 231, 221, 0.55);
+  --glass-blur: 14px;
+  --glass-saturate: 160%;
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --glass-border-bright: rgba(255, 255, 255, 0.42);
+  --glass-highlight: rgba(255, 255, 255, 0.3);
+  --glass-radius: 22px;
+  --glass-shadow: 0 24px 60px -24px rgba(43, 36, 32, 0.38);
 }
 
 @theme inline {
-  --color-gold: var(--gold);
-  --color-gold-bright: var(--gold-bright);
-  --color-gold-deep: var(--gold-deep);
-  --color-coal: var(--coal);
-  --color-charcoal: var(--charcoal);
-  --color-cream: var(--cream);
-  --color-paper: var(--paper);
+  --color-sand: var(--sand);
+  --color-sand-deep: var(--sand-deep);
+  --color-shell: var(--shell);
   --color-ink: var(--ink);
-  --font-display: var(--font-cinzel);
-  --font-serif-ka: var(--font-noto-serif-georgian);
-  --font-sans: var(--font-noto-sans-georgian);
-  --shadow-glow-gold: 0 10px 40px -8px rgba(201, 162, 75, 0.55);
-  --shadow-glow-soft: 0 0 60px rgba(201, 162, 75, 0.25);
+  --color-ink-70: var(--ink-70);
+  --color-ink-55: var(--ink-55);
+  --color-ink-40: var(--ink-40);
+  --color-clay: var(--clay);
+  --color-clay-deep: var(--clay-deep);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-instrument);
+}
+
+/* ---------------------------------------------------------------------
+ * BASE
+ * ------------------------------------------------------------------ */
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--paper);
+  background: var(--sand);
   color: var(--ink);
-  font-family: var(--font-noto-sans-georgian), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  font-synthesis-weight: none;
 }
 
 ::selection {
-  background: rgba(201, 162, 75, 0.4);
+  background: rgba(176, 118, 90, 0.22);
 }
 
-/*
- * The intro overlay only exists for the first visit of a session.
- * A pre-paint inline script in layout.tsx adds `intro-pending` to <html>
- * when the intro should play; without it the overlay never displays and
- * the page is fully visible — so a JS failure can never hide content.
- */
+:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+}
+
+/* Display type: tight tracking, optical balance at large sizes. */
+.u-display {
+  font-family: var(--font-fraunces), ui-serif, Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+}
+
+/* Small tracked label used for section eyebrows. */
+.u-eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-55);
+}
+
+/* ---------------------------------------------------------------------
+ * MICRO-INTERACTIONS
+ * ------------------------------------------------------------------ */
+
+/* Underline that slides in from the left, out to the right. */
+.u-link {
+  position: relative;
+  display: inline-block;
+}
+
+.u-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.15em;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.u-link:hover::after,
+.u-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Every button settles slightly on press. */
+.u-press {
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.35s ease,
+    color 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.u-press:active {
+  transform: scale(0.98);
+}
+
+/* ---------------------------------------------------------------------
+ * INTRO OVERLAY — gated by the pre-paint script in layout.tsx.
+ * Without the `is-loading` class the overlay never displays, so a JS
+ * failure can never hide the page.
+ * ------------------------------------------------------------------ */
 .intro-overlay {
   display: none;
 }
 
-.intro-pending .intro-overlay {
+.is-loading .intro-overlay {
   display: block;
-  /* Failsafe: if the JS bundle never runs, uncover the page after 12s. */
-  animation: kg-failsafe-hide 0s linear 12s forwards;
+  /* Failsafe: uncover the page after 6s even if JS never runs. */
+  animation: kg-failsafe-hide 0s linear 6s forwards;
 }
 
-.intro-pending body {
+.is-loading body {
   overflow: hidden;
-  animation: kg-failsafe-scroll 0s linear 12s forwards;
+  animation: kg-failsafe-scroll 0s linear 6s forwards;
 }
 
 @keyframes kg-failsafe-hide {
@@ -70,105 +169,135 @@ body {
   }
 }
 
-/* Custom cursor — enabled only on fine pointers without reduced motion. */
-.kg-cursor-on,
-.kg-cursor-on a,
-.kg-cursor-on button {
+/* ---------------------------------------------------------------------
+ * GLASS MATERIAL — reuse via className="glass". Only ever place glass
+ * over imagery; on flat sand it reads as a gray box.
+ * ------------------------------------------------------------------ */
+.glass {
+  background: var(--glass-tint);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    var(--glass-shadow);
+}
+
+/*
+ * Perf switch: invisible glass still costs GPU, so fully faded cards get
+ * this class from JS. Keep at most two live glass surfaces per frame.
+ */
+.glass--off {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Fallback when backdrop-filter is unsupported: solid, still on-palette. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: color-mix(in srgb, var(--sand) 90%, transparent);
+  }
+}
+
+/*
+ * Interactive glass surface: iOS press + desktop hover lift. These live
+ * on an INNER element so CSS transforms never fight GSAP's choreography
+ * on the outer card.
+ */
+.glass-interactive {
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease;
+}
+
+.glass-interactive:active {
+  transform: scale(0.985);
+}
+
+@media (hover: hover) {
+  .glass-interactive:hover {
+    transform: translateY(-4px);
+    border-color: var(--glass-border-bright);
+  }
+}
+
+/* Frosted header once the page has scrolled (attribute set from JS). */
+[data-site-header][data-scrolled] {
+  background: var(--glass-tint-strong);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+}
+
+/* ---------------------------------------------------------------------
+ * CUSTOM CURSOR — desktop only, activated from JS.
+ * ------------------------------------------------------------------ */
+.has-cursor,
+.has-cursor a,
+.has-cursor button {
   cursor: none;
 }
 
-.kg-cursor {
+.cursor-dot {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 9999;
+  z-index: 90;
   pointer-events: none;
-  mix-blend-mode: difference;
+  border-radius: 9999px;
+  will-change: transform;
 }
 
-/* Frosted nav once the page is scrolled (set by HeroMotion). */
-[data-site-nav][data-scrolled] {
-  background: rgba(237, 234, 227, 0.82);
-  backdrop-filter: blur(14px);
+/* Hero scroll cue — a segment travelling down a hairline. */
+.cue-travel {
+  animation: cue-travel 2.1s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
-/* Intro internals stay invisible until the GSAP timeline takes over. */
-.intro-pending .intro-veil {
-  opacity: 0;
+@keyframes cue-travel {
+  0% {
+    transform: translateY(-100%);
+  }
+  55%,
+  100% {
+    transform: translateY(400%);
+  }
 }
 
-/* Film grain — drop <div className="kg-noise" /> inside any section. */
-.kg-noise {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
-}
-
-/* Edge-faded marquee (references: mask fade + linear loop). */
-.kg-marquee {
+/* ---------------------------------------------------------------------
+ * MARQUEE — GSAP drives the track; static and readable without JS.
+ * ------------------------------------------------------------------ */
+.marquee {
   overflow: hidden;
   mask-image: linear-gradient(
     90deg,
     transparent 0,
-    #000 8%,
-    #000 92%,
+    #000 10%,
+    #000 90%,
     transparent 100%
   );
 }
 
-/* Track motion is GSAP-driven (scroll-velocity reactive); static without JS. */
-.kg-marquee-track {
+.marquee-track {
   display: flex;
   width: max-content;
+  will-change: transform;
 }
 
-@keyframes kg-breathe {
-  0%,
-  100% {
-    opacity: 0.25;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.5;
-    transform: scale(1.07);
-  }
-}
-
-@keyframes kg-scrollhint {
-  0% {
-    transform: scaleY(0);
-    transform-origin: top;
-  }
-  45% {
-    transform: scaleY(1);
-    transform-origin: top;
-  }
-  55% {
-    transform: scaleY(1);
-    transform-origin: bottom;
-  }
-  100% {
-    transform: scaleY(0);
-    transform-origin: bottom;
-  }
-}
-
-@keyframes kg-blink {
-  0%,
-  100% {
-    opacity: 0.9;
-  }
-  50% {
-    opacity: 0.35;
-  }
-}
-
+/* ---------------------------------------------------------------------
+ * REDUCED MOTION
+ * ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {
-  .kg-anim,
-  .kg-marquee-track {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .is-loading .preloader,
+  .is-loading body {
     animation: none !important;
   }
 }
