@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+:root {
+  --gold: #c9a24b;
+  --gold-bright: #e3c27e;
+  --gold-deep: #8c6a25;
+  --coal: #0f0e0c;
+  --charcoal: #17140f;
+  --cream: #faf6ee;
+  --paper: #edeae3;
+  --ink: #1c1811;
+}
+
+@theme inline {
+  --color-gold: var(--gold);
+  --color-gold-bright: var(--gold-bright);
+  --color-gold-deep: var(--gold-deep);
+  --color-coal: var(--coal);
+  --color-charcoal: var(--charcoal);
+  --color-cream: var(--cream);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --font-display: var(--font-cinzel);
+  --font-serif-ka: var(--font-noto-serif-georgian);
+  --font-sans: var(--font-noto-sans-georgian);
+  --shadow-glow-gold: 0 10px 40px -8px rgba(201, 162, 75, 0.55);
+  --shadow-glow-soft: 0 0 60px rgba(201, 162, 75, 0.25);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-noto-sans-georgian), ui-sans-serif, system-ui, sans-serif;
+}
+
+::selection {
+  background: rgba(201, 162, 75, 0.4);
+}
+
+/*
+ * The intro overlay only exists for the first visit of a session.
+ * A pre-paint inline script in layout.tsx adds `intro-pending` to <html>
+ * when the intro should play; without it the overlay never displays and
+ * the page is fully visible — so a JS failure can never hide content.
+ */
+.intro-overlay {
+  display: none;
+}
+
+.intro-pending .intro-overlay {
+  display: block;
+  /* Failsafe: if the JS bundle never runs, uncover the page after 12s. */
+  animation: kg-failsafe-hide 0s linear 12s forwards;
+}
+
+.intro-pending body {
+  overflow: hidden;
+  animation: kg-failsafe-scroll 0s linear 12s forwards;
+}
+
+@keyframes kg-failsafe-hide {
+  to {
+    visibility: hidden;
+  }
+}
+
+@keyframes kg-failsafe-scroll {
+  to {
+    overflow: auto;
+  }
+}
+
+/* Custom cursor — enabled only on fine pointers without reduced motion. */
+.kg-cursor-on,
+.kg-cursor-on a,
+.kg-cursor-on button {
+  cursor: none;
+}
+
+.kg-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+/* Frosted nav once the page is scrolled (set by HeroMotion). */
+[data-site-nav][data-scrolled] {
+  background: rgba(237, 234, 227, 0.82);
+  backdrop-filter: blur(14px);
+}
+
+/* Intro internals stay invisible until the GSAP timeline takes over. */
+.intro-pending .intro-veil {
+  opacity: 0;
+}
+
+/* Film grain — drop <div className="kg-noise" /> inside any section. */
+.kg-noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* Edge-faded marquee (references: mask fade + linear loop). */
+.kg-marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+}
+
+/* Track motion is GSAP-driven (scroll-velocity reactive); static without JS. */
+.kg-marquee-track {
+  display: flex;
+  width: max-content;
+}
+
+@keyframes kg-breathe {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.07);
+  }
+}
+
+@keyframes kg-scrollhint {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  45% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  55% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+@keyframes kg-blink {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kg-anim,
+  .kg-marquee-track {
+    animation: none !important;
+  }
+}
