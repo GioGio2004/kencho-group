@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
+import { useTranslations } from "next-intl";
 import { DUR, EASE, REVEAL_START, STAGGER } from "@/lib/motion";
 
 /*
@@ -15,17 +16,13 @@ import { DUR, EASE, REVEAL_START, STAGGER } from "@/lib/motion";
  */
 
 const NOTES = [
-  {
-    id: "light",
-    text: "Every plan starts with the sun. Rooms are set to meet it in turn, so the hour of the day is felt indoors as clearly as it is on the street.",
-  },
-  {
-    id: "material",
-    text: "Materials are left close to their raw state — lime plaster, oiled oak, brushed limestone. They take on marks with use, and read better for it.",
-  },
+  { id: "one", titleKey: "noteOneTitle", textKey: "noteOne" },
+  { id: "two", titleKey: "noteTwoTitle", textKey: "noteTwo" },
 ] as const;
 
 export default function Manifesto() {
+  const t = useTranslations("manifesto");
+
   const rootRef = useRef<HTMLElement>(null);
   const eyebrowRef = useRef<HTMLParagraphElement>(null);
   const ruleRef = useRef<HTMLSpanElement>(null);
@@ -124,7 +121,7 @@ export default function Manifesto() {
             aria-hidden="true"
             className="block h-px w-8 shrink-0 bg-clay"
           />
-          The idea
+          {t("eyebrow")}
         </p>
 
         {/*
@@ -137,9 +134,7 @@ export default function Manifesto() {
           ref={headingRef}
           className="u-display mt-8 text-[clamp(1.6rem,4.6vw,3.4rem)] leading-[1.15]! text-ink sm:mt-10"
         >
-          We build for the hours light spends in a room. Honest proportion,
-          materials that age with grace, and the restraint to leave everything
-          else quiet.
+          {t("statement")}
         </h2>
 
         <div
@@ -148,8 +143,11 @@ export default function Manifesto() {
         >
           {NOTES.map((note) => (
             <div key={note.id} data-note className="border-t border-line pt-6">
-              <p className="max-w-[38ch] text-[0.9375rem] leading-[1.7] text-ink-70 sm:text-base">
-                {note.text}
+              <h3 className="text-[0.9375rem] leading-[1.5] font-medium text-ink sm:text-base">
+                {t(note.titleKey)}
+              </h3>
+              <p className="mt-3 max-w-[38ch] text-[0.9375rem] leading-[1.7] text-ink-70 sm:text-base">
+                {t(note.textKey)}
               </p>
             </div>
           ))}

@@ -4,17 +4,46 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { NAV_LINKS, SITE } from "@/lib/site";
+import { useLocale, useTranslations } from "next-intl";
+import { usePathname, useRouter } from "@/i18n/navigation";
+import type { Locale } from "@/i18n/routing";
+import { SITE } from "@/lib/site";
+import { DUR, EASE } from "@/lib/motion";
 
 /*
  * Fixed minimal header: retreats on scroll down, returns on scroll up,
- * and picks up a frosted backdrop once the page has moved. The nav links
- * collapse on small screens — on a single-page site with three anchors a
- * burger menu is more chrome than it is worth, so mobile keeps only the
- * wordmark and the booking link.
+ * and picks up a frosted backdrop once the page has moved. Nav links
+ * collapse on smaller screens — on a single-page site anchors are more
+ * chrome than they are worth there; mobile keeps the wordmark, the
+ * language pill, and the booking link.
  */
+
+const NAV_ITEMS = [
+  { key: "services", href: "#services" },
+  { key: "projects", href: "#projects" },
+  { key: "process", href: "#process" },
+  { key: "faq", href: "#faq" },
+  { key: "contact", href: "#contact" },
+] as const;
+
+/* Endonyms: a language switcher names each language in itself, so these
+ * labels are intentionally identical across locales (not message copy). */
+const LOCALE_OPTIONS: ReadonlyArray<{
+  code: Locale;
+  short: string;
+  name: string;
+}> = [
+  { code: "ka", short: "ქარ", name: "ქართული" },
+  { code: "ru", short: "RU", name: "Русский" },
+  { code: "en", short: "EN", name: "English" },
+];
+
 export default function SiteHeader() {
   const rootRef = useRef<HTMLElement>(null);
+  const t = useTranslations("nav");
+  const locale = useLocale();
+  const pathname = usePathname();
+  const router = useRouter();
 
   useGSAP(
     () => {
@@ -27,8 +56,8 @@ export default function SiteHeader() {
         const hide = gsap
           .to(header, {
             yPercent: -130,
-            duration: 0.45,
-            ease: "power3.inOut",
+            duration: DUR.fast,
+            ease: EASE.inOut,
             paused: true,
           })
           .progress(0);
@@ -49,6 +78,8 @@ export default function SiteHeader() {
 
         return () => {
           st.kill();
+          hide.kill();
+          header.removeAttribute("data-scrolled");
           gsap.set(header, { clearProps: "transform" });
         };
       });
@@ -62,34 +93,86 @@ export default function SiteHeader() {
     <header
       ref={rootRef}
       data-site-header
-      className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-5 py-5 sm:px-8 lg:px-12"
+      className="fixed inset-x-0 top-0 z-50 flex items-center justify-between gap-3 px-5 py-4 sm:px-8 lg:px-12"
     >
+      {/* Wordmark lockup — type only, links back to the top. */}
       <a
         href="#hero"
-        className="u-display text-sm tracking-[0.42em] text-ink"
-        aria-label={`${SITE.fullName} — back to top`}
+        className="flex shrink-0 flex-col text-charcoal"
+        aria-label={`${SITE.fullName} — ${t("home")}`}
       >
-        {SITE.wordmark}
+        {/* Inline letter-spacing: the unlayered ka display override in
+            globals.css would otherwise beat the tracking utility. */}
+        <span
+          className="u-display text-sm leading-none"
+          style={{ letterSpacing: "0.35em" }}
+        >
+          {SITE.wordmark}
+        </span>
+        <span
+          className="mt-1 text-[0.5rem] leading-none text-clay"
+          style={{ letterSpacing: "0.55em" }}
+        >
+          {SITE.wordmarkSub}
+        </span>
       </a>
 
-      <nav aria-label="Primary" className="hidden items-center gap-9 sm:flex">
-        {NAV_LINKS.map((link) => (
+      {/* Georgian nav strings run long — five anchors only fit from lg up. */}
+      <nav className="hidden items-center gap-6 lg:flex xl:gap-8">
+        {NAV_ITEMS.map((item) => (
           <a
-            key={link.href}
-            href={link.href}
+            key={item.href}
+            href={item.href}
             className="u-link text-sm text-ink-70 transition-colors hover:text-ink"
           >
-            {link.label}
+            {t(item.key)}
           </a>
         ))}
       </nav>
 
-      <a
-        href="#contact"
-        className="u-press rounded-full border border-line-strong px-5 py-2.5 text-xs tracking-[0.14em] text-ink uppercase hover:border-clay hover:text-clay sm:text-sm sm:normal-case sm:tracking-normal"
-      >
-        Book a viewing
-      </a>
+      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+        {/* Language switcher — tiny glass pill, present on mobile too.
+            Inline radius: .glass is unlayered and would win over a
+            rounded-full utility. */}
+        <div
+          role="group"
+          aria-label={t("langLabel")}
+          className="glass flex items-center p-0.5"
+          style={{ borderRadius: "9999px" }}
+        >
+          {LOCALE_OPTIONS.map((option) => {
+            const active = option.code === locale;
+            return (
+              <button
+                key={option.code}
+                type="button"
+                aria-label={option.name}
+                aria-current={active ? "true" : undefined}
+                onClick={() => {
+                  if (!active) {
+                    router.replace(pathname, {
+                      locale: option.code,
+                      scroll: false,
+                    });
+                  }
+                }}
+                className={`u-press rounded-full px-2 py-1.5 text-[0.625rem] leading-none tracking-[0.08em] ${
+                  active ? "text-ink" : "text-ink-55 hover:text-ink-70"
+                }`}
+              >
+                {option.short}
+              </button>
+            );
+          })}
+        </div>
+
+        <a
+          href="#contact"
+          className="u-press shrink-0 rounded-full border border-clay px-3.5 py-2 text-[0.6875rem] whitespace-nowrap text-clay-deep hover:bg-clay hover:text-shell sm:px-5 sm:py-2.5 sm:text-xs"
+        >
+          {t("book")}
+        </a>
+      </div>
     </header>
   );
 }

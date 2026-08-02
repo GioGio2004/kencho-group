@@ -1,24 +1,39 @@
 /*
- * Single source of truth for brand + contact copy.
- * Swap these values to rebrand the entire site.
+ * Single source of truth for brand + contact data.
+ * Real client data — verify before changing.
  */
 export const SITE = {
-  name: "ALMA",
-  wordmark: "ALMA",
-  fullName: "Alma Residences",
-  tagline: "Residences shaped by light",
-  description:
-    "Twenty-four residences in a quiet quarter of the old town. Deep terraces, lime-washed walls, and light that moves through the day.",
-  location: "Vera District, Tbilisi",
+  name: "Kencho Group",
+  fullName: "Kencho Group",
+  legalName: "Kencho Group",
+  wordmark: "KENCHO",
+  wordmarkSub: "GROUP",
+  location: "Tbilisi, Georgia",
+  /** TODO: confirm the production domain before launch. */
+  url: "https://kenchogroup.ge",
   phone: "+995 592 82 22 60",
   phoneHref: "+995592822260",
-  email: "hello@almaresidences.com",
-  url: "https://almaresidences.com",
+  whatsappBase: "https://wa.me/995592822260",
+  email: "kenchogroup@gmail.com",
+  address: {
+    street: "Guram Panjikidze St 1",
+    city: "Tbilisi",
+    country: "GE",
+  },
+  mapsUrl:
+    "https://www.google.com/maps/search/?api=1&query=Guram+Panjikidze+St+1%2C+Tbilisi%2C+Georgia",
+  socials: {
+    facebook: "https://www.facebook.com/kenchogroup",
+    tiktok: "https://www.tiktok.com/@kencho.group",
+    /** TODO: real Instagram URL. */
+    instagram: "https://www.instagram.com/TODO-kenchogroup",
+    /** TODO: real LinkedIn URL. */
+    linkedin: "https://www.linkedin.com/company/TODO-kenchogroup",
+  },
   year: 2026,
 } as const;
 
-export const NAV_LINKS = [
-  { href: "#residences", label: "Residences" },
-  { href: "#gallery", label: "Gallery" },
-  { href: "#location", label: "Location" },
-] as const;
+/** WhatsApp deep link with a locale-specific prefilled message. */
+export function whatsappUrl(prefill: string): string {
+  return `${SITE.whatsappBase}?text=${encodeURIComponent(prefill)}`;
+}

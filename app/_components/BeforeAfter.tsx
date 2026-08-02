@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Draggable } from "gsap/Draggable";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useTranslations } from "next-intl";
 import { IMAGES, src } from "@/lib/images";
 import { DUR, EASE, REVEAL_START, prefersReducedMotion } from "@/lib/motion";
 
@@ -26,6 +27,8 @@ const STEP = 0.05;
 const GRAB_SLOP = 26;
 
 export default function BeforeAfter() {
+  const t = useTranslations("transformation");
+
   const sectionRef = useRef<HTMLElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
   const clipRef = useRef<HTMLDivElement>(null);
@@ -59,7 +62,7 @@ export default function BeforeAfter() {
         if (pct !== announced) {
           announced = pct;
           knob.setAttribute("aria-valuenow", String(pct));
-          knob.setAttribute("aria-valuetext", `Before view: ${pct}%`);
+          knob.setAttribute("aria-valuetext", t("sliderValue", { percent: pct }));
         }
       };
 
@@ -294,7 +297,7 @@ export default function BeforeAfter() {
         mm.revert();
       };
     },
-    { scope: sectionRef },
+    { scope: sectionRef, dependencies: [t], revertOnUpdate: true },
   );
 
   return (
@@ -307,7 +310,7 @@ export default function BeforeAfter() {
       <div className="mx-auto w-full max-w-[86rem] px-5 sm:px-8 lg:px-12">
         <div className="flex items-center gap-4">
           <span aria-hidden="true" className="block h-px w-8 bg-clay" />
-          <p className="u-eyebrow">Transformation</p>
+          <p className="u-eyebrow">{t("eyebrow")}</p>
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-12 lg:items-end lg:gap-12">
@@ -315,12 +318,10 @@ export default function BeforeAfter() {
             id="transformation-title"
             className="u-display text-[clamp(1.9rem,6vw,4rem)] text-ink lg:col-span-7"
           >
-            From shell to home
+            {t("title")}
           </h2>
           <p className="max-w-[42ch] text-[0.95rem] leading-relaxed text-ink-70 lg:col-span-5 lg:justify-self-end">
-            Every residence is handed over complete — oak laid, joinery fitted,
-            walls lime-washed. Move the divider to see the same room the day the
-            concrete was poured.
+            {t("sub")}
           </p>
         </div>
 
@@ -331,7 +332,7 @@ export default function BeforeAfter() {
         >
           <Image
             src={src(IMAGES.shellAfter)}
-            alt={IMAGES.shellAfter.alt}
+            alt={t("afterAlt")}
             fill
             sizes="(min-width: 1024px) 80vw, 100vw"
             draggable={false}
@@ -345,7 +346,7 @@ export default function BeforeAfter() {
           >
             <Image
               src={src(IMAGES.shellBefore)}
-              alt={IMAGES.shellBefore.alt}
+              alt={t("beforeAlt")}
               fill
               sizes="(min-width: 1024px) 80vw, 100vw"
               draggable={false}
@@ -355,10 +356,10 @@ export default function BeforeAfter() {
 
           <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-4 sm:p-6">
             <span className="bg-sand px-2.5 py-1 text-[0.625rem] uppercase tracking-[0.24em] text-ink">
-              Before
+              {t("before")}
             </span>
             <span className="bg-sand px-2.5 py-1 text-[0.625rem] uppercase tracking-[0.24em] text-ink">
-              After
+              {t("after")}
             </span>
           </div>
 
@@ -374,13 +375,13 @@ export default function BeforeAfter() {
               ref={knobRef}
               type="button"
               role="slider"
-              aria-label="Move the divider between the shell and the finished interior"
+              aria-label={t("sliderLabel")}
               aria-controls="transformation-frame"
               aria-orientation="horizontal"
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={50}
-              aria-valuetext="Before view: 50%"
+              aria-valuetext={t("sliderValue", { percent: 50 })}
               className="glass absolute left-0 top-1/2 -ml-6 -mt-6 flex h-12 w-12 items-center justify-center text-ink"
               style={{ borderRadius: "9999px" }}
             >
@@ -401,10 +402,7 @@ export default function BeforeAfter() {
           </div>
         </div>
 
-        <p className="mt-5 text-xs text-ink-55">
-          Drag the divider, tap anywhere on the photograph, or use the arrow
-          keys.
-        </p>
+        <p className="mt-5 text-xs text-ink-55">{t("hint")}</p>
       </div>
     </section>
   );

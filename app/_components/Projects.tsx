@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Flip } from "gsap/Flip";
+import { useTranslations } from "next-intl";
 import { IMAGES, src, type ImageAsset } from "@/lib/images";
 import {
   DUR,
@@ -15,9 +16,10 @@ import {
   prefersReducedMotion,
 } from "@/lib/motion";
 
-type GalleryItem = {
+type ProjectItem = {
+  /** Message key under `projects.items` — caption + alt live there. */
+  key: "p1" | "p2" | "p3" | "p4" | "p5" | "p6";
   asset: ImageAsset;
-  caption: string;
   /** Grid placement for the <figure> cell. */
   cell: string;
   /** Frame proportions per breakpoint. */
@@ -30,45 +32,45 @@ type GalleryItem = {
  * Six frames in a deliberately uneven rhythm: one wide opener, a tall
  * column beside it, a staggered middle row, and a full-width closer.
  */
-const ITEMS: GalleryItem[] = [
+const ITEMS: ProjectItem[] = [
   {
-    asset: IMAGES.gallery01,
-    caption: "West facade, late afternoon",
+    key: "p1",
+    asset: IMAGES.project01,
     cell: "sm:col-span-2 lg:col-span-2",
     frame: "aspect-[4/5] sm:aspect-[16/11]",
     sizes: "(min-width: 1024px) 62vw, 100vw",
   },
   {
-    asset: IMAGES.gallery02,
-    caption: "Living room, second floor",
+    key: "p2",
+    asset: IMAGES.project02,
     cell: "lg:mt-16",
     frame: "aspect-[4/5] sm:aspect-[3/4]",
     sizes: "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
   },
   {
-    asset: IMAGES.gallery03,
-    caption: "Principal bedroom, morning",
+    key: "p3",
+    asset: IMAGES.project03,
     cell: "lg:mt-24",
     frame: "aspect-[4/5]",
     sizes: "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
   },
   {
-    asset: IMAGES.gallery04,
-    caption: "Kitchen, stone and oak",
+    key: "p4",
+    asset: IMAGES.project04,
     cell: "",
     frame: "aspect-[4/5] sm:aspect-[3/4]",
     sizes: "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
   },
   {
-    asset: IMAGES.gallery05,
-    caption: "Bathroom in warm microcement",
+    key: "p5",
+    asset: IMAGES.project05,
     cell: "lg:mt-24",
     frame: "aspect-[4/5]",
     sizes: "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
   },
   {
-    asset: IMAGES.gallery06,
-    caption: "Terrace, looking north",
+    key: "p6",
+    asset: IMAGES.project06,
     cell: "sm:col-span-2 lg:col-span-3",
     frame: "aspect-[4/5] sm:aspect-[16/9] lg:aspect-[21/9]",
     sizes: "100vw",
@@ -76,15 +78,18 @@ const ITEMS: GalleryItem[] = [
 ];
 
 /*
- * GALLERY
- * -------
+ * PROJECTS
+ * --------
  * Frames wipe open on a clip-path, their contents drift inside the crop as
  * the page moves, and any frame can be lifted full-screen with GSAP Flip —
  * the real image element travels, so there is never a cross-fade seam.
  * Without JS every photo is already fully visible; the overlay stays
  * display:none until a click opens it.
  */
-export default function Gallery() {
+export default function Projects() {
+  const t = useTranslations("projects");
+  const tCommon = useTranslations("common");
+
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -135,6 +140,10 @@ export default function Gallery() {
         media = target;
         home = parent;
         opener = frame;
+
+        // The dialog announces as the picture it is showing.
+        const alt = target.querySelector("img")?.alt;
+        if (alt) overlay.setAttribute("aria-label", alt);
 
         // The stage keeps the frame's own proportions, so the enlargement
         // is the same composition — no crop pop on arrival.
@@ -344,39 +353,26 @@ export default function Gallery() {
     <>
       <section
         ref={sectionRef}
-        id="gallery"
-        aria-labelledby="gallery-title"
+        id="projects"
+        aria-labelledby="projects-title"
         className="bg-sand-deep py-24 sm:py-32 lg:py-40"
       >
         <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-8 lg:px-12">
-          <div
-            ref={headerRef}
-            className="lg:grid lg:grid-cols-12 lg:items-end lg:gap-8"
-          >
-            <div className="lg:col-span-7">
-              <p data-head="" className="u-eyebrow flex items-center gap-3">
-                <span
-                  aria-hidden="true"
-                  className="inline-block h-1.5 w-1.5 bg-clay"
-                />
-                Gallery
-              </p>
-              <h2
-                data-head=""
-                id="gallery-title"
-                className="u-display mt-6 max-w-[15ch] text-[clamp(1.9rem,6vw,4rem)] text-ink"
-              >
-                Rooms as they are, hour by hour
-              </h2>
-            </div>
-            <p
-              data-head=""
-              className="mt-6 max-w-[46ch] text-[0.95rem] leading-relaxed text-ink-70 lg:col-span-4 lg:col-start-9 lg:mt-0"
-            >
-              Six frames from a single day in the building — early light on the
-              west facade, the quiet of the upper floors at noon, and the
-              terrace as the sun leaves it.
+          <div ref={headerRef}>
+            <p data-head="" className="u-eyebrow flex items-center gap-3">
+              <span
+                aria-hidden="true"
+                className="inline-block h-1.5 w-1.5 bg-clay"
+              />
+              {t("eyebrow")}
             </p>
+            <h2
+              data-head=""
+              id="projects-title"
+              className="u-display mt-6 max-w-[16ch] text-[clamp(1.9rem,6vw,4rem)] text-ink"
+            >
+              {t("title")}
+            </h2>
           </div>
 
           <div
@@ -385,7 +381,7 @@ export default function Gallery() {
           >
             {ITEMS.map((item, index) => (
               <figure
-                key={item.asset.id}
+                key={item.key}
                 data-figure=""
                 className={`min-w-0 ${item.cell}`}
               >
@@ -395,6 +391,7 @@ export default function Gallery() {
                   type="button"
                   data-frame=""
                   aria-haspopup="dialog"
+                  aria-label={t(`items.${item.key}.alt`)}
                   style={{ clipPath: "inset(0% 0% 0% 0%)" }}
                   className={`u-press relative block w-full cursor-pointer overflow-hidden bg-shell ${item.frame}`}
                 >
@@ -405,7 +402,7 @@ export default function Gallery() {
                     <span data-parallax="" className="absolute inset-0 block">
                       <Image
                         src={src(item.asset)}
-                        alt={item.asset.alt}
+                        alt={t(`items.${item.key}.alt`)}
                         fill
                         sizes={item.sizes}
                         className="object-cover"
@@ -417,8 +414,8 @@ export default function Gallery() {
                   data-caption=""
                   className="mt-3 flex items-baseline justify-between gap-4 sm:mt-4"
                 >
-                  <span className="text-[0.8125rem] text-ink-55">
-                    {item.caption}
+                  <span className="text-xs tracking-[0.18em] text-ink-55">
+                    {t(`items.${item.key}.caption`)}
                   </span>
                   <span
                     aria-hidden="true"
@@ -433,12 +430,13 @@ export default function Gallery() {
         </div>
       </section>
 
-      {/* Lightbox. Kept out of the flow with `hidden`; JS sets display:flex. */}
+      {/* Lightbox. Kept out of the flow with `hidden`; JS sets display:flex.
+          Its aria-label is set on open to the shown image's localized alt. */}
       <div
         ref={overlayRef}
         hidden
         role="dialog"
-        aria-label="Image viewer"
+        aria-label={t("title")}
         className="fixed inset-0 z-50 items-center justify-center"
       >
         <div
@@ -449,7 +447,7 @@ export default function Gallery() {
         <button
           ref={closeRef}
           type="button"
-          aria-label="Close image"
+          aria-label={tCommon("close")}
           className="u-press absolute right-5 top-5 z-10 flex h-11 w-11 cursor-pointer items-center justify-center border border-line-strong bg-shell text-ink sm:right-8 sm:top-8"
         >
           <svg

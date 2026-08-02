@@ -15,9 +15,12 @@
   --ink-55: rgba(43, 36, 32, 0.55);
   --ink-40: rgba(43, 36, 32, 0.4);
 
-  /* The single accent — used sparingly */
-  --clay: #b0765a;
-  --clay-deep: #96604a;
+  /* The single accent — muted brass, used sparingly */
+  --clay: #b08d57;
+  --clay-deep: #8f7143;
+
+  /* Deep charcoal — footer, wordmark, small brand moments */
+  --charcoal: #1c1b19;
 
   /* Hairlines */
   --line: rgba(43, 36, 32, 0.14);
@@ -49,11 +52,22 @@
   --color-ink-40: var(--ink-40);
   --color-clay: var(--clay);
   --color-clay-deep: var(--clay-deep);
+  --color-charcoal: var(--charcoal);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
 
-  --font-display: var(--font-fraunces);
-  --font-sans: var(--font-instrument);
+  /*
+   * Per-locale typography: only the active locale's font variables are
+   * attached to <html>, so the chain resolves to whichever pair exists.
+   */
+  --font-display: var(
+    --font-display-ka,
+    var(--font-display-ru, var(--font-display-en, ui-serif))
+  );
+  --font-sans: var(
+    --font-body-ka,
+    var(--font-body-ru, var(--font-body-en, ui-sans-serif))
+  );
 }
 
 /* ---------------------------------------------------------------------
@@ -61,12 +75,21 @@
  * ------------------------------------------------------------------ */
 html {
   -webkit-text-size-adjust: 100%;
+  /* Hide the native scrollbar — Lenis owns the scroll feel. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 body {
   background: var(--sand);
   color: var(--ink);
-  font-family: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
   font-synthesis-weight: none;
 }
 
@@ -81,10 +104,17 @@ body {
 
 /* Display type: tight tracking, optical balance at large sizes. */
 .u-display {
-  font-family: var(--font-fraunces), ui-serif, Georgia, serif;
+  font-family: var(--font-display), Georgia, serif;
   font-weight: 400;
   letter-spacing: -0.03em;
   line-height: 0.95;
+}
+
+/* Georgian display: Mkhedruli has no italic/tight-tracking tradition —
+ * loosen slightly so ascenders and descenders breathe. */
+html[lang="ka"] .u-display {
+  letter-spacing: -0.01em;
+  line-height: 1.02;
 }
 
 /* Small tracked label used for section eyebrows. */

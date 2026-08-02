@@ -1,0 +1,64 @@
+import { ImageResponse } from "next/og";
+
+export const size = { width: 1200, height: 630 };
+export const contentType = "image/png";
+export const alt = "Kencho Group — custom furniture in Tbilisi";
+
+/*
+ * Wordmark-on-warm-background OG card. Latin-only text so the bundled
+ * font renders every locale safely; replace with a designed static
+ * image once the real logo SVG arrives.
+ */
+export default function OpenGraphImage() {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#efe7dd",
+          color: "#2b2420",
+        }}
+      >
+        <div
+          style={{
+            fontSize: 132,
+            letterSpacing: "0.28em",
+            marginLeft: "0.28em",
+            display: "flex",
+          }}
+        >
+          KENCHO
+        </div>
+        <div
+          style={{
+            marginTop: 18,
+            fontSize: 36,
+            letterSpacing: "0.6em",
+            marginLeft: "0.6em",
+            color: "#b08d57",
+            display: "flex",
+          }}
+        >
+          GROUP
+        </div>
+        <div
+          style={{
+            marginTop: 54,
+            fontSize: 26,
+            letterSpacing: "0.18em",
+            color: "rgba(43,36,32,0.62)",
+            display: "flex",
+          }}
+        >
+          CUSTOM FURNITURE — TBILISI
+        </div>
+      </div>
+    ),
+    size,
+  );
+}

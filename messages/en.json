@@ -1,0 +1,183 @@
+{
+  "meta": {
+    "title": "Custom furniture in Tbilisi — kitchens, wardrobes, interiors | Kencho Group",
+    "description": "Kencho Group — made-to-measure furniture and turnkey interior fit-outs in Tbilisi, Georgia. Custom kitchens, wardrobes, wall paneling, and commercial spaces. Free measurement and 3D design.",
+    "ogAlt": "Kencho Group — custom furniture in Tbilisi"
+  },
+  "nav": {
+    "services": "Services",
+    "projects": "Projects",
+    "process": "Process",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "book": "Free measurement",
+    "home": "Back to top",
+    "langLabel": "Language"
+  },
+  "common": {
+    "whatsappPrefill": "Hello, I'm interested in custom furniture",
+    "close": "Close",
+    "whatsappCta": "Message us on WhatsApp",
+    "whatsappSticky": "Message us",
+    "phoneCta": "Call us",
+    "discuss": "Discuss your project"
+  },
+  "hero": {
+    "lines": "From empty space\nto finished interior.",
+    "sub": "Custom furniture — made in Tbilisi",
+    "scroll": "Scroll",
+    "imageAlt": "A kitchen built by Kencho Group in natural light"
+  },
+  "manifesto": {
+    "eyebrow": "About us",
+    "statement": "We draw the design ourselves, build it in our own workshop, and install it with our own hands. Every piece is made precisely for your space.",
+    "noteOneTitle": "Made to measure",
+    "noteOne": "We have no standard sizes — we start from your walls, ceilings, and habits. The furniture adapts to the space, never the other way around.",
+    "noteTwoTitle": "Residential and commercial",
+    "noteTwo": "Apartments and houses, offices, cafés, and shops — one team from design to handover."
+  },
+  "transformation": {
+    "eyebrow": "Transformation",
+    "title": "From shell to home",
+    "sub": "The same space — before our work and after. Drag the divider and compare.",
+    "before": "Shell",
+    "after": "Finished",
+    "sliderLabel": "Move the divider between the shell and the finished interior",
+    "sliderValue": "Shell view: {percent}%",
+    "hint": "Drag the divider, tap the photo, or use the arrow keys.",
+    "beforeAlt": "An unfinished space in shell condition before fit-out",
+    "afterAlt": "The same space with a finished interior and built-in furniture"
+  },
+  "services": {
+    "eyebrow": "Services",
+    "title": "What we build",
+    "cta": "Discuss your project",
+    "items": {
+      "kitchens": {
+        "name": "Kitchens",
+        "line": "Kitchens built to an individual design — integrated appliances, clean joins, precise measurement.",
+        "imageAlt": "A custom kitchen with dark wood cabinet fronts"
+      },
+      "wardrobes": {
+        "name": "Wardrobes and storage",
+        "line": "Walk-in wardrobes, built-in closets, and storage systems — every corner put to work.",
+        "imageAlt": "A built-in wardrobe room with wooden detailing"
+      },
+      "paneling": {
+        "name": "Wall paneling and details",
+        "line": "Wood paneling, shelving, and interior details that give a space its character.",
+        "imageAlt": "Wooden wall paneling in soft light"
+      },
+      "commercial": {
+        "name": "Commercial fit-outs",
+        "line": "Offices, cafés, and shops — a complete fit-out from design to opening day.",
+        "imageAlt": "A commercial interior with custom furniture"
+      }
+    }
+  },
+  "projects": {
+    "eyebrow": "Work",
+    "title": "Selected projects",
+    "items": {
+      "p1": { "caption": "Kitchen · Vake · 2025", "alt": "A dark wood kitchen in Vake" },
+      "p2": { "caption": "Living room · Saburtalo · 2025", "alt": "A living room with built-in furniture in Saburtalo" },
+      "p3": { "caption": "Bedroom · Dighomi · 2024", "alt": "A bedroom with wooden accents in Dighomi" },
+      "p4": { "caption": "Kitchen · Vera · 2024", "alt": "A light-toned kitchen in Vera" },
+      "p5": { "caption": "Bathroom · Vake · 2024", "alt": "A microcement bathroom in Vake" },
+      "p6": { "caption": "Terrace · Mtatsminda · 2023", "alt": "A furnished terrace in Mtatsminda" }
+    }
+  },
+  "process": {
+    "eyebrow": "Process",
+    "title": "How we work",
+    "note": "The exact price is set after the free measurement and design approval — and never changes after that.",
+    "steps": {
+      "s1": { "title": "Free measurement", "line": "We visit, measure, and listen to how you use the space." },
+      "s2": { "title": "3D design", "line": "You see the result on screen before production begins." },
+      "s3": { "title": "Approval", "line": "We settle materials, colours, and the final price." },
+      "s4": { "title": "Manufacturing", "line": "In our own workshop, within 3–5 weeks." },
+      "s5": { "title": "Installation", "line": "We install cleanly and hand over a finished space." }
+    },
+    "weeksValue": "3–5",
+    "weeksLabel": "weeks in production"
+  },
+  "social": {
+    "eyebrow": "Trust",
+    "title": "People trust us",
+    "statFollowersValue": "43",
+    "statFollowersSuffix": "K",
+    "statFollowersLabel": "followers on Facebook",
+    "statRecommendValue": "100",
+    "statRecommendSuffix": "%",
+    "statRecommendLabel": "recommended · 17 reviews",
+    "quotes": {
+      "q1": { "text": "Delivered exactly on time, and the quality is better than the photos. The kitchen looks precisely like the 3D design.", "author": "N. K. — Vake" },
+      "q2": { "text": "One team handled everything from measurement to installation. The process was calm and transparent.", "author": "G. M. — Saburtalo" },
+      "q3": { "text": "They built the full interior for our café — we opened without a day of delay.", "author": "T. B. — Vera" }
+    }
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Common questions",
+    "items": {
+      "pricing": {
+        "q": "How is the price set?",
+        "a": "Every project is individual, so we quote after a free measurement and an agreed design. The price is fixed in writing and does not change during the work."
+      },
+      "timeline": {
+        "q": "How long does it take?",
+        "a": "Production takes 3–5 weeks on average after design approval. Installation usually takes 1–3 days."
+      },
+      "materials": {
+        "q": "What materials do you use, and is there a warranty?",
+        "a": "We work with European MDF and solid wood; hardware is Blum and Häfele. Every piece we build is covered by a warranty."
+      },
+      "commercial": {
+        "q": "Do you take commercial projects?",
+        "a": "Yes — offices, cafés, and shops. We take on both individual pieces and complete turnkey fit-outs through to opening."
+      }
+    }
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Let's start your project",
+    "sub": "Message us on WhatsApp or leave your number — we reply within one business day.",
+    "bookMeasure": "Book a free measurement",
+    "formTitle": "Leave your number",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "phoneLabel": "Phone",
+    "phonePlaceholder": "5XX XX XX XX",
+    "submit": "Send",
+    "replyNote": "We reply within one business day.",
+    "success": "Thank you — we'll be in touch shortly.",
+    "errorName": "Please enter your name.",
+    "errorPhone": "Please enter a valid phone number.",
+    "addressLabel": "Address",
+    "address": "Guram Panjikidze St 1, Tbilisi",
+    "mapCta": "View on the map",
+    "phoneLabel2": "Phone",
+    "emailLabel": "Email",
+    "detailAlt": "An interior detail — a wooden surface in soft light"
+  },
+  "audio": {
+    "label": "Listen",
+    "play": "Play",
+    "pause": "Pause",
+    "close": "Close",
+    "transcriptLink": "Read transcript",
+    "transcriptTitle": "Audio guide transcript",
+    "transcript": "Welcome to Kencho Group. We're a small team in Tbilisi that designs, builds, and installs custom furniture — all under one roof. Every project begins in your space: we visit, we measure, and we listen to how you live. Our designers then draw your interior in 3D, so you see the result before we cut a single board. In our own workshop, your kitchen, wardrobe, or complete interior takes shape within three to five weeks — European materials, precise joinery, and a warranty on everything we make. Then we arrive, install cleanly, and hand over a finished space. If you're thinking about a project of your own, write to us on WhatsApp. The measurement is free.",
+    "sectionLabel": {
+      "hero": "Introduction",
+      "manifesto": "About us",
+      "process": "Process",
+      "contact": "Contact"
+    }
+  },
+  "footer": {
+    "tagline": "Custom furniture — Tbilisi",
+    "rights": "© {year} Kencho Group. All rights reserved.",
+    "socials": "Social media"
+  }
+}
