@@ -38,8 +38,8 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <Hero />
         <Manifesto />
         <BeforeAfter />
-        <Services />
         <Projects />
+        <Services />
         <Process />
         <SocialProof />
         <FAQ />

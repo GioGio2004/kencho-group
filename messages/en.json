@@ -75,16 +75,38 @@
       }
     }
   },
+  "intro": {
+    "words": "WE MEASURE\nWE DESIGN\nWE BUILD\nWE INSTALL"
+  },
   "projects": {
     "eyebrow": "Work",
     "title": "Selected projects",
+    "lightboxCta": "Discuss a similar project",
+    "lightboxPrev": "Previous photo",
+    "lightboxNext": "Next photo",
+    "filters": {
+      "all": "All",
+      "kitchens": "Kitchens",
+      "wardrobes": "Wardrobes",
+      "commercial": "Commercial"
+    },
     "items": {
       "p1": { "caption": "Kitchen · Vake · 2025", "alt": "A dark wood kitchen in Vake" },
-      "p2": { "caption": "Living room · Saburtalo · 2025", "alt": "A living room with built-in furniture in Saburtalo" },
-      "p3": { "caption": "Bedroom · Dighomi · 2024", "alt": "A bedroom with wooden accents in Dighomi" },
-      "p4": { "caption": "Kitchen · Vera · 2024", "alt": "A light-toned kitchen in Vera" },
-      "p5": { "caption": "Bathroom · Vake · 2024", "alt": "A microcement bathroom in Vake" },
-      "p6": { "caption": "Terrace · Mtatsminda · 2023", "alt": "A furnished terrace in Mtatsminda" }
+      "p2": { "caption": "Kitchen · Saburtalo · 2025", "alt": "A sunlit kitchen in Saburtalo" },
+      "p3": { "caption": "Wardrobe · Vera · 2025", "alt": "A walk-in wardrobe room in Vera" },
+      "p4": { "caption": "Office · Saburtalo · 2024", "alt": "A boardroom in Saburtalo" },
+      "p5": { "caption": "Kitchen · Dighomi · 2024", "alt": "A kitchen with oak joinery in Dighomi" },
+      "p6": { "caption": "Living room · Vake · 2025", "alt": "A living room storage wall in Vake" },
+      "p7": { "caption": "Café · Vera · 2024", "alt": "A café interior in Vera" },
+      "p8": { "caption": "Kitchen · Ortachala · 2024", "alt": "A stone and oak kitchen in Ortachala" },
+      "p9": { "caption": "Bathroom furniture · Vake · 2023", "alt": "A bathroom vanity in Vake" },
+      "p10": { "caption": "Office · Didube · 2024", "alt": "An office lounge in Didube" },
+      "p11": { "caption": "Bedroom · Dighomi · 2025", "alt": "Bedroom built-ins in Dighomi" },
+      "p12": { "caption": "Kitchen · Mtatsminda · 2023", "alt": "A light kitchen in Mtatsminda" },
+      "p13": { "caption": "Restaurant · Mtatsminda · 2024", "alt": "A restaurant fit-out in Mtatsminda" },
+      "p14": { "caption": "Bedroom · Tskneti · 2023", "alt": "A bedroom in soft tones in Tskneti" },
+      "p15": { "caption": "Kitchen · Isani · 2025", "alt": "A loft kitchen in Isani" },
+      "p16": { "caption": "Hotel · Vera · 2023", "alt": "A hotel lobby in Vera" }
     }
   },
   "process": {
@@ -122,7 +144,7 @@
     "items": {
       "pricing": {
         "q": "How is the price set?",
-        "a": "Every project is individual, so we quote after a free measurement and an agreed design. The price is fixed in writing and does not change during the work."
+        "a": "We quote after a free measurement and an agreed design. The price is fixed in writing and never changes."
       },
       "timeline": {
         "q": "How long does it take?",
@@ -134,7 +156,7 @@
       },
       "commercial": {
         "q": "Do you take commercial projects?",
-        "a": "Yes — offices, cafés, and shops. We take on both individual pieces and complete turnkey fit-outs through to opening."
+        "a": "Yes — offices, cafés, and shops, from single pieces to complete turnkey fit-outs."
       }
     }
   },

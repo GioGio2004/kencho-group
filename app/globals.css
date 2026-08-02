@@ -117,6 +117,18 @@ html[lang="ka"] .u-display {
   line-height: 1.02;
 }
 
+/* Outlined display type — used by the kinetic intro's alternating cuts. */
+.u-outline {
+  -webkit-text-stroke: 1.5px var(--ink);
+  color: transparent;
+}
+
+@supports not (-webkit-text-stroke: 1px black) {
+  .u-outline {
+    color: var(--ink);
+  }
+}
+
 /* Small tracked label used for section eyebrows. */
 .u-eyebrow {
   font-size: 0.6875rem;

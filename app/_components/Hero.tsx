@@ -6,28 +6,34 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
-import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { useTranslations } from "next-intl";
 import { IMAGES, src } from "@/lib/images";
 import { SITE } from "@/lib/site";
-import LineArt from "./LineArt";
 
 /* =====================================================================
  * INTRO CONFIG — every timing, easing and stagger for the opening.
  * Tune the feel here; nothing below hard-codes a number.
  *
- * The sequence: line drawing sketches itself while the counter tracks
- * real asset progress → strokes wink to brass → the sand overlay splits
- * as two workshop doors → the hero pushes in (back photo settles from
- * 1.15, vignette from 1.06, copy rises) → ambient depth takes over.
+ * The sequence: kinetic verbs hard-cut in the centre (solid / outlined /
+ * solid / outlined) while the counter tracks real asset progress → the
+ * KENCHO / GROUP lockup cuts in and holds a beat → the lockup blows past
+ * the camera while the sand sheet lifts upward with rounded bottom
+ * corners → the hero pushes in (back photo settles from 1.15, vignette
+ * from 1.06, copy rises) → ambient depth takes over.
  *
- * SLOWER / SOFTER  → raise curtain.duration toward 1.0 and
- *                    depth.back.duration toward 2.0; push
- *                    headline.stagger toward 0.12.
+ * The background NEVER changes colour — the sheet stays constant sand
+ * and only the type cuts (photosensitivity rule).
+ *
+ * SLOWER / SOFTER  → raise words.perWord toward 0.45 and
+ *                    curtain.duration toward 1.1; push headline.stagger
+ *                    toward 0.12.
+ * PUNCHIER CUTS    → drop words.scalePunch.from toward 0.88 and its
+ *                    duration toward 0.12.
  * GENTLER PUSH     → lower depth.back.fromScale toward 1.08 (a shorter
  *                    journey reads calmer); raise toward 1.2 for drama.
- * SNAPPIER         → drop counter.minDuration to ~0.5, draw.main
- *                    duration to ~0.7 and curtain.duration to ~0.6.
+ * SNAPPIER         → drop counter.minDuration to ~0.5, words.perWord to
+ *                    ~0.28, lockup.holdBeat to ~0.25, fly.duration to
+ *                    ~0.55 and curtain.duration to ~0.7.
  * ================================================================== */
 const INTRO = {
   counter: {
@@ -41,33 +47,54 @@ const INTRO = {
     /** How hard the displayed number chases the true value (0–1). */
     chase: 0.11,
   },
-  draw: {
-    /** Main geometry strokes — the craftsman blocks in the carcass. */
-    main: { duration: 0.9, stagger: 0.12, ease: "power2.inOut" },
-    /** Detail strokes — handles, splits, the pendant. Overlaps main. */
-    detail: { duration: 0.5, stagger: 0.06, overlap: 0.3, ease: "power2.inOut" },
+  words: {
+    /** Seconds each verb owns the screen before the next hard cut. */
+    perWord: 0.35,
+    /** Punch on every cut: the word lands slightly small, snaps to 1. */
+    scalePunch: { from: 0.92, duration: 0.18, ease: "power3.out" },
+    /**
+     * Tracking tightens toward this while a word holds — a 2–3% visual
+     * squeeze from the .u-display base (-0.03em; ka loosens to -0.01em,
+     * which is why the base is read from computed style, never assumed).
+     */
+    tightenTo: "-0.045em",
+    /** Ease of the tracking squeeze — a slow settle, no bounce. */
+    tightenEase: "power1.out",
+  },
+  lockup: {
+    /** Beat held on the KENCHO / GROUP lockup before the fly-through. */
+    holdBeat: 0.4,
+  },
+  fly: {
+    /** How far past the camera the lockup blows (scale multiplier). */
+    scaleTo: 14,
+    duration: 0.7,
+    ease: "expo.in",
+    /** Opacity holds until this share of the fly, then drops fast. */
+    fadeStartProgress: 0.6,
+    /** Ease of that fast tail fade. */
+    fadeEase: "power2.in",
+    /**
+     * Zoom origin — aims roughly at the counter of the E in KENCHO. The
+     * lockup element is viewport-sized, so these are viewport
+     * percentages; nudge ±2% if the display font or clamp changes.
+     */
+    origin: "38% 42%",
+  },
+  curtain: {
+    /** The single sand sheet lifts upward, unveiling the stage below. */
+    duration: 0.9,
+    ease: "expo.inOut",
+    /** Bottom corners round off as the sheet lifts — a soft page-peel. */
+    radius: "20px",
   },
   release: {
     /**
-     * The preloader releases when assets are done AND the drawing has
-     * finished — but never later than this many seconds, total.
+     * The preloader releases when assets are done AND the word+lockup
+     * sequence has reached its hold — but never later than this many
+     * seconds, total.
      */
     hardCap: 3.5,
-  },
-  wink: {
-    /** Strokes flash from ink to brass — the maker's signature. */
-    duration: 0.2,
-    /** Beat held on the brass drawing before the content fades. */
-    hold: 0.15,
-  },
-  curtain: {
-    /** Lockup + drawing + counter fade fully BEFORE the panels move. */
-    contentFade: 0.25,
-    /** Each half-panel's travel — workshop doors opening. */
-    duration: 0.8,
-    /** The right door trails the left by this much. */
-    rightDelay: 0.05,
-    ease: "expo.inOut",
   },
   /* Pseudo-3D stage: three layers moving at different rates. */
   depth: {
@@ -85,7 +112,7 @@ const INTRO = {
     drift: { amp: 3, duration: 7 },
   },
   headline: {
-    /** Start relative to the curtains splitting (during the push). */
+    /** Start relative to the sheet lifting (during the push). */
     offset: 0.25,
     duration: 1.1,
     stagger: 0.09,
@@ -104,9 +131,11 @@ const INTRO = {
     duration: 0.5,
     ease: "power2.out",
   },
-  /** Return visits within the same session: no preloader, no curtain. */
+  /** Return visits within the same session: no words, no counter. */
   returnVisit: {
     fade: 0.5,
+    /** Fast upward lift, used only if the sheet is somehow still live. */
+    lift: 0.6,
     headlineDuration: 0.9,
     headlineStagger: 0.07,
   },
@@ -126,6 +155,7 @@ const MID_VIGNETTE = [
 
 export default function Hero() {
   const t = useTranslations("hero");
+  const tIntro = useTranslations("intro");
   const rootRef = useRef<HTMLElement>(null);
 
   /*
@@ -135,19 +165,22 @@ export default function Hero() {
    */
   const headlineLines = t("lines").split("\n");
 
+  /* "intro.words" — four verbs per locale, \n-separated. Rendered from
+   * JS via textContent swaps; the overlay is aria-hidden, so the copy is
+   * SEO-invisible by design (the real h1 lives in the hero). */
+  const introWords = tIntro("words").split("\n");
+
   useGSAP(
     () => {
-      gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin);
+      gsap.registerPlugin(ScrollTrigger, SplitText);
 
       const root = rootRef.current;
       if (!root) return;
 
       const q = gsap.utils.selector(root);
       const overlay = q("[data-intro-overlay]")[0];
-      const panelLeft = q('[data-intro-panel="left"]')[0];
-      const panelRight = q('[data-intro-panel="right"]')[0];
-      const introContent = q("[data-intro-content]")[0];
-      const artWrap = q("[data-intro-art]")[0];
+      const wordEl = q("[data-intro-word]")[0];
+      const lockupEl = q("[data-intro-lockup]")[0];
       const counterEl = q("[data-intro-counter]")[0];
       const back = q('[data-hero-layer="back"]')[0];
       const mid = q('[data-hero-layer="mid"]')[0];
@@ -157,7 +190,7 @@ export default function Hero() {
       const cue = q("[data-hero-cue]")[0];
       if (!back || !mid || !front || !heading) return;
 
-      /* "alma:reveal" fires once, when the curtains start moving —
+      /* "alma:reveal" fires once, when the sheet starts lifting —
        * and always before "alma:loaded". */
       let revealed = false;
       const reveal = () => {
@@ -182,6 +215,10 @@ export default function Hero() {
         markSeen();
         document.documentElement.classList.remove("is-loading");
         if (overlay) gsap.set(overlay, { display: "none" });
+        /* will-change was applied from JS at intro start — release the
+         * compositor hint now that the intro is over. */
+        const hinted = [overlay, wordEl, lockupEl].filter(Boolean);
+        if (hinted.length) gsap.set(hinted, { clearProps: "willChange" });
         window.dispatchEvent(new Event("alma:loaded"));
       };
 
@@ -189,7 +226,7 @@ export default function Hero() {
 
       /* -----------------------------------------------------------------
        * REDUCED MOTION — land on the finished hero. A single opacity
-       * fade only: no draw, no curtains, no push, no drift loops.
+       * fade only: no cuts, no fly-through, no push, no drift loops.
        * -------------------------------------------------------------- */
       mm.add("(prefers-reduced-motion: reduce)", () => {
         finish();
@@ -317,159 +354,235 @@ export default function Hero() {
           }
         })();
 
-        const introReady =
-          overlay && panelLeft && panelRight && introContent && artWrap;
+        const introReady = overlay && wordEl && lockupEl;
 
         /* ---------------------------------------------------------------
-         * RETURN VISIT — skip the preloader, quick fade + headline reveal,
-         * landing directly on the settled stage.
+         * RETURN VISIT — no words, no counter. The layout script only
+         * sets `is-loading` on first visits, so normally nothing covers
+         * the frame and a quick fade + headline reveal is enough. If the
+         * sheet IS live (the inline script and this code disagree about
+         * the session), lift it fast instead of blinking it away.
          * ------------------------------------------------------------ */
         if (
           seen ||
           !introReady ||
           !document.documentElement.classList.contains("is-loading")
         ) {
-          finish();
+          const overlayLive =
+            !!overlay &&
+            document.documentElement.classList.contains("is-loading");
+
           gsap.set(back, { scale: INTRO.depth.back.toScale });
-          gsap
-            .timeline()
-            .from(root, {
+
+          const tl = gsap.timeline();
+          if (overlayLive) {
+            gsap.set(overlay, { willChange: "transform" });
+            tl.set(overlay, {
+              borderBottomLeftRadius: INTRO.curtain.radius,
+              borderBottomRightRadius: INTRO.curtain.radius,
+            }).to(overlay, {
+              yPercent: -100,
+              duration: INTRO.returnVisit.lift,
+              ease: INTRO.curtain.ease,
+              onStart: reveal,
+              /* finish() hides the sheet and fires "alma:loaded" — it
+               * must run exactly once on this path too. */
+              onComplete: finish,
+            });
+          } else {
+            finish();
+            tl.from(root, {
               autoAlpha: 0,
               duration: INTRO.returnVisit.fade,
               ease: "power2.out",
-            })
-            .from(
-              lines(),
-              {
-                yPercent: INTRO.headline.fromYPercent,
-                duration: INTRO.returnVisit.headlineDuration,
-                ease: INTRO.headline.ease,
-                stagger: INTRO.returnVisit.headlineStagger,
-              },
-              0.1,
-            )
-            .from(
-              [sub, cue].filter(Boolean),
-              {
-                autoAlpha: 0,
-                y: 14,
-                duration: INTRO.sub.duration,
-                ease: INTRO.sub.ease,
-                stagger: 0.12,
-              },
-              0.35,
-            );
+            });
+          }
+          tl.from(
+            lines(),
+            {
+              yPercent: INTRO.headline.fromYPercent,
+              duration: INTRO.returnVisit.headlineDuration,
+              ease: INTRO.headline.ease,
+              stagger: INTRO.returnVisit.headlineStagger,
+            },
+            overlayLive ? 0.2 : 0.1,
+          ).from(
+            [sub, cue].filter(Boolean),
+            {
+              autoAlpha: 0,
+              y: 14,
+              duration: INTRO.sub.duration,
+              ease: INTRO.sub.ease,
+              stagger: 0.12,
+            },
+            overlayLive ? 0.45 : 0.35,
+          );
           watchCue();
           startAmbient();
           return teardown;
         }
 
         /* ---------------------------------------------------------------
-         * FIRST VISIT — the full sequence.
+         * FIRST VISIT — the full kinetic type sequence.
          *
          * Initial states are applied here rather than in CSS, so the
          * server-rendered HTML stays complete and correct without JS. The
-         * opaque overlay is already covering this frame, so setting them
+         * opaque sheet is already covering this frame, so setting them
          * now cannot flash.
          * ------------------------------------------------------------ */
-        const mainPaths = q('[data-la="main"] path');
-        const detailPaths = q('[data-la="detail"] path');
 
-        /* Brass for the wink — strokes are currentColor, so tweening the
-         * wrapper's `color` recolors every path at once. The fallback
-         * mirrors --clay in globals.css (never rendered as copy). */
-        const clayColor =
-          getComputedStyle(document.documentElement)
-            .getPropertyValue("--clay")
-            .trim() || "#b08d57";
+        /* Compositor hints for the intro's lifetime only — cleared with
+         * clearProps in finish() (which every path funnels through). */
+        gsap.set([overlay, wordEl, lockupEl], { willChange: "transform" });
 
-        gsap.set([...mainPaths, ...detailPaths], { drawSVG: "0%" });
         gsap.set(back, { scale: INTRO.depth.back.fromScale });
         gsap.set(mid, { scale: INTRO.depth.mid.fromScale });
         gsap.set(front, { y: INTRO.depth.front.fromY });
         gsap.set([sub, cue].filter(Boolean), { autoAlpha: 0 });
 
-        /* ---------------------------------------------------------------
-         * PRELOADER LINE-DRAW — starts immediately, never waits on assets.
-         * A craftsman's sketch: carcass first, then handles and details.
-         * ------------------------------------------------------------ */
-        const drawTl = gsap
-          .timeline({
-            onComplete: () => {
-              drawDone = true;
-              release();
-            },
-          })
-          .to(mainPaths, {
-            drawSVG: "100%",
-            duration: INTRO.draw.main.duration,
-            stagger: INTRO.draw.main.stagger,
-            ease: INTRO.draw.main.ease,
-          })
-          .to(
-            detailPaths,
-            {
-              drawSVG: "100%",
-              duration: INTRO.draw.detail.duration,
-              stagger: INTRO.draw.detail.stagger,
-              ease: INTRO.draw.detail.ease,
-            },
-            `-=${INTRO.draw.detail.overlap}`,
-          );
+        /* Each locale's .u-display resting tracking (ka loosens it), in
+         * computed px — every cut tightens from this same base. */
+        const rawTracking = getComputedStyle(wordEl).letterSpacing;
+        const baseTracking = rawTracking === "normal" ? "0px" : rawTracking;
 
         /* ---------------------------------------------------------------
-         * MASTER — wink → content fade → doors split → push-in.
+         * WORD SEQUENCE — starts immediately, never waits on assets.
+         * One element, hard cuts: textContent swaps via .call(). Even
+         * verbs are solid ink, odd verbs outlined (.u-outline strokes
+         * with --ink). No fade-outs — the next .call IS the cut. The
+         * sheet behind stays constant sand throughout.
+         * ------------------------------------------------------------ */
+        const seqTl = gsap.timeline({
+          onComplete: () => {
+            sequenceDone = true;
+            release();
+          },
+        });
+
+        introWords.forEach((word, i) => {
+          const at = i * INTRO.words.perWord;
+          seqTl.call(
+            () => {
+              wordEl.textContent = word;
+              wordEl.classList.toggle("u-outline", i % 2 === 1);
+            },
+            undefined,
+            at,
+          );
+          /* Punch: lands slightly small, snaps up. immediateRender off —
+           * these all share one element, so none may render early. */
+          seqTl.fromTo(
+            wordEl,
+            { scale: INTRO.words.scalePunch.from },
+            {
+              scale: 1,
+              duration: INTRO.words.scalePunch.duration,
+              ease: INTRO.words.scalePunch.ease,
+              immediateRender: false,
+            },
+            at,
+          );
+          /* Tracking squeeze across the word's whole hold. */
+          seqTl.fromTo(
+            wordEl,
+            { letterSpacing: baseTracking },
+            {
+              letterSpacing: INTRO.words.tightenTo,
+              duration: INTRO.words.perWord,
+              ease: INTRO.words.tightenEase,
+              immediateRender: false,
+            },
+            at,
+          );
+        });
+
+        /* Lockup cut — same rhythm as the verbs: hard cut in, punch, then
+         * hold. The timeline completes at the end of the hold, which is
+         * what arms the release. */
+        const lockupAt = introWords.length * INTRO.words.perWord;
+        seqTl.call(
+          () => {
+            gsap.set(wordEl, { autoAlpha: 0 });
+            gsap.set(lockupEl, { autoAlpha: 1 });
+          },
+          undefined,
+          lockupAt,
+        );
+        seqTl.fromTo(
+          lockupEl,
+          { scale: INTRO.words.scalePunch.from },
+          {
+            scale: 1,
+            duration: INTRO.words.scalePunch.duration,
+            ease: INTRO.words.scalePunch.ease,
+            immediateRender: false,
+          },
+          lockupAt,
+        );
+        seqTl.to({}, { duration: INTRO.lockup.holdBeat }, lockupAt);
+
+        /* ---------------------------------------------------------------
+         * EXIT MASTER — fly-through + sheet lift + push-in. Paused until
+         * release() plays it (assets AND sequence complete, or hard cap).
          * ------------------------------------------------------------ */
         const master = gsap.timeline({
           paused: true,
           onComplete: startAmbient,
         });
 
-        if (artWrap) {
-          master.to(artWrap, {
-            color: clayColor,
-            duration: INTRO.wink.duration,
-            ease: "power2.inOut",
-          });
-        }
+        master.addLabel("lift");
 
-        /* Lockup, drawing and counter are gone before the doors move —
-         * the drawing must never visibly jump with the panels. */
-        master
-          .to(
-            introContent,
-            {
-              autoAlpha: 0,
-              duration: INTRO.curtain.contentFade,
-              ease: "power2.in",
-            },
-            `+=${INTRO.wink.hold}`,
-          )
-          .addLabel("split")
-          .to(
-            panelLeft,
-            {
-              xPercent: -100,
-              duration: INTRO.curtain.duration,
-              ease: INTRO.curtain.ease,
-              onStart: reveal,
-            },
-            "split",
-          )
-          .to(
-            panelRight,
-            {
-              xPercent: 100,
-              duration: INTRO.curtain.duration,
-              ease: INTRO.curtain.ease,
-            },
-            `split+=${INTRO.curtain.rightDelay}`,
-          )
-          /* Overlay is fully off-screen here — the page is live even
-           * though the push-in is still settling. */
-          .add(finish, `split+=${INTRO.curtain.duration + INTRO.curtain.rightDelay}`);
+        /* (a) The lockup blows past the camera. Origin targets the E's
+         * counter, so the zoom reads as flying "through" the wordmark. */
+        master.to(
+          lockupEl,
+          {
+            scale: INTRO.fly.scaleTo,
+            transformOrigin: INTRO.fly.origin,
+            duration: INTRO.fly.duration,
+            ease: INTRO.fly.ease,
+          },
+          "lift",
+        );
+        /* Opacity holds until fadeStartProgress of the fly, then drops
+         * fast — a separate tween positioned inside the fly's window. */
+        master.to(
+          lockupEl,
+          {
+            autoAlpha: 0,
+            duration: INTRO.fly.duration * (1 - INTRO.fly.fadeStartProgress),
+            ease: INTRO.fly.fadeEase,
+          },
+          `lift+=${INTRO.fly.duration * INTRO.fly.fadeStartProgress}`,
+        );
 
-        /* The push-in overlaps the doors: three layers, three rates. */
+        /* (b) The sheet lifts upward; bottom corners round off as it
+         * goes. A .set is fine — the radius only reads once it moves. */
+        master.set(
+          overlay,
+          {
+            borderBottomLeftRadius: INTRO.curtain.radius,
+            borderBottomRightRadius: INTRO.curtain.radius,
+          },
+          "lift",
+        );
+        master.to(
+          overlay,
+          {
+            yPercent: -100,
+            duration: INTRO.curtain.duration,
+            ease: INTRO.curtain.ease,
+            /* (c) "alma:reveal" fires the moment the lift starts. */
+            onStart: reveal,
+          },
+          "lift",
+        );
+        /* Sheet fully off-screen here — the page is live even though the
+         * push-in is still settling. */
+        master.add(finish, `lift+=${INTRO.curtain.duration}`);
+
+        /* (d) The push-in overlaps the lift: three layers, three rates,
+         * and the masked headline lands DURING the reveal. */
         master
           .to(
             back,
@@ -478,7 +591,7 @@ export default function Hero() {
               duration: INTRO.depth.back.duration,
               ease: INTRO.depth.back.ease,
             },
-            "split",
+            "lift",
           )
           .to(
             mid,
@@ -487,7 +600,7 @@ export default function Hero() {
               duration: INTRO.depth.mid.duration,
               ease: INTRO.depth.back.ease,
             },
-            "split",
+            "lift",
           )
           .to(
             front,
@@ -496,7 +609,7 @@ export default function Hero() {
               duration: INTRO.depth.front.duration,
               ease: INTRO.depth.back.ease,
             },
-            "split",
+            "lift",
           )
           .add(() => {
             gsap.from(lines(), {
@@ -505,7 +618,7 @@ export default function Hero() {
               ease: INTRO.headline.ease,
               stagger: INTRO.headline.stagger,
             });
-          }, `split+=${INTRO.headline.offset}`);
+          }, `lift+=${INTRO.headline.offset}`);
 
         if (sub) {
           master.to(
@@ -515,7 +628,7 @@ export default function Hero() {
               duration: INTRO.sub.duration,
               ease: INTRO.sub.ease,
             },
-            `split+=${INTRO.headline.offset + INTRO.sub.offset}`,
+            `lift+=${INTRO.headline.offset + INTRO.sub.offset}`,
           );
         }
 
@@ -527,31 +640,33 @@ export default function Hero() {
               duration: INTRO.cue.duration,
               ease: INTRO.cue.ease,
             },
-            `split+=${INTRO.headline.offset + INTRO.cue.offset}`,
+            `lift+=${INTRO.headline.offset + INTRO.cue.offset}`,
           );
         }
 
         /* ---------------------------------------------------------------
-         * RELEASE — assets done AND draw complete, total ≤ hardCap.
+         * RELEASE — assets done AND sequence at its hold, total ≤ hardCap.
          * Both waits are explicit; either alone never releases.
          * ------------------------------------------------------------ */
         let fontsReady = false;
         let imageReady = false;
         let displayed = 0;
         let assetsDone = false;
-        let drawDone = false;
+        let sequenceDone = false;
         let released = false;
         const startedAt = performance.now();
 
         const release = (force = false) => {
           if (released) return;
-          if (!force && !(assetsDone && drawDone)) return;
+          if (!force && !(assetsDone && sequenceDone)) return;
           released = true;
           gsap.ticker.remove(tick);
           if (counterEl) counterEl.textContent = "100";
-          /* Forced release (hard cap / skip): complete the sketch
-           * instantly so the wink recolors a finished drawing. */
-          if (drawTl.progress() < 1) drawTl.progress(1);
+          /* Forced release (hard cap / skip): jump the word sequence to
+           * its end state first — the .call()s fire in order, landing on
+           * the lockup — so the fly always exits from the lockup, never
+           * from a half-held verb. */
+          if (seqTl.progress() < 1) seqTl.progress(1);
           master.play();
         };
 
@@ -625,20 +740,27 @@ export default function Hero() {
          * SKIP — any scroll, tap or keypress jumps straight to the end.
          * ------------------------------------------------------------ */
         /*
-         * progress(1) fires the timeline's callbacks in order — reveal,
+         * release(true) jumps the word sequence to its end (its .call()s
+         * fire in order — all synchronous, so nothing paints mid-jump)
+         * and starts the master. master.progress(1) then fires the
+         * master's callbacks in order — reveal (the lift's onStart),
          * finish, the headline `.add` (which would START a from-tween),
-         * and onComplete/startAmbient (both guarded, run-once). So after
+         * and onComplete/startAmbient (all guarded, run-once). So after
          * jumping, kill the freshly created headline tween and snap every
-         * animated property to its resting value explicitly. Ambient
-         * depth is deliberately left running; it is the resting state.
+         * animated property to its resting value explicitly. The sequence
+         * timeline is killed so no late tick can ever re-show a word.
+         * Ambient depth is deliberately left running; it is the resting
+         * state.
          */
         let skipped = false;
         const skip = () => {
           if (skipped) return;
           skipped = true;
           release(true);
-          drawTl.kill();
+          seqTl.kill();
           master.progress(1);
+          gsap.killTweensOf([wordEl, lockupEl]);
+          if (overlay) gsap.set(overlay, { display: "none" });
           const headingLines = lines();
           gsap.killTweensOf(headingLines);
           gsap.set(headingLines, { yPercent: 0 });
@@ -755,52 +877,68 @@ export default function Hero() {
       </div>
 
       {/*
-       * Intro overlay, gated by the `is-loading` class from the pre-paint
-       * script — a JS failure can never leave it covering the page.
+       * Kinetic type intro overlay, gated by the `is-loading` class from
+       * the pre-paint script — a JS failure can never leave it covering
+       * the page.
        *
-       * Two sand half-panels (50.1% each so no seam ever shows) split as
-       * workshop doors; the content layer above them fades out first.
-       * Wordmark lockup: type only. The tracking utility carries `!`
+       * ONE constant sand sheet (the background never changes colour —
+       * photosensitivity rule): verbs hard-cut in the centre, the brand
+       * lockup cuts in, then the whole sheet lifts upward while the
+       * lockup flies past the camera. will-change is applied from JS for
+       * the intro only. The wordmark tracking utility carries `!`
        * because `.u-display` is unlayered CSS and would otherwise win.
        */}
       <div
         data-intro-overlay
         aria-hidden="true"
-        className="intro-overlay fixed inset-0 z-[100]"
+        className="intro-overlay fixed inset-0 z-[100] bg-sand"
       >
-        <div
-          data-intro-panel="left"
-          className="absolute inset-y-0 left-0 w-[50.1%] bg-sand will-change-transform"
-        />
-        <div
-          data-intro-panel="right"
-          className="absolute inset-y-0 right-0 w-[50.1%] bg-sand will-change-transform"
-        />
-
-        <div data-intro-content className="absolute inset-0">
-          <span className="absolute top-5 left-5 flex flex-col sm:top-8 sm:left-8">
-            <span className="u-display text-sm tracking-[0.35em]! text-ink">
-              {SITE.wordmark}
-            </span>
-            <span className="mt-1 text-[0.5rem] font-medium tracking-[0.52em] text-clay">
-              {SITE.wordmarkSub}
-            </span>
+        <span className="absolute top-5 left-5 flex flex-col sm:top-8 sm:left-8">
+          <span className="u-display text-sm tracking-[0.35em]! text-ink">
+            {SITE.wordmark}
           </span>
+          <span className="mt-1 text-[0.5rem] font-medium tracking-[0.52em] text-clay">
+            {SITE.wordmarkSub}
+          </span>
+        </span>
 
-          {/* The sketch — strokes are currentColor, so the wrapper's
-              `color` is the single recolor handle for the brass wink. */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div
-              data-intro-art
-              className="w-[72vw] max-w-[420px] text-ink sm:w-[min(60vw,420px)]"
-            >
-              <LineArt />
-            </div>
-          </div>
+        {/* Centre stage: one element, re-used for every verb cut via
+            textContent swaps from JS. Sized to hold two lines max at
+            390px in the long ka/ru locales. Inline font metrics win over
+            the unlayered .u-display line-height. */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div
+            data-intro-word
+            className="u-display w-[86vw] max-w-none text-center text-ink uppercase"
+            style={{ fontSize: "clamp(2.6rem, 13vw, 9rem)", lineHeight: 1.02 }}
+          />
+        </div>
 
+        {/* Brand lockup — hidden until its beat. The fly-through scales
+            this viewport-sized wrapper, so fly.origin percentages are
+            viewport coordinates aimed at the E in KENCHO. */}
+        <div
+          data-intro-lockup
+          className="absolute inset-0 flex flex-col items-center justify-center opacity-0"
+        >
+          <span
+            className="u-display text-clay"
+            style={{ fontSize: "clamp(3rem, 15vw, 10rem)" }}
+          >
+            {SITE.wordmark}
+          </span>
+          <span className="mt-3 text-xs font-medium tracking-[0.52em] text-ink">
+            {SITE.wordmarkSub}
+          </span>
+        </div>
+
+        {/* Bottom anchor bar — rule + counter. Outside the cut zone, so
+            the verbs never disturb it; it simply rides the sheet up. */}
+        <div className="absolute inset-x-0 bottom-5 flex items-center justify-center gap-4 sm:bottom-8">
+          <span className="h-px w-24 bg-line-strong" />
           <span
             data-intro-counter
-            className="u-display absolute right-5 bottom-5 text-lg tabular-nums text-ink sm:right-8 sm:bottom-8"
+            className="u-display text-lg tabular-nums text-ink"
           >
             00
           </span>
