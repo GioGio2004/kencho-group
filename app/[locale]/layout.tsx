@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import Script from "next/script";
 import AnalyticsScripts from "@/app/_components/AnalyticsScripts";
 import { routing, type Locale } from "@/i18n/routing";
 import { fontClassesFor } from "@/lib/fonts";
@@ -132,17 +131,23 @@ export default async function LocaleLayout({
     >
       <head>
         <link rel="preconnect" href="https://images.unsplash.com" />
-        <Script
-          id="business-ld"
+        {/*
+         * Raw inline scripts, NOT next/script. <Script> defaults to the
+         * afterInteractive strategy, which appends the tag from a passive
+         * effect *after* hydration — too late for a pre-paint guard (Hero
+         * reads `is-loading` in a layout effect, which always runs first,
+         * so the whole first-visit intro would never play), and too late
+         * for structured data to appear in the server-rendered HTML.
+         */}
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: businessLd }}
         />
-        <Script
-          id="faq-ld"
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: faqLd }}
         />
-        <Script id="loader-guard" dangerouslySetInnerHTML={{ __html: loaderGuard }} />
+        <script dangerouslySetInnerHTML={{ __html: loaderGuard }} />
       </head>
       <body>
         <NextIntlClientProvider>{children}</NextIntlClientProvider>

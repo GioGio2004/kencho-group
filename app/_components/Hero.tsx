@@ -225,17 +225,14 @@ export default function Hero() {
       const mm = gsap.matchMedia();
 
       /* -----------------------------------------------------------------
-       * REDUCED MOTION — land on the finished hero. A single opacity
-       * fade only: no cuts, no fly-through, no push, no drift loops.
+       * REDUCED MOTION — land directly on the finished hero. No cuts, no
+       * fly-through, no push, no drift loops, and deliberately no fade
+       * either: a page-wide 500ms opacity animation is exactly the kind
+       * of motion this preference asks us not to run.
        * -------------------------------------------------------------- */
       mm.add("(prefers-reduced-motion: reduce)", () => {
         finish();
         gsap.set(back, { scale: INTRO.depth.back.toScale });
-        gsap.from(root, {
-          autoAlpha: 0,
-          duration: INTRO.returnVisit.fade,
-          ease: "power2.out",
-        });
       });
 
       /* -----------------------------------------------------------------
@@ -784,7 +781,10 @@ export default function Hero() {
         watchCue();
 
         if (process.env.NODE_ENV === "development") {
-          (window as unknown as Record<string, unknown>).__almaIntro = master;
+          const w = window as unknown as Record<string, unknown>;
+          /* master = exit (fly-through + curtain); seq = the word cuts. */
+          w.__almaIntro = master;
+          w.__almaIntroSeq = seqTl;
         }
 
         return teardown;
@@ -800,7 +800,10 @@ export default function Hero() {
       ref={rootRef}
       id="hero"
       aria-labelledby="hero-title"
-      className="relative isolate flex min-h-svh flex-col justify-end overflow-hidden bg-sand"
+      /* No `isolate` here: it would make the section a stacking context and
+         trap the intro overlay's z-[100] inside it, letting the fixed
+         header (z-50, a sibling of <main>) paint over the sand sheet. */
+      className="relative flex min-h-svh flex-col justify-end overflow-hidden bg-sand"
     >
       {/*
        * Pseudo-3D stage: back (photo) and mid (vignette) settle at
@@ -903,14 +906,19 @@ export default function Hero() {
         </span>
 
         {/* Centre stage: one element, re-used for every verb cut via
-            textContent swaps from JS. Sized to hold two lines max at
-            390px in the long ka/ru locales. Inline font metrics win over
-            the unlayered .u-display line-height. */}
+            textContent swaps from JS.
+            The ka/ru verbs are single words with no break opportunity, so
+            a fixed-width box cannot wrap them — it would only push an
+            over-wide word off-centre to the right. Full width plus
+            symmetric padding keeps any overflow even, and the smaller
+            preferred size keeps the longest verb ("ПРОЕКТИРУЕМ") inside
+            the frame on a 320px phone. Inline font metrics win over the
+            unlayered .u-display line-height. */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div
             data-intro-word
-            className="u-display w-[86vw] max-w-none text-center text-ink uppercase"
-            style={{ fontSize: "clamp(2.6rem, 13vw, 9rem)", lineHeight: 1.02 }}
+            className="u-display w-full px-5 text-center text-ink uppercase"
+            style={{ fontSize: "clamp(2.2rem, 11vw, 9rem)", lineHeight: 1.02 }}
           />
         </div>
 

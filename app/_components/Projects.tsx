@@ -80,6 +80,7 @@ export default function Projects() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const prevLayerRef = useRef<HTMLDivElement>(null);
@@ -145,14 +146,21 @@ export default function Projects() {
   const ratioH = Number(ratioParts[1] ?? 1);
   const lbOpen = lightbox !== null;
 
-  /* Scroll lock while the lightbox is open — released on close AND on
-   * unmount, so navigating away mid-close can never strand the page. */
+  /*
+   * Scroll lock while the lightbox is open — released on close AND on
+   * unmount, so navigating away mid-close can never strand the page.
+   * Both scroll paths must be frozen: `overflow: hidden` stops native
+   * scrolling, and the event tells SmoothScroll to stop Lenis, which
+   * would otherwise keep driving the page behind the modal.
+   */
   useEffect(() => {
     if (!lbOpen) return;
     const previous = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
+    window.dispatchEvent(new Event("alma:scroll-lock"));
     return () => {
       document.documentElement.style.overflow = previous;
+      window.dispatchEvent(new Event("alma:scroll-unlock"));
     };
   }, [lbOpen]);
 
@@ -163,6 +171,45 @@ export default function Projects() {
     },
     [],
   );
+
+  /*
+   * Focus containment. The dialog declares aria-modal, so nothing behind
+   * it should be reachable — without this, Tab walks straight back into
+   * the grid and a keyboard user can swap the image they are looking at.
+   * A wrap-around trap is used rather than `inert` on the page shell,
+   * because the dialog is itself rendered inside <main> and would be
+   * disabled along with everything else.
+   */
+  useEffect(() => {
+    if (!lbOpen) return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const onTab = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const focusables = Array.from(
+        dialog.querySelectorAll<HTMLElement>("button, a[href]"),
+      ).filter((el) => !el.hasAttribute("disabled"));
+      if (!focusables.length) return;
+      const first = focusables[0]!;
+      const last = focusables[focusables.length - 1]!;
+      const active = document.activeElement;
+
+      if (!dialog.contains(active)) {
+        event.preventDefault();
+        first.focus();
+      } else if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onTab);
+    return () => document.removeEventListener("keydown", onTab);
+  }, [lbOpen]);
 
   /* -------------------------------------------------------------------
    * Click handlers — capture Flip states BEFORE setState so the effects
@@ -446,37 +493,56 @@ export default function Projects() {
         }
       }
 
-      const onKey = (event: KeyboardEvent) => {
-        if (event.key === "Escape") close();
-        else if (event.key === "ArrowLeft") navigate(-1);
-        else if (event.key === "ArrowRight") navigate(1);
-      };
-      const onBackdrop = () => close();
-      const onPointerDown = (event: PointerEvent) => {
-        swipeXRef.current = event.clientX;
-      };
-      const onPointerUp = (event: PointerEvent) => {
-        const startX = swipeXRef.current;
-        swipeXRef.current = null;
-        if (startX === null) return;
-        const dx = event.clientX - startX;
-        if (Math.abs(dx) > 40) navigate(dx < 0 ? 1 : -1);
-      };
-
-      document.addEventListener("keydown", onKey);
-      backdrop.addEventListener("click", onBackdrop);
-      stage.addEventListener("pointerdown", onPointerDown);
-      stage.addEventListener("pointerup", onPointerUp);
-      return () => {
-        document.removeEventListener("keydown", onKey);
-        backdrop.removeEventListener("click", onBackdrop);
-        stage.removeEventListener("pointerdown", onPointerDown);
-        stage.removeEventListener("pointerup", onPointerUp);
-        actionsRef.current = null;
-      };
+      /*
+       * Input listeners deliberately do NOT live here. useGSAP only runs
+       * this cleanup on unmount unless revertOnUpdate is set, so binding
+       * them per `lightbox` change would stack a fresh document keydown
+       * listener on every navigation — arrow keys would then fire several
+       * times and re-open a closed lightbox. They live in the effect
+       * below instead, bound once per open/close.
+       */
     },
     { dependencies: [lightbox], scope: sectionRef },
   );
+
+  /* -------------------------------------------------------------------
+   * Lightbox input — bound once while open, torn down on close and on
+   * unmount. Handlers delegate through actionsRef so they always call
+   * the current close/navigate closures without rebinding.
+   * ---------------------------------------------------------------- */
+  useEffect(() => {
+    if (!lbOpen) return;
+    const backdrop = backdropRef.current;
+    const stage = stageRef.current;
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") actionsRef.current?.close();
+      else if (event.key === "ArrowLeft") actionsRef.current?.navigate(-1);
+      else if (event.key === "ArrowRight") actionsRef.current?.navigate(1);
+    };
+    const onBackdrop = () => actionsRef.current?.close();
+    const onPointerDown = (event: PointerEvent) => {
+      swipeXRef.current = event.clientX;
+    };
+    const onPointerUp = (event: PointerEvent) => {
+      const startX = swipeXRef.current;
+      swipeXRef.current = null;
+      if (startX === null) return;
+      const dx = event.clientX - startX;
+      if (Math.abs(dx) > 40) actionsRef.current?.navigate(dx < 0 ? 1 : -1);
+    };
+
+    document.addEventListener("keydown", onKey);
+    backdrop?.addEventListener("click", onBackdrop);
+    stage?.addEventListener("pointerdown", onPointerDown);
+    stage?.addEventListener("pointerup", onPointerUp);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      backdrop?.removeEventListener("click", onBackdrop);
+      stage?.removeEventListener("pointerdown", onPointerDown);
+      stage?.removeEventListener("pointerup", onPointerUp);
+    };
+  }, [lbOpen]);
 
   return (
     <>
@@ -611,6 +677,7 @@ export default function Projects() {
           warm-dark wash (NOT glass — zero backdrop-filters here). */}
       {lightbox && lbCurrent && (
         <div
+          ref={dialogRef}
           role="dialog"
           aria-modal="true"
           aria-label={t(`items.${lbCurrent.key}.alt`)}

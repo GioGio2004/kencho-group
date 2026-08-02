@@ -37,6 +37,17 @@ export default function SmoothScroll() {
       window.addEventListener("alma:loaded", onLoaded);
     }
 
+    /*
+     * Modal scroll lock. `overflow: hidden` alone does not hold here —
+     * Lenis scrolls the page programmatically via transforms/scrollTo, so
+     * a modal must freeze the instance itself. Any component can ask by
+     * dispatching these events (see the Projects lightbox).
+     */
+    const onLock = () => lenis.stop();
+    const onUnlock = () => lenis.start();
+    window.addEventListener("alma:scroll-lock", onLock);
+    window.addEventListener("alma:scroll-unlock", onUnlock);
+
     // In-page anchors glide instead of jumping.
     const onClick = (e: MouseEvent) => {
       if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.button !== 0) return;
@@ -55,6 +66,8 @@ export default function SmoothScroll() {
     return () => {
       document.removeEventListener("click", onClick);
       window.removeEventListener("alma:loaded", onLoaded);
+      window.removeEventListener("alma:scroll-lock", onLock);
+      window.removeEventListener("alma:scroll-unlock", onUnlock);
       gsap.ticker.remove(tick);
       lenis.destroy();
     };
