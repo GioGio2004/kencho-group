@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "frames": "node scripts/frames.mjs",
-    "verify:hero": "node scripts/verify-hero.mjs"
+    "verify:hero": "node scripts/verify-hero.mjs",
+    "verify:fallbacks": "node scripts/verify-fallbacks.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

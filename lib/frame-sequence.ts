@@ -38,8 +38,13 @@ export class FrameSequence {
 
   private lastDrawn = -1;
   private disposed = false;
-  /** Highest contiguous index loaded — the cheap "nearest" lookup. */
+  /** Highest contiguous index loaded — used only to report completeness. */
   private contiguous = -1;
+  private loadedCount = 0;
+  /** In-flight requests, so dispose() can abort them. */
+  private readonly pending = new Set<HTMLImageElement>();
+  /** Progress requested before any frame existed, replayed on first paint. */
+  private pendingProgress: number | null = null;
 
   constructor(canvas: HTMLCanvasElement, tier: FrameTier) {
     this.canvas = canvas;
@@ -80,8 +85,9 @@ export class FrameSequence {
   private async fetchFrame(i: number): Promise<void> {
     if (this.disposed || this.frames[i]) return;
     const url = frameUrl(this.tier, i);
+    const img = new Image();
+    this.pending.add(img);
     try {
-      const img = new Image();
       img.decoding = "async";
       img.src = url;
       // decode() resolves once the pixels are ready to draw, so the first
@@ -96,21 +102,37 @@ export class FrameSequence {
       }
       if (this.disposed) return;
       this.frames[i] = img;
+      this.loadedCount++;
     } catch {
       /* A missing frame must never break the scrub — the nearest loaded
        * frame is painted instead. */
       return;
+    } finally {
+      this.pending.delete(img);
     }
     while (this.frames[this.contiguous + 1]) this.contiguous++;
   }
 
-  /** Fetch the eager head; resolves once the scrub is safe to arm. */
-  async loadHead(): Promise<void> {
+  /**
+   * Fetch the eager head. Frame 0 is awaited first and painted the moment
+   * it lands, so the canvas shows something after ~one frame's worth of
+   * bytes instead of waiting on the whole head (~1 MB). Rejects if the
+   * entire head failed, which is what arms the poster fallback.
+   */
+  async loadHead(): Promise<number> {
     const head = Math.min(WALKTHROUGH.eagerFrames, this.total);
+    if (head === 0) throw new Error("no frames configured");
+
+    await this.fetchFrame(0);
+    if (this.disposed) return 0;
+    // Paint immediately: either the requested scroll position, or frame 0.
+    if (this.frames[0]) this.draw(this.pendingProgress ?? 0);
+
     await Promise.all(
-      Array.from({ length: head }, (_, i) => this.fetchFrame(i)),
+      Array.from({ length: head - 1 }, (_, k) => this.fetchFrame(k + 1)),
     );
-    if (head > 0) this.paint(0);
+    if (this.loadedCount === 0) throw new Error("no frames loaded");
+    return this.loadedCount;
   }
 
   /** Stream the remainder in order, a few at a time. Fire-and-forget. */
@@ -133,10 +155,20 @@ export class FrameSequence {
     return this.contiguous >= this.total - 1;
   }
 
-  /** Nearest loaded frame at or before `i`, else the first one after. */
+  /** How many frames are actually available to paint. */
+  get loaded(): number {
+    return this.loadedCount;
+  }
+
+  /**
+   * Nearest loaded frame at or before `i`, else the first one after.
+   * Scans back from `i` itself, NOT from the contiguous cursor: a single
+   * failed fetch would otherwise pin the fallback to a stale early frame
+   * for the whole streaming window.
+   */
   private nearest(i: number): number {
     if (this.frames[i]) return i;
-    for (let k = Math.min(i, this.contiguous); k >= 0; k--) {
+    for (let k = i - 1; k >= 0; k--) {
       if (this.frames[k]) return k;
     }
     for (let k = i + 1; k < this.total; k++) {
@@ -145,22 +177,31 @@ export class FrameSequence {
     return -1;
   }
 
-  /** Paint by scroll progress (0–1). */
-  draw(progress: number): void {
+  /** Paint by scroll progress (0–1). Returns true if pixels were drawn. */
+  draw(progress: number): boolean {
     const clamped = Math.max(0, Math.min(1, progress));
+    // Remember the ask, so the first frame to arrive lands on the right
+    // position rather than snapping to frame 0 on a mid-page reload.
+    this.pendingProgress = clamped;
     const target = Math.min(
       this.total - 1,
       Math.round(clamped * (this.total - 1)),
     );
-    this.paint(target);
+    return this.paint(target);
   }
 
-  private paint(target: number): void {
-    if (this.disposed) return;
+  /** True once at least one frame has actually been rendered. */
+  get hasPainted(): boolean {
+    return this.lastDrawn >= 0;
+  }
+
+  private paint(target: number): boolean {
+    if (this.disposed) return false;
     const index = this.nearest(target);
-    if (index < 0 || index === this.lastDrawn) return; // skip redundant draws
+    if (index < 0) return false;
+    if (index === this.lastDrawn) return true; // already showing it
     const frame = this.frames[index];
-    if (!frame) return;
+    if (!frame) return false;
 
     const cw = this.canvas.width;
     const ch = this.canvas.height;
@@ -176,12 +217,16 @@ export class FrameSequence {
 
     this.ctx.drawImage(frame, dx, dy, dw, dh);
     this.lastDrawn = index;
+    return true;
   }
 
   dispose(): void {
     this.disposed = true;
-    // Dropping the references is enough — the browser reclaims each
-    // <img>'s decoded surface on its own schedule.
+    // Abort anything still in flight — setting src aborts the fetch in
+    // every current engine — then drop the references. The browser
+    // reclaims each <img>'s decoded surface on its own schedule.
+    for (const img of this.pending) img.src = "";
+    this.pending.clear();
     this.frames.length = 0;
   }
 }

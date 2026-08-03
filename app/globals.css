@@ -330,6 +330,29 @@ html[lang="ka"] .u-display {
   will-change: transform;
 }
 
+/*
+ * Hero narrative beats. They cross-fade in one shared grid cell once JS
+ * takes over, but the server-rendered markup carries `data-static` so a
+ * crawler, a JS failure, or a reduced-motion visitor gets a readable
+ * column instead of four strings overprinting each other.
+ */
+[data-beats][data-static] {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  justify-content: flex-end;
+  padding-block: 6rem 3rem;
+}
+
+[data-beats][data-static] > * {
+  grid-column: auto;
+  grid-row: auto;
+  align-self: auto;
+  justify-self: auto;
+  padding-bottom: 0;
+}
+
 /* Hero scroll cue — a segment travelling down a hairline. */
 .cue-travel {
   animation: cue-travel 2.1s cubic-bezier(0.65, 0, 0.35, 1) infinite;
@@ -378,7 +401,7 @@ html[lang="ka"] .u-display {
     scroll-behavior: auto !important;
   }
 
-  .is-loading .preloader,
+  .is-loading .intro-overlay,
   .is-loading body {
     animation: none !important;
   }

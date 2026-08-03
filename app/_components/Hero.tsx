@@ -12,7 +12,6 @@ import { DUR, EASE } from "@/lib/motion";
 import { FrameSequence } from "@/lib/frame-sequence";
 import {
   WALKTHROUGH as W,
-  FRAMES,
   pickTier,
   posterUrl,
   type FrameTier,
@@ -66,12 +65,18 @@ export default function Hero() {
       const mm = gsap.matchMedia();
 
       /* -----------------------------------------------------------------
-       * FALLBACK — reduced motion. Poster only, no scrub, no pin. The
-       * copy is simply present; nothing animates.
+       * FALLBACK — reduced motion. Poster only, no scrub, no pin.
+       *
+       * The four beats share one grid cell because they cross-fade in
+       * place; showing them all at once overprints the h1 with three
+       * other strings. The static layout un-stacks the grid instead (see
+       * the `data-static` rule in globals.css) so the copy reads as an
+       * ordinary column — which is also exactly what the no-JS HTML
+       * gives a crawler, since the attribute is in the server markup.
        * -------------------------------------------------------------- */
       mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set([beats.welcome, beats.headline, beats.craft, beats.cue], {
-          autoAlpha: 1,
+          opacity: 1,
         });
       });
 
@@ -86,12 +91,48 @@ export default function Hero() {
           return split.lines;
         };
 
-        /* Beats start hidden; set from JS so the SSR HTML stays complete. */
+        /*
+         * Motion is on, so collapse the static column into the single
+         * stacked cell the cross-fade needs, and hide the beats that have
+         * not had their turn. Both are set from JS, so the server HTML
+         * stays a complete, readable column.
+         */
+        const beatWrap = q("[data-beats]")[0];
+        if (beatWrap) beatWrap.removeAttribute("data-static");
+
         const beatEls = [beats.headline, beats.craft, beats.cue].filter(
           Boolean,
         );
-        gsap.set(beatEls, { autoAlpha: 0 });
+        // opacity, not autoAlpha: visibility:hidden would strip the only
+        // <h1> from the accessibility tree and from the section's name.
+        gsap.set(beatEls, { opacity: 0 });
         gsap.set(lines(), { yPercent: 110 });
+
+        /*
+         * Beat windows are expressed as a share of the PIN's scroll
+         * distance, resolved through function-based start/end that read
+         * the pin trigger's own start/end in pixels.
+         *
+         * The obvious `top+=45% top` form is wrong here on two counts: a
+         * percentage start resolves against the element height (100svh)
+         * while the pin length is a vh multiple (lvh on mobile, where the
+         * two units differ by the browser chrome), so every beat fired
+         * early on a phone; and it silently depends on the pin trigger
+         * existing first, since a pinned element's positions shift.
+         */
+        const pinSpan = () => {
+          const pin = pinTriggerRef.current;
+          if (pin) return { start: pin.start, end: pin.end };
+          const top = root.getBoundingClientRect().top + window.scrollY;
+          return {
+            start: top,
+            end: top + (W.scrollLength / 100) * window.innerHeight,
+          };
+        };
+        const atProgress = (p: number) => () => {
+          const { start, end } = pinSpan();
+          return start + (end - start) * p;
+        };
 
         /* Fade a beat in across its window and out before the next. */
         const beatTween = (
@@ -104,17 +145,18 @@ export default function Hero() {
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: root,
-              start: `top+=${window_.in * W.scrollLength}% top`,
-              end: `top+=${window_.out * W.scrollLength}% top`,
+              start: atProgress(window_.in),
+              end: atProgress(window_.out),
               scrub: true,
+              invalidateOnRefresh: true,
             },
           });
           // Fade in over the first fifth, hold, fade out over the last fifth.
-          tl.to(el, { autoAlpha: 1, duration: span * 0.2, ease: "none" })
+          tl.to(el, { opacity: 1, duration: span * 0.2, ease: "none" })
             .to(el, { duration: span * 0.6 }, ">")
             .to(
               el,
-              { autoAlpha: 0, duration: span * 0.2, ease: "none", ...extra },
+              { opacity: 0, duration: span * 0.2, ease: "none", ...extra },
               ">",
             );
           cleanups.push(() => {
@@ -129,18 +171,19 @@ export default function Hero() {
          * It only fades OUT, as the headline takes over.
          */
         if (beats.welcome) {
-          gsap.set(beats.welcome, { autoAlpha: 1 });
+          gsap.set(beats.welcome, { opacity: 1 });
           const wb = W.beats.welcome;
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: root,
-              start: `top+=${wb.in * W.scrollLength}% top`,
-              end: `top+=${wb.out * W.scrollLength}% top`,
+              start: atProgress(wb.in),
+              end: atProgress(wb.out),
               scrub: true,
+              invalidateOnRefresh: true,
             },
           });
           tl.to({}, { duration: 0.65 }).to(beats.welcome, {
-            autoAlpha: 0,
+            opacity: 0,
             duration: 0.35,
             ease: "none",
           });
@@ -159,12 +202,13 @@ export default function Hero() {
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: root,
-              start: `top+=${hb.in * W.scrollLength}% top`,
-              end: `top+=${hb.out * W.scrollLength}% top`,
+              start: atProgress(hb.in),
+              end: atProgress(hb.out),
               scrub: true,
+              invalidateOnRefresh: true,
             },
           });
-          tl.set(beats.headline, { autoAlpha: 1 })
+          tl.set(beats.headline, { opacity: 1 })
             .to(lines(), {
               yPercent: 0,
               duration: 0.35,
@@ -174,7 +218,7 @@ export default function Hero() {
             .to({}, { duration: 0.35 })
             .to(
               beats.headline,
-              { yPercent: -14, autoAlpha: 0, duration: 0.3, ease: "none" },
+              { yPercent: -14, opacity: 0, duration: 0.3, ease: "none" },
               ">",
             );
           cleanups.push(() => {
@@ -188,9 +232,10 @@ export default function Hero() {
           const tl = gsap.timeline({
             scrollTrigger: {
               trigger: root,
-              start: "top top",
-              end: `+=${W.scrollLength}%`,
+              start: atProgress(0),
+              end: atProgress(1),
               scrub: true,
+              invalidateOnRefresh: true,
             },
           });
           tl.fromTo(
@@ -207,7 +252,33 @@ export default function Hero() {
         /* ---------------------------------------------------------------
          * The canvas scrub, or the poster zoom if frames are unavailable.
          * ------------------------------------------------------------ */
-        let pinTrigger: ScrollTrigger | null = null;
+        const pinTriggerRef: { current: ScrollTrigger | null } = {
+          current: null,
+        };
+
+        /*
+         * The canvas is opaque (alpha:false, for fill speed), so it would
+         * composite as a black rectangle over the poster from the first
+         * paint. It ships hidden and cross-fades in once a real frame has
+         * been drawn; the poster only leaves after the canvas is up.
+         */
+        const revealCanvas = () => {
+          if (!canvas) return;
+          gsap.to(canvas, {
+            autoAlpha: 1,
+            duration: DUR.fast,
+            ease: EASE.soft,
+          });
+          if (poster) {
+            gsap.to(poster, {
+              autoAlpha: 0,
+              duration: DUR.fast,
+              ease: EASE.soft,
+              delay: 0.05,
+              onComplete: () => gsap.set(poster, { clearProps: "willChange" }),
+            });
+          }
+        };
 
         const armPosterFallback = () => {
           if (!poster) return;
@@ -219,6 +290,9 @@ export default function Hero() {
               scrub: true,
               pin: true,
               anticipatePin: 1,
+              onRefresh: (self) => {
+                pinTriggerRef.current = self;
+              },
             },
           });
           tl.fromTo(
@@ -261,37 +335,69 @@ export default function Hero() {
               seqRef.current = null;
             });
 
-            /* Pin immediately so layout is stable while frames stream in;
-             * the scrub simply paints the nearest loaded frame until the
-             * head has arrived. No spinner, no blocked scroll. */
-            pinTrigger = ScrollTrigger.create({
-              trigger: root,
-              start: "top top",
-              end: `+=${W.scrollLength}%`,
-              scrub: W.scrub,
-              pin: true,
-              anticipatePin: 1,
-              onUpdate: (self) => seq.draw(self.progress),
+            /*
+             * SMOOTHNESS — the frames are scrubbed through a proxy value
+             * rather than read straight off the trigger.
+             *
+             * `scrub` on a bare ScrollTrigger has nothing to interpolate:
+             * self.progress is the raw scroll position, so painting from
+             * it steps the sequence in lockstep with scroll events and
+             * reads mechanical. Tweening a proxy gives GSAP something to
+             * ease, and painting on the ticker decouples the repaint rate
+             * from how often the browser chooses to fire scroll — so the
+             * sequence glides at display refresh instead of stuttering
+             * with input. The head tween below is what `W.scrub` tunes.
+             */
+            const playhead = { v: 0 };
+
+            const scrubTween = gsap.to(playhead, {
+              v: 1,
+              ease: "none",
+              scrollTrigger: {
+                trigger: root,
+                start: "top top",
+                end: `+=${W.scrollLength}%`,
+                scrub: W.scrub,
+                pin: true,
+                anticipatePin: 1,
+              },
             });
-            cleanups.push(() => pinTrigger?.kill());
+            pinTriggerRef.current = scrubTween.scrollTrigger ?? null;
+            // Beats were created before the pin existed; re-resolve their
+            // function-based bounds now that it does.
+            ScrollTrigger.refresh();
+
+            /* Paint once per frame from the eased playhead. draw() skips
+             * redundant indices, so a still page costs one comparison. */
+            const paint = () => {
+              seq.draw(playhead.v);
+            };
+            gsap.ticker.add(paint);
+
+            cleanups.push(() => {
+              gsap.ticker.remove(paint);
+              scrubTween.scrollTrigger?.kill();
+              scrubTween.kill();
+            });
 
             seq
               .loadHead()
               .then(() => {
-                if (!poster) return;
-                // Hand off from poster to canvas once a frame is painted.
-                gsap.to(poster, {
-                  autoAlpha: 0,
-                  duration: DUR.fast,
-                  ease: EASE.soft,
-                });
+                /* Only hand off once pixels are genuinely on the canvas —
+                 * fading the poster on mere promise resolution left an
+                 * opaque black canvas covering everything. */
+                if (seq.hasPainted) revealCanvas();
                 seq.loadRest();
-                ScrollTrigger.refresh();
               })
               .catch(() => {
-                pinTrigger?.kill();
-                pinTrigger = null;
+                /* Total frame failure: tear the scrub down and let the
+                 * poster carry the section. */
+                gsap.ticker.remove(paint);
+                scrubTween.scrollTrigger?.kill();
+                scrubTween.kill();
+                pinTriggerRef.current = null;
                 armPosterFallback();
+                ScrollTrigger.refresh();
               });
           }
         }
@@ -305,7 +411,7 @@ export default function Hero() {
             get complete() {
               return seqRef.current?.isComplete ?? false;
             },
-            trigger: () => pinTrigger,
+            trigger: () => pinTriggerRef.current,
           };
         }
 
@@ -321,8 +427,6 @@ export default function Hero() {
     },
     { scope: rootRef },
   );
-
-  const aspectPad = `${(1 / FRAMES.aspect) * 100}%`;
 
   return (
     <>
@@ -347,8 +451,8 @@ export default function Hero() {
           <div
             data-hero-poster
             className="absolute inset-0 will-change-transform"
-            style={{ ["--aspect-pad" as string]: aspectPad }}
           >
+            {/* Phones fetch the 900px poster, desktops the wide one. */}
             <Image
               src={posterUrl("desktop")}
               alt={t("walkthroughAlt")}
@@ -361,9 +465,10 @@ export default function Hero() {
             />
           </div>
 
+          {/* Hidden until a real frame is painted — see revealCanvas(). */}
           <canvas
             aria-hidden="true"
-            className="absolute inset-0 block h-full w-full"
+            className="invisible absolute inset-0 block h-full w-full opacity-0"
           />
 
           {/* Warm-dark scrim so overlay copy reads against any frame. */}
@@ -392,7 +497,11 @@ export default function Hero() {
             Narrative beats. All real DOM, server-rendered and stacked in
             one centred grid cell so they cross-fade in place.
             --------------------------------------------------------- */}
-        <div className="pointer-events-none absolute inset-0 z-10 grid">
+        <div
+          data-beats
+          data-static
+          className="pointer-events-none absolute inset-0 z-10 grid"
+        >
           {/* 0–15% — the door opens. */}
           <p
             data-beat="welcome"
