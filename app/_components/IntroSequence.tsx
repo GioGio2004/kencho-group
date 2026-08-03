@@ -20,7 +20,7 @@ import { SITE } from "@/lib/site";
  * and only the type cuts (photosensitivity rule).
  *
  * SLOWER / SOFTER  → raise words.perWord toward 0.45, lockup.holdBeat
- *                    toward 0.55 and curtain.duration toward 1.1.
+ *                    toward 0.7 and curtain.duration toward 1.6.
  * PUNCHIER CUTS    → drop words.scalePunch.from toward 0.88 and its
  *                    duration toward 0.12.
  * GENTLER EXIT     → lower fly.scaleTo toward 9 (a shorter journey past
@@ -57,12 +57,12 @@ const INTRO = {
   },
   lockup: {
     /** Beat held on the KENCHO / GROUP lockup before the fly-through. */
-    holdBeat: 0.4,
+    holdBeat: 0.55,
   },
   fly: {
     /** How far past the camera the lockup blows (scale multiplier). */
     scaleTo: 14,
-    duration: 0.7,
+    duration: 0.85,
     ease: "expo.in",
     /** Opacity holds until this share of the fly, then drops fast. */
     fadeStartProgress: 0.6,
@@ -76,8 +76,12 @@ const INTRO = {
     origin: "38% 42%",
   },
   curtain: {
-    /** The single sand sheet lifts upward, unveiling the stage below. */
-    duration: 0.9,
+    /**
+     * The single sand sheet lifts upward, unveiling the stage below.
+     * Deliberately unhurried — this is the reveal the whole intro has
+     * been building to, and a fast lift throws it away.
+     */
+    duration: 1.35,
     ease: "expo.inOut",
     /** Bottom corners round off as the sheet lifts — a soft page-peel. */
     radius: "20px",

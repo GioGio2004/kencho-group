@@ -11,6 +11,7 @@ import Manifesto from "@/app/_components/Manifesto";
 import Process from "@/app/_components/Process";
 import Projects from "@/app/_components/Projects";
 import Services from "@/app/_components/Services";
+import Showcase from "@/app/_components/Showcase";
 import SiteHeader from "@/app/_components/SiteHeader";
 import SmoothScroll from "@/app/_components/SmoothScroll";
 import SocialProof from "@/app/_components/SocialProof";
@@ -40,6 +41,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <BeforeAfter />
         <Projects />
         <Services />
+        <Showcase />
         <Process />
         <SocialProof />
         <FAQ />
