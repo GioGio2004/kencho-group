@@ -121,7 +121,6 @@ export default function StickyWhatsApp() {
       aria-label={tCommon("whatsappSticky")}
       onClick={() => track("Contact", { method: "whatsapp" })}
       className="glass u-press fixed right-5 bottom-5 z-40 inline-flex items-center gap-3 p-4 text-sm tracking-[0.14em] text-ink uppercase sm:px-6 sm:py-4"
-      style={{ borderRadius: "9999px" }}
     >
       {/* Simple speech-bubble outline — the section's one clay moment. */}
       <svg

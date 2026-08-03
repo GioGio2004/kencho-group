@@ -585,7 +585,6 @@ export default function Projects() {
             >
               <div
                 className="glass inline-flex w-max items-center gap-1 p-1.5"
-                style={{ borderRadius: "9999px" }}
               >
                 {FILTERS.map((f) => {
                   const active = f === category;
@@ -599,9 +598,8 @@ export default function Projects() {
                         active ? "text-ink" : "text-ink-55"
                       }`}
                       style={{
-                        borderRadius: "9999px",
                         borderColor: active
-                          ? "rgba(43, 36, 32, 0.35)"
+                          ? "var(--ink-35)"
                           : "transparent",
                       }}
                     >
@@ -705,7 +703,6 @@ export default function Projects() {
             onClick={() => actionsRef.current?.close()}
             className="u-press absolute top-4 right-4 z-20 flex h-11 w-11 cursor-pointer items-center justify-center border text-shell sm:top-6 sm:right-6"
             style={{
-              borderRadius: "9999px",
               borderColor: "color-mix(in srgb, var(--shell) 30%, transparent)",
             }}
           >
@@ -729,7 +726,6 @@ export default function Projects() {
             onClick={() => actionsRef.current?.navigate(-1)}
             className="u-press absolute top-1/2 left-2 z-20 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center border text-shell sm:left-5"
             style={{
-              borderRadius: "9999px",
               borderColor: "color-mix(in srgb, var(--shell) 30%, transparent)",
               background: "color-mix(in srgb, var(--charcoal) 45%, transparent)",
             }}
@@ -754,7 +750,6 @@ export default function Projects() {
             onClick={() => actionsRef.current?.navigate(1)}
             className="u-press absolute top-1/2 right-2 z-20 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center border text-shell sm:right-5"
             style={{
-              borderRadius: "9999px",
               borderColor: "color-mix(in srgb, var(--shell) 30%, transparent)",
               background: "color-mix(in srgb, var(--charcoal) 45%, transparent)",
             }}
@@ -842,7 +837,6 @@ export default function Projects() {
                 rel="noopener noreferrer"
                 onClick={() => track("Contact", { method: "whatsapp" })}
                 className="u-press inline-flex cursor-pointer items-center gap-2 bg-clay px-6 py-3 text-xs tracking-[0.16em] text-charcoal"
-                style={{ borderRadius: "9999px" }}
               >
                 {t("lightboxCta")}
               </a>

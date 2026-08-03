@@ -383,7 +383,6 @@ export default function BeforeAfter() {
               aria-valuenow={50}
               aria-valuetext={t("sliderValue", { percent: 50 })}
               className="glass absolute left-0 top-1/2 -ml-6 -mt-6 flex h-12 w-12 items-center justify-center text-ink"
-              style={{ borderRadius: "9999px" }}
             >
               <svg
                 aria-hidden="true"

@@ -34,13 +34,28 @@ const CONTRAST = `(() => {
   const cs = getComputedStyle(el);
   const v = (n) => cs.getPropertyValue(n).trim();
 
+  /*
+   * Chromium serialises a computed colour TWO ways, and the difference
+   * is silent: rgba() comes back as "rgb(237, 230, 218 / 0.62)" in
+   * 0-255 channels, but anything that went through color-mix() comes
+   * back as "color(srgb 0.929412 0.901961 0.854902 / 0.62)" in 0-1
+   * floats. Scraping numbers and assuming 0-255 makes every tokenised
+   * colour compute as near-black, every contrast ratio as ~1.0, and
+   * every check here fail without a pixel changing. Verified in this
+   * project's own Chromium before the tokens were converted.
+   */
   const parse = (c) => {
     const probe = document.createElement('span');
     probe.style.color = c;
     document.body.appendChild(probe);
-    const m = getComputedStyle(probe).color.match(/[\\d.]+/g).map(Number);
+    const computed = getComputedStyle(probe).color;
     probe.remove();
-    return { r: m[0], g: m[1], b: m[2], a: m.length > 3 ? m[3] : 1 };
+    const m = (computed.match(/[\\d.]+/g) || []).map(Number);
+    const unit = computed.startsWith('color(') ? 255 : 1;
+    return {
+      r: m[0] * unit, g: m[1] * unit, b: m[2] * unit,
+      a: m.length > 3 ? m[3] : 1
+    };
   };
   const over = (fg, bg) => ({
     r: fg.r * fg.a + bg.r * (1 - fg.a),

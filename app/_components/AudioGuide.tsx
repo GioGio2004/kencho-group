@@ -375,7 +375,6 @@ export default function AudioGuide() {
         <div
           ref={pillRef}
           className="glass glass-interactive max-w-[72vw] sm:max-w-none"
-          style={{ borderRadius: "9999px" }}
         >
           {expanded ? (
             <div className="flex flex-col gap-1.5 px-6 py-3.5">

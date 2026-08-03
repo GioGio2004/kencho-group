@@ -13,6 +13,8 @@
     "verify:rail": "node scripts/verify-rail.mjs",
     "verify:drawing": "node --import ./scripts/alias-hook.mjs scripts/verify-drawing.mjs",
     "verify:dark": "node --import ./scripts/alias-hook.mjs scripts/verify-dark.mjs",
+    "verify:theme": "node --import ./scripts/alias-hook.mjs scripts/verify-theme.mjs",
+    "verify:perf": "node scripts/verify-perf.mjs",
     "verify:pacing": "node --import ./scripts/alias-hook.mjs scripts/verify-pacing.mjs",
     "verify:fallbacks": "node scripts/verify-fallbacks.mjs"
   },

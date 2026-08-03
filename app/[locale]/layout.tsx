@@ -6,7 +6,7 @@ import AnalyticsScripts from "@/app/_components/AnalyticsScripts";
 import { routing, type Locale } from "@/i18n/routing";
 import { fontClassesFor } from "@/lib/fonts";
 import { IMAGES, src } from "@/lib/images";
-import { SITE } from "@/lib/site";
+import { PALETTE, SITE } from "@/lib/site";
 import "../globals.css";
 
 /*
@@ -72,8 +72,13 @@ export async function generateMetadata({
 }
 
 export const viewport: Viewport = {
-  themeColor: "#efe7dd",
-  colorScheme: "light",
+  themeColor: PALETTE.sand,
+  /*
+   * Deliberately unset rather than "light". The page flips
+   * <html data-surface="dark"> for the whole drawing interlude, so
+   * declaring a fixed scheme tells the browser something that stops
+   * being true a third of the way down.
+   */
 };
 
 /** LocalBusiness (FurnitureStore) + per-locale FAQPage structured data. */

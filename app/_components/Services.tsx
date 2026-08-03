@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type CSSProperties } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -269,6 +269,10 @@ export default function Services() {
             >
               <div
                 data-glass
+                /* The one glass surface that is a card rather than a
+                   pill. `.glass` is unlayered so a `rounded-*` utility
+                   cannot beat it — the custom property is the opt-out. */
+                style={{ "--glass-radius": "var(--radius-card)" } as CSSProperties}
                 className="glass glass-interactive w-full max-w-[24rem] p-6 sm:p-8 lg:w-[26rem] lg:max-w-none"
               >
                 <h3 className="u-display text-[1.5rem] text-ink sm:text-[2rem]">
@@ -303,7 +307,6 @@ export default function Services() {
           data-progress
           aria-hidden="true"
           className="glass pointer-events-none absolute top-24 right-5 z-20 flex items-center gap-3 px-4 py-2.5 opacity-0 sm:right-8"
-          style={{ borderRadius: "9999px" }}
         >
           <span
             data-progress-count

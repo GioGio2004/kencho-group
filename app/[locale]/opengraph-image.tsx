@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { PALETTE, SITE } from "@/lib/site";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -20,8 +21,8 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#efe7dd",
-          color: "#2b2420",
+          backgroundColor: PALETTE.sand,
+          color: PALETTE.ink,
         }}
       >
         <div
@@ -32,7 +33,7 @@ export default function OpenGraphImage() {
             display: "flex",
           }}
         >
-          KENCHO
+          {SITE.wordmark}
         </div>
         <div
           style={{
@@ -40,18 +41,18 @@ export default function OpenGraphImage() {
             fontSize: 36,
             letterSpacing: "0.6em",
             marginLeft: "0.6em",
-            color: "#b08d57",
+            color: PALETTE.clay,
             display: "flex",
           }}
         >
-          GROUP
+          {SITE.wordmarkSub}
         </div>
         <div
           style={{
             marginTop: 54,
             fontSize: 26,
             letterSpacing: "0.18em",
-            color: "rgba(43,36,32,0.62)",
+            color: PALETTE.inkSoft,
             display: "flex",
           }}
         >

@@ -138,7 +138,6 @@ export default function SiteHeader() {
           role="group"
           aria-label={t("langLabel")}
           className="glass flex items-center p-0.5"
-          style={{ borderRadius: "9999px" }}
         >
           {LOCALE_OPTIONS.map((option) => {
             const active = option.code === locale;

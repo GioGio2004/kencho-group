@@ -1,0 +1,287 @@
+/* =====================================================================
+ * THEME — the single source for every colour, space, size and radius.
+ * ---------------------------------------------------------------------
+ * Nothing outside this file may contain a literal colour. If you are
+ * about to type a hex, an rgba() or a px padding into a component, the
+ * value belongs here and the component takes the token.
+ *
+ * Two exceptions exist and both are structural, not laziness:
+ *
+ *   1. app/[locale]/opengraph-image.tsx runs in the Satori renderer,
+ *      which has no CSSOM and cannot read a custom property. It imports
+ *      PALETTE from lib/site.ts instead — the same values, in TS.
+ *   2. The marquee's mask gradient uses `#000`, where the colour is
+ *      meaningless because only the alpha channel is sampled.
+ *
+ * ORDER MATTERS. This file is imported by globals.css AFTER
+ * `@import "tailwindcss"` so the `@theme inline` block below can extend
+ * Tailwind's theme rather than be overwritten by it.
+ * ================================================================== */
+
+/* ---------------------------------------------------------------------
+ * 1. LIGHT SURFACE — the page's default material.
+ * ------------------------------------------------------------------ */
+:root {
+  /* Surfaces, warm sand family */
+  --sand: #efe7dd;
+  --sand-deep: #e8dccf;
+  --shell: #f7f2ec;
+
+  /* Ink */
+  --ink: #2b2420;
+  --ink-70: color-mix(in srgb, var(--ink) 70%, transparent);
+  --ink-55: color-mix(in srgb, var(--ink) 55%, transparent);
+  --ink-40: color-mix(in srgb, var(--ink) 40%, transparent);
+  /* The portfolio filter chip border — was an inline rgba with no rung. */
+  --ink-35: color-mix(in srgb, var(--ink) 35%, transparent);
+
+  /* The single accent — muted brass, used sparingly */
+  --clay: #b08d57;
+  --clay-deep: #8f7143;
+
+  /* Deep charcoal — footer, wordmark, small brand moments */
+  --charcoal: #1c1b19;
+
+  /* Hairlines */
+  --line: color-mix(in srgb, var(--ink) 14%, transparent);
+  --line-strong: color-mix(in srgb, var(--ink) 26%, transparent);
+
+  /* -------------------------------------------------------------------
+   * LIQUID GLASS — the single place to tune the material.
+   * Every value derives from --sand so retinting the surface retints
+   * the glass with it; before this they were re-typed rgb(239,231,221).
+   * ---------------------------------------------------------------- */
+  --glass-tint: color-mix(in srgb, var(--sand) 28%, transparent);
+  --glass-tint-strong: color-mix(in srgb, var(--sand) 55%, transparent);
+  --glass-blur: 14px;
+  --glass-saturate: 160%;
+  --glass-border: color-mix(in srgb, white 25%, transparent);
+  --glass-border-bright: color-mix(in srgb, white 42%, transparent);
+  --glass-highlight: color-mix(in srgb, white 30%, transparent);
+  --glass-shadow: 0 24px 60px -24px
+    color-mix(in srgb, var(--ink) 38%, transparent);
+
+  /* Text selection. Was rgba(176,118,90,.22) — a terracotta measuring
+   * ΔE00 13.5 from --clay, i.e. a hue the palette does not contain.
+   * Merged onto --clay; the difference is invisible at 22% alpha. */
+  --selection: color-mix(in srgb, var(--clay) 24%, transparent);
+
+  /* -------------------------------------------------------------------
+   * 2. SPACING — the page's vertical rhythm and its gutters.
+   *
+   * Five steps. `section` is the standard band, `section-lg` the two
+   * sections that deliberately breathe more (Manifesto, Contact), and
+   * `block`/`flow` are the two intra-section steps. The gutter is ONE
+   * value: the fixed header used a different progression from the
+   * sections it floats over, so its left edge misaligned with the copy
+   * beneath it by 1rem at base and 4rem at lg.
+   * ---------------------------------------------------------------- */
+  --space-section: 6rem;
+  --space-section-lg: 7rem;
+  --space-block: 3.5rem;
+  --space-flow: 1.25rem;
+  --space-gutter: 1.25rem;
+
+  /* -------------------------------------------------------------------
+   * 3. TYPE — four display steps, three utility sizes.
+   *
+   * Seventeen distinct clamp() values collapsed to four. Every step
+   * ramps over the same 390px→1440px window, which is the actual point
+   * of the exercise: before this, headlines in neighbouring sections
+   * grew at different rates, so their relative size depended on the
+   * viewport.
+   * ---------------------------------------------------------------- */
+  --type-1: clamp(2.4rem, 9vw, 6.5rem); /* hero, poster wordmark */
+  --type-2: clamp(1.9rem, 6vw, 4rem); /* section headings */
+  --type-3: clamp(1.6rem, 4.6vw, 3.4rem); /* statements, sub-headings */
+  --type-4: clamp(1.15rem, 3.6vw, 2.2rem); /* ledes */
+
+  --type-eyebrow: 0.6875rem;
+  --type-caption: 0.625rem;
+  --type-micro: 0.5rem;
+
+  /* -------------------------------------------------------------------
+   * 4. RADIUS
+   *
+   * `.glass` is unlayered CSS, so it beat Tailwind's layered
+   * `rounded-full` and eleven components each worked around that with an
+   * inline `borderRadius: 9999px`. The fallback in the `.glass` rule now
+   * makes pill the default and this token the opt-out.
+   * ---------------------------------------------------------------- */
+  --radius-pill: 9999px;
+  --radius-card: 22px;
+  --radius-panel: 20px;
+
+  /* -------------------------------------------------------------------
+   * 5. EASING — the CSS side of the motion vocabulary.
+   *
+   * lib/motion.ts owns the GSAP eases; these are for transitions CSS
+   * runs on its own. `--ease-out` is the site's actual house curve: it
+   * was typed literally in four places and tokenised in none.
+   * ---------------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@media (min-width: 640px) {
+  :root {
+    --space-section: 8rem;
+    --space-section-lg: 10rem;
+    --space-block: 5rem;
+    --space-flow: 1.5rem;
+    --space-gutter: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --space-section: 10rem;
+    --space-section-lg: 12rem;
+    --space-block: 6rem;
+    --space-flow: 1.75rem;
+    --space-gutter: 3rem;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * 6. DARK SURFACE — the drawing interlude.
+ *
+ * Scoped to the attribute rather than to the component, so the same
+ * surface can be reused and the fixed UI can read the same values when
+ * `data-surface="dark"` lands on <html>.
+ *
+ * The `--dwg-` prefix is kept deliberately. It is an established API:
+ * scripts/verify-dark.mjs asserts AA contrast by reading these exact
+ * names, and Drawing.tsx consumes them. Renaming for tidiness while a
+ * harness depends on them would be churn with a regression attached.
+ *
+ * On the greys: the background is warm, never neutral and never #000.
+ * A pure black behind bone-white linework reads as a void with drawing
+ * floating in it; a warm near-black reads as a material the drawing is
+ * ON. The 8-point lift between the vignette's centre and its edge is
+ * what supplies that reading.
+ * ------------------------------------------------------------------ */
+[data-surface="dark"] {
+  /* Surface */
+  --dwg-bg: #131110;
+  --dwg-bg-lift: #1b1815;
+
+  /* Linework and type */
+  --dwg-bone: #ede6da;
+  /* 15.3:1 on --dwg-bg. */
+  --dwg-bone-soft: color-mix(in srgb, var(--dwg-bone) 62%, transparent);
+  /*
+   * The brief asked for 40–45% on the index label, title block and
+   * readout. Measured, 0.40 lands at 2.9:1 and 0.45 at 3.3:1 — both
+   * below AA at the sizes these are set. 0.58 measures 5.7:1 and is
+   * within a hair of the intended weight, so that is what ships.
+   */
+  --dwg-bone-dim: color-mix(in srgb, var(--dwg-bone) 58%, transparent);
+
+  /*
+   * Annotation gold. Brighter than --clay on this surface — NOT for
+   * contrast: --clay measures 6.1:1 on --dwg-bg and passes AA
+   * comfortably. (An earlier note here claimed 4.1:1; that number was
+   * wrong in both directions and is corrected.) The reason is chromatic
+   * — --clay's value sits close enough to the vignette that it reads
+   * muddy rather than as brass.
+   */
+  --dwg-gold: #c9a36b;
+  /* 8.0:1 on --dwg-bg. */
+  --dwg-gold-line: color-mix(in srgb, var(--dwg-gold) 60%, transparent);
+
+  /* Atmosphere */
+  --dwg-grid: color-mix(in srgb, var(--dwg-bone) 4.5%, transparent);
+  --dwg-grid-major: color-mix(in srgb, var(--dwg-bone) 7.5%, transparent);
+  --dwg-tint: color-mix(in srgb, var(--dwg-bone) 5.5%, transparent);
+  /* The glow underlay — a wider, dimmer copy of the linework rather
+   * than a filter. See #glow in Drawing.tsx for why. */
+  --dwg-halo: color-mix(in srgb, var(--dwg-bone) 10%, transparent);
+  --dwg-halo-width: 3.2;
+  /* The pen tip. Brighter than the line it leads, and warm. */
+  --dwg-tip: #fffaf0;
+  --dwg-noise-opacity: 0.03;
+
+  /* Glass, re-tinted for charcoal. The light recipe reads as a grey
+   * smear here, so the whole material swaps rather than its alpha. */
+  --dwg-glass-bg: color-mix(in srgb, var(--dwg-bg-lift) 55%, transparent);
+  --dwg-glass-border: color-mix(in srgb, var(--dwg-bone) 16%, transparent);
+  --dwg-glass-highlight: color-mix(in srgb, var(--dwg-bone) 8%, transparent);
+  --dwg-header-bg: color-mix(in srgb, var(--dwg-bg) 72%, transparent);
+  --dwg-shadow: 0 24px 60px -24px color-mix(in srgb, black 60%, transparent);
+
+  /* The interlude's own selection and focus ring. Clay on charcoal is
+   * the light surface's accent on the wrong material. */
+  --selection: color-mix(in srgb, var(--dwg-gold) 30%, transparent);
+  --focus-ring: var(--dwg-gold);
+}
+
+:root {
+  --focus-ring: var(--clay);
+}
+
+/* ---------------------------------------------------------------------
+ * 7. TAILWIND REGISTRATION
+ *
+ * `inline` throughout, so a utility resolves the var() chain at use
+ * time — which is what lets the per-locale font fallback and the
+ * surface-scoped dark tokens work through ordinary classes.
+ *
+ * `--color-*: initial` drops Tailwind's default palette. Without it
+ * `text-emerald-500` compiles silently and an off-palette colour can
+ * ship unnoticed; with it, anything outside this file is an unknown
+ * class the build surfaces.
+ * ------------------------------------------------------------------ */
+@theme inline {
+  --color-*: initial;
+
+  --color-sand: var(--sand);
+  --color-sand-deep: var(--sand-deep);
+  --color-shell: var(--shell);
+  --color-ink: var(--ink);
+  --color-ink-70: var(--ink-70);
+  --color-ink-55: var(--ink-55);
+  --color-ink-40: var(--ink-40);
+  --color-clay: var(--clay);
+  --color-clay-deep: var(--clay-deep);
+  --color-charcoal: var(--charcoal);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  /* Kept because a handful of places genuinely need a pure inversion
+   * source: mix-blend-difference on the journey rail and the showcase
+   * title. Everything else uses --shell. */
+  --color-white: #fff;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* Dark surface, so Drawing.tsx can use text-dwg-bone instead of
+   * hand-writing text-[var(--dwg-bone)] five times. */
+  --color-dwg-bone: var(--dwg-bone);
+  --color-dwg-bone-soft: var(--dwg-bone-soft);
+  --color-dwg-bone-dim: var(--dwg-bone-dim);
+  --color-dwg-gold: var(--dwg-gold);
+  --color-dwg-bg: var(--dwg-bg);
+
+  --radius-pill: var(--radius-pill);
+  --radius-card: var(--radius-card);
+
+  --ease-out: var(--ease-out);
+  --ease-expo: var(--ease-expo);
+
+  /*
+   * Per-locale typography: only the active locale's font variables are
+   * attached to <html>, so the chain resolves to whichever pair exists.
+   */
+  --font-display: var(
+    --font-display-ka,
+    var(--font-display-ru, var(--font-display-en, ui-serif))
+  );
+  --font-sans: var(
+    --font-body-ka,
+    var(--font-body-ru, var(--font-body-en, ui-sans-serif))
+  );
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, "Liberation Mono",
+    monospace;
+}
