@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Source video for the frame pipeline (regenerate with: npm run frames)
+public/source/
+scripts/shots/
+scripts/old-hero.txt

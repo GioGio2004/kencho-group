@@ -26,7 +26,11 @@
     "lines": "From empty space\nto finished interior.",
     "sub": "Custom furniture — made in Tbilisi",
     "scroll": "Scroll",
-    "imageAlt": "A kitchen built by Kencho Group in natural light"
+    "imageAlt": "A kitchen built by Kencho Group in natural light",
+    "walkthroughAlt": "Walking through a finished Kencho Group interior",
+    "beatWelcome": "Welcome in",
+    "beatCraft": "Every piece measured, drawn, and built for this room.",
+    "beatContinue": "Keep scrolling"
   },
   "manifesto": {
     "eyebrow": "About us",

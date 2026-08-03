@@ -1,0 +1,26 @@
+{
+  "generatedFrom": "walkthrough.mp4",
+  "source": {
+    "width": 1280,
+    "height": 720,
+    "fps": 24,
+    "seconds": 8
+  },
+  "aspect": 1.7778,
+  "tiers": {
+    "desktop": {
+      "frames": 192,
+      "width": 1280,
+      "dir": "desktop"
+    },
+    "mobile": {
+      "frames": 192,
+      "width": 820,
+      "dir": "mobile"
+    }
+  },
+  "poster": {
+    "desktop": "poster-desktop.webp",
+    "mobile": "poster-mobile.webp"
+  }
+}

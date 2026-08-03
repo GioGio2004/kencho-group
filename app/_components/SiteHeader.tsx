@@ -98,7 +98,7 @@ export default function SiteHeader() {
       {/* Wordmark lockup — type only, links back to the top. */}
       <a
         href="#hero"
-        className="flex shrink-0 flex-col text-charcoal"
+        className="header-fg flex shrink-0 flex-col"
         aria-label={`${SITE.fullName} — ${t("home")}`}
       >
         {/* Inline letter-spacing: the unlayered ka display override in
@@ -110,7 +110,7 @@ export default function SiteHeader() {
           {SITE.wordmark}
         </span>
         <span
-          className="mt-1 text-[0.5rem] leading-none text-clay"
+          className="header-accent mt-1 text-[0.5rem] leading-none"
           style={{ letterSpacing: "0.55em" }}
         >
           {SITE.wordmarkSub}
@@ -123,7 +123,7 @@ export default function SiteHeader() {
           <a
             key={item.href}
             href={item.href}
-            className="u-link text-sm text-ink-70 transition-colors hover:text-ink"
+            className="u-link header-fg-dim text-sm hover:opacity-100"
           >
             {t(item.key)}
           </a>
@@ -157,7 +157,7 @@ export default function SiteHeader() {
                   }
                 }}
                 className={`u-press rounded-full px-2 py-1.5 text-[0.625rem] leading-none tracking-[0.08em] ${
-                  active ? "text-ink" : "text-ink-55 hover:text-ink-70"
+                  active ? "header-fg" : "header-fg-dim"
                 }`}
               >
                 {option.short}
@@ -168,7 +168,7 @@ export default function SiteHeader() {
 
         <a
           href="#contact"
-          className="u-press shrink-0 rounded-full border border-clay px-3.5 py-2 text-[0.6875rem] whitespace-nowrap text-clay-deep hover:bg-clay hover:text-shell sm:px-5 sm:py-2.5 sm:text-xs"
+          className="header-accent u-press shrink-0 rounded-full border px-3.5 py-2 text-[0.6875rem] whitespace-nowrap hover:bg-clay hover:text-shell sm:px-5 sm:py-2.5 sm:text-xs"
         >
           {t("book")}
         </a>

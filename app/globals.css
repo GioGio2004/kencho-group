@@ -264,11 +264,51 @@ html[lang="ka"] .u-display {
   }
 }
 
+/*
+ * Header colour is driven by these variables rather than by utilities,
+ * because the header floats over two very different backgrounds: the
+ * dark walkthrough hero at the top of the page, and the warm sand body
+ * once scrolled. Charcoal type vanished against the video.
+ */
+[data-site-header] {
+  --header-fg: var(--sand);
+  --header-fg-dim: rgba(250, 246, 238, 0.72);
+  --header-accent: #d8b070;
+}
+
 /* Frosted header once the page has scrolled (attribute set from JS). */
 [data-site-header][data-scrolled] {
   background: var(--glass-tint-strong);
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  --header-fg: var(--ink);
+  --header-fg-dim: var(--ink-70);
+  --header-accent: var(--clay-deep);
+}
+
+.header-fg {
+  color: var(--header-fg);
+  transition: color 0.4s ease;
+}
+
+.header-fg-dim {
+  color: var(--header-fg-dim);
+  transition: color 0.4s ease;
+}
+
+.header-accent {
+  color: var(--header-accent);
+  border-color: var(--header-accent);
+  transition:
+    color 0.4s ease,
+    border-color 0.4s ease;
+}
+
+/* A whisper of shadow keeps header type legible over moving video. */
+[data-site-header]:not([data-scrolled]) .header-fg,
+[data-site-header]:not([data-scrolled]) .header-fg-dim,
+[data-site-header]:not([data-scrolled]) .header-accent {
+  text-shadow: 0 1px 12px rgba(28, 27, 25, 0.5);
 }
 
 /* ---------------------------------------------------------------------

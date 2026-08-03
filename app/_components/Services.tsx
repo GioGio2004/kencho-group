@@ -105,9 +105,15 @@ export default function Services() {
         });
       });
 
-      // Pinned scrub stage — desktop only (no pin below 1024px).
+      /*
+       * Pinned scrub stage — every screen size, phones included. Pinning
+       * used to be desktop-only out of caution about janky native mobile
+       * scroll, but Lenis drives the scroll here, so the pin behaves the
+       * same on touch as it does with a wheel. The card layout is capped
+       * to the viewport below, so a pinned block always fits a phone.
+       */
       mm.add(
-        "(min-width: 1024px) and (prefers-reduced-motion: no-preference)",
+        "(prefers-reduced-motion: no-preference)",
         () => {
           const n = blocks.length;
 
@@ -190,24 +196,6 @@ export default function Services() {
         },
       );
 
-      // Below 1024px with motion allowed: keep the stacked flow (no pin)
-      // and let each card drift up once as its block scrolls in. Blocks
-      // are full-height, so at most two glass cards share a viewport.
-      mm.add(
-        "(max-width: 1023px) and (prefers-reduced-motion: no-preference)",
-        () => {
-          if (pill) gsap.set(pill, { autoAlpha: 0 });
-          cards.forEach((card) => {
-            gsap.from(card, {
-              y: 28,
-              opacity: 0,
-              duration: DUR.base,
-              ease: EASE.soft,
-              scrollTrigger: { trigger: card, start: REVEAL_START },
-            });
-          });
-        },
-      );
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
         // Static stack: every card keeps its glass (one per viewport),
