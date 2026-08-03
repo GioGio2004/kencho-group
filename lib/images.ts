@@ -82,6 +82,21 @@ export const IMAGES = {
     alt: "A furnished terrace in Mtatsminda",
   },
 
+  /**
+   * The Drawing — the photograph the elevation resolves into.
+   *
+   * Same asset as portfolio08, and deliberately so: it is a dead-on
+   * front view with the hood centred and the oven housing to one side,
+   * which is the arrangement the elevation is drawn in. The crossfade
+   * only works if the two compositions land on each other, and matching
+   * the drawing to a photo already in the library beat introducing a
+   * second kitchen that sits at a different angle.
+   */
+  drawingReality: {
+    id: "1600566752229-250ed79470f8",
+    alt: "The finished kitchen, seen straight on",
+  },
+
   /** Contact — quiet supporting detail shot. */
   contactDetail: {
     id: "1522771739844-6a9f6d5f14af",

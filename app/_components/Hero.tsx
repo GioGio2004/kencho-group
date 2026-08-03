@@ -8,10 +8,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useTranslations } from "next-intl";
 import { SITE } from "@/lib/site";
-import { DUR, EASE } from "@/lib/motion";
+import { DUR, EASE, lingerStops, smoothstep } from "@/lib/motion";
 import { FrameSequence } from "@/lib/frame-sequence";
 import {
   WALKTHROUGH as W,
+  WALKTHROUGH_STOPS,
   pickTier,
   posterUrl,
   type FrameTier,
@@ -151,12 +152,26 @@ export default function Hero() {
               invalidateOnRefresh: true,
             },
           });
-          // Fade in over the first fifth, hold, fade out over the last fifth.
-          tl.to(el, { opacity: 1, duration: span * 0.2, ease: "none" })
+          /*
+           * Fade in over the first fifth, hold, fade out over the last
+           * fifth — each on smoothstep rather than linear.
+           *
+           * This is a scrub, so the visitor is the clock, and a linear
+           * opacity ramp under a hand-driven clock reads as a dimmer
+           * being turned: the copy is at 50% for exactly as long as it is
+           * at 5% or 95%, and there is no moment where it *arrives*.
+           * Smoothstep spends its slope in the middle, so the beat
+           * appears and departs decisively and holds legible in between.
+           *
+           * Not a GSAP named ease: those are shaped for a tween the page
+           * plays itself, and an expo under a scrub is over inside the
+           * first tenth of the scroll it was given.
+           */
+          tl.to(el, { opacity: 1, duration: span * 0.2, ease: smoothstep })
             .to(el, { duration: span * 0.6 }, ">")
             .to(
               el,
-              { opacity: 0, duration: span * 0.2, ease: "none", ...extra },
+              { opacity: 0, duration: span * 0.2, ease: smoothstep, ...extra },
               ">",
             );
           cleanups.push(() => {
@@ -185,7 +200,7 @@ export default function Hero() {
           tl.to({}, { duration: 0.65 }).to(beats.welcome, {
             opacity: 0,
             duration: 0.35,
-            ease: "none",
+            ease: smoothstep,
           });
           cleanups.push(() => {
             tl.scrollTrigger?.kill();
@@ -218,7 +233,7 @@ export default function Hero() {
             .to({}, { duration: 0.35 })
             .to(
               beats.headline,
-              { yPercent: -14, opacity: 0, duration: 0.3, ease: "none" },
+              { yPercent: -14, opacity: 0, duration: 0.3, ease: smoothstep },
               ">",
             );
           cleanups.push(() => {
@@ -295,10 +310,17 @@ export default function Hero() {
               },
             },
           });
+          /* Paced by the same stops as the frame walk, so the fallback is
+           * a quieter version of the same shot rather than a different
+           * one. lingerStops is monotone and pinned at both ends, which
+           * is exactly the contract a GSAP ease has to satisfy. */
           tl.fromTo(
             poster,
             { scale: W.fallback.fromScale },
-            { scale: W.fallback.toScale, ease: "none" },
+            {
+              scale: W.fallback.toScale,
+              ease: (p: number) => lingerStops(p, WALKTHROUGH_STOPS),
+            },
           );
           cleanups.push(() => {
             tl.scrollTrigger?.kill();
@@ -367,10 +389,24 @@ export default function Hero() {
             // function-based bounds now that it does.
             ScrollTrigger.refresh();
 
-            /* Paint once per frame from the eased playhead. draw() skips
-             * redundant indices, so a still page costs one comparison. */
+            /*
+             * Paint once per frame from the eased playhead, re-paced by
+             * the beat stops on the way through. draw() skips redundant
+             * indices, so a still page costs one comparison.
+             *
+             * TWO DIFFERENT SMOOTHINGS, and they do different jobs. The
+             * proxy tween above smooths the INPUT — it decouples the
+             * playhead from the browser's scroll-event cadence, which is
+             * what stops the sequence stepping. lingerStops re-paces the
+             * OUTPUT — it decides which part of the walk is worth more
+             * scroll, so the camera all but stops while a beat is being
+             * read and covers the empty stretch at full speed. Neither
+             * substitutes for the other, and neither moves a beat
+             * boundary: every window's ends stay on the frame they were
+             * already on.
+             */
             const paint = () => {
-              seq.draw(playhead.v);
+              seq.draw(lingerStops(playhead.v, WALKTHROUGH_STOPS));
             };
             gsap.ticker.add(paint);
 

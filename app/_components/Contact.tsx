@@ -8,6 +8,7 @@ import { SplitText } from "gsap/SplitText";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import MagneticType from "@/app/_components/MagneticType";
 import { submitLead } from "@/app/actions";
 import { track } from "@/lib/analytics";
 import { DUR, EASE, REVEAL_START, STAGGER } from "@/lib/motion";
@@ -448,6 +449,35 @@ export function Footer() {
               ))}
             </ul>
           </div>
+        </div>
+
+        {/*
+          The closing wordmark. Poster-scale, and the one thing on the
+          page the visitor moves directly: the letters clear a path for
+          the cursor and drift back once it has gone.
+
+          `overflow-hidden` is load-bearing — a letter pushed off the
+          right edge would otherwise widen the document and hand the page
+          a horizontal scrollbar. Letters are Latin in all three locales,
+          which is what makes the per-character split safe here.
+        */}
+        <div className="overflow-hidden border-t border-sand/10 pt-12 pb-4">
+          {/*
+            `strength` well under 1. REPEL is tuned for a headline, where
+            a word has to clear its neighbour to read as pushed at all;
+            at this size a letter IS the neighbour, and the field as
+            authored throws the wordmark into a pile. Cut to a third, it
+            reads as the type parting around the cursor — which is the
+            effect. The size came down with it, for the same reason.
+          */}
+          <MagneticType
+            as="p"
+            unit="chars"
+            strength={0.34}
+            className="u-display block text-center text-[clamp(2.2rem,12vw,9.5rem)] leading-[0.9] text-sand/90 select-none"
+          >
+            {`${SITE.wordmark} ${SITE.wordmarkSub}`}
+          </MagneticType>
         </div>
 
         <div className="flex flex-col gap-6 border-t border-sand/10 py-8 lg:flex-row lg:items-center lg:justify-between">

@@ -6,6 +6,8 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslations } from "next-intl";
+import RevealText from "@/app/_components/RevealText";
+import ScrambleText from "@/app/_components/ScrambleText";
 import { IMAGES, src } from "@/lib/images";
 import { SHOWCASE, SHOWCASE_MOTION as M } from "@/lib/showcase";
 import { whatsappUrl } from "@/lib/site";
@@ -166,20 +168,23 @@ export default function Showcase() {
       aria-labelledby="showcase-title"
       className="relative bg-charcoal text-sand"
     >
+      {/* Neither of these carries [data-srev]: each primitive brings its
+          own trigger, and a second `from` tween on the same element would
+          be fighting it for the transform. */}
       <div className="px-5 pt-24 pb-14 text-center sm:px-8 sm:pt-32">
-        <p
-          data-srev
+        <ScrambleText
+          as="p"
+          text={t("eyebrow")}
           className="text-[0.65rem] tracking-[0.35em] text-clay uppercase sm:text-xs"
-        >
-          {t("eyebrow")}
-        </p>
-        <h2
-          data-srev
+        />
+        <RevealText
+          as="h2"
           id="showcase-title"
+          variant="stack"
           className="u-display mt-4 text-[clamp(2rem,6vw,4.5rem)] text-sand uppercase"
         >
           {t("title")}
-        </h2>
+        </RevealText>
       </div>
 
       {SHOWCASE.map((project) => (

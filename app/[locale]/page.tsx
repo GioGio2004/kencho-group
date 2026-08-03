@@ -5,11 +5,16 @@ import AudioGuide from "@/app/_components/AudioGuide";
 import BeforeAfter from "@/app/_components/BeforeAfter";
 import Contact, { Footer } from "@/app/_components/Contact";
 import CustomCursor from "@/app/_components/CustomCursor";
+import Drawing from "@/app/_components/Drawing";
 import FAQ from "@/app/_components/FAQ";
 import Hero from "@/app/_components/Hero";
+import JourneyRail from "@/app/_components/JourneyRail";
+import Kinetic from "@/app/_components/Kinetic";
 import Manifesto from "@/app/_components/Manifesto";
+import MarqueeBand from "@/app/_components/MarqueeBand";
 import Process from "@/app/_components/Process";
 import Projects from "@/app/_components/Projects";
+import ScrollFX from "@/app/_components/ScrollFX";
 import Services from "@/app/_components/Services";
 import Showcase from "@/app/_components/Showcase";
 import SiteHeader from "@/app/_components/SiteHeader";
@@ -30,18 +35,31 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   return (
     <>
       <SmoothScroll />
+      {/* Scans the document for [data-fx] and wires the scroll effects. */}
+      <ScrollFX />
       <CustomCursor />
       <SiteHeader />
+      {/* Where you are in the page, and how much of it is left. */}
+      <JourneyRail />
       <StickyWhatsApp />
       <AudioGuide />
 
       <main>
         <Hero />
         <Manifesto />
+        {/* The poster band — no photo, no price. It sits here so the
+            visitor slows down before the first hard evidence. */}
+        <Kinetic />
         <BeforeAfter />
         <Projects />
+        {/* The sheet the workshop builds from, drawing itself. Sits on
+            the seam between the portfolio and the services list — the
+            only Services/portfolio boundary the page has. */}
+        <Drawing />
         <Services />
         <Showcase />
+        {/* A seam between two dark sections, moving at scroll speed. */}
+        <MarqueeBand />
         <Process />
         <SocialProof />
         <FAQ />

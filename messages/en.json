@@ -12,7 +12,8 @@
     "contact": "Contact",
     "book": "Free measurement",
     "home": "Back to top",
-    "langLabel": "Language"
+    "langLabel": "Language",
+    "journeyLabel": "Page sections"
   },
   "common": {
     "whatsappPrefill": "Hello, I'm interested in custom furniture",
@@ -79,8 +80,53 @@
       }
     }
   },
+  "drawing": {
+    "index": "04",
+    "eyebrow": "From the workshop",
+    "title": "The Drawing",
+    "beatTwo": "Every piece begins here — measured to the <em>millimetre</em> before a single board is cut.",
+    "beatThree": "Then we build <em>exactly this</em>, and hand you the room.",
+    "svgTitle": "Technical front elevation of a fitted kitchen",
+    "svgDesc": "A workshop drawing of a 3600 mm kitchen run seen from the front: five base cabinets including an oven housing and drawer units, a worktop, wall units, an extractor hood and an open shelf unit, annotated with dimensions in millimetres.",
+    "photoAlt": "The finished kitchen, built from the drawing",
+    "sheet": "K-01",
+    "scaleLabel": "Scale",
+    "unitsNote": "Dimensions in mm",
+    "stages": {
+      "carcass": "Carcasses",
+      "dividers": "Panels",
+      "fronts": "Fronts",
+      "worktop": "Worktop",
+      "appliances": "Appliances",
+      "details": "Details",
+      "dims": "Dimensions",
+      "approved": "Approved",
+      "built": "Built"
+    },
+    "units": {
+      "oven": "Oven housing",
+      "drawers": "Drawer unit",
+      "doors": "Door unit",
+      "sink": "Sink unit",
+      "door": "Wall unit",
+      "shelf": "Open shelves"
+    },
+    "inspectHint": "Tap any unit",
+    "materials": {
+      "oak": "Solid oak fronts, oiled",
+      "lacquer": "Matt lacquered MDF",
+      "stone": "Stone worktop, oak carcass",
+      "veneer": "Oak veneer, open back"
+    }
+  },
   "intro": {
     "words": "WE MEASURE\nWE DESIGN\nWE BUILD\nWE INSTALL"
+  },
+  "kinetic": {
+    "eyebrow": "Start to finish",
+    "words": "MEASURE\nDESIGN\nBUILD\nINSTALL",
+    "note": "Four stages, one team, and no handover in between.",
+    "marquee": "Made to measure in Tbilisi"
   },
   "projects": {
     "eyebrow": "Work",

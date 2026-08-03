@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Flip } from "gsap/Flip";
 import { useTranslations } from "next-intl";
+import RevealText from "@/app/_components/RevealText";
 import { IMAGES, src } from "@/lib/images";
 import {
   COLUMN_DRIFT,
@@ -561,13 +562,18 @@ export default function Projects() {
               />
               {t("eyebrow")}
             </p>
-            <h2
-              data-head=""
+            {/* No [data-head]: this one uncovers itself. `clip` rather
+                than the house line rise because the filter row sits
+                directly beneath and must not be pushed around while the
+                title is still arriving. */}
+            <RevealText
+              as="h2"
               id="projects-title"
+              variant="clip"
               className="u-display mt-6 max-w-[16ch] text-[clamp(1.9rem,6vw,4rem)] text-ink"
             >
               {t("title")}
-            </h2>
+            </RevealText>
 
             {/* Filter chips — FOUR buttons share ONE glass container, so
                 the whole row costs a single backdrop-filter (the only

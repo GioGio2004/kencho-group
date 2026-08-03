@@ -9,6 +9,11 @@
     "lint": "eslint",
     "frames": "node scripts/frames.mjs",
     "verify:hero": "node scripts/verify-hero.mjs",
+    "verify:kinetic": "node scripts/verify-kinetic.mjs",
+    "verify:rail": "node scripts/verify-rail.mjs",
+    "verify:drawing": "node --import ./scripts/alias-hook.mjs scripts/verify-drawing.mjs",
+    "verify:dark": "node --import ./scripts/alias-hook.mjs scripts/verify-dark.mjs",
+    "verify:pacing": "node --import ./scripts/alias-hook.mjs scripts/verify-pacing.mjs",
     "verify:fallbacks": "node scripts/verify-fallbacks.mjs"
   },
   "dependencies": {

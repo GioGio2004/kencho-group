@@ -389,6 +389,528 @@ html[lang="ka"] .u-display {
 }
 
 /* ---------------------------------------------------------------------
+ * THE DRAWING — the scroll-drawn kitchen elevation.
+ *
+ * The SVG's user units are millimetres, so every weight below is a
+ * millimetre value. JS measures the rendered sheet and rewrites these
+ * four variables, which is what holds the line weight at a constant
+ * 1.5px from 390px to 1440px instead of scaling it with the zoom. The
+ * defaults are the 390px values, so the server's sheet is already right
+ * on the viewport that matters most.
+ * ------------------------------------------------------------------ */
+.dwg {
+  --dwg-line: 17.4;
+  --dwg-dim: 11.6;
+  --dwg-label: 128px;
+  --dwg-note: 110px;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+
+/*
+ * Cabinet work — bone-white on the dark surface.
+ *
+ * `stroke` and `stroke-width` are read from custom properties rather
+ * than set literally, which is what makes the glow layer possible: a
+ * <use> of a whole group inherits these two variables, so overriding
+ * them on the <use> restyles the clone without touching the original,
+ * and the clone follows the original's dash animation for free. Set
+ * them as plain values here and the glow needs 69 duplicated tweens.
+ */
+.dwg-line {
+  fill: none;
+  stroke: var(--dwg-line-color, var(--dwg-bone));
+  stroke-width: var(--dwg-line);
+}
+
+/* Annotation — gold, and deliberately lighter than the thing it
+ * annotates. A dimension line that out-weighs the cabinet reads as the
+ * subject of the drawing. */
+.dwg-dim {
+  fill: none;
+  stroke: var(--dwg-gold-line);
+  stroke-width: var(--dwg-dim);
+}
+
+/* Arrowheads and numbers take the full gold; only the lines are held
+ * back to 60%. */
+.dwg-solid {
+  fill: var(--dwg-gold);
+  stroke: none;
+}
+
+/*
+ * The halo. A single <use> per structural group, painted underneath the
+ * real linework at ~3x the width and a tenth of the opacity.
+ *
+ * Deliberately NOT `filter: drop-shadow`. A filter on a scrubbed,
+ * full-viewport SVG re-rasterises the whole layer every frame, which is
+ * the first thing to collapse on a mid-range phone — the same reason
+ * lib/motion.ts keeps blur out of the scroll vocabulary entirely. This
+ * costs one extra element per group and nothing per frame.
+ */
+#glow {
+  --dwg-line-color: var(--dwg-halo);
+  --dwg-line: var(--dwg-halo-width);
+  pointer-events: none;
+}
+
+/* The pen tip: a short bright dash riding the head of each stroke while
+ * it draws, and nothing at all once it has arrived. */
+.dwg-tip {
+  fill: none;
+  stroke: var(--dwg-tip);
+  stroke-width: var(--dwg-line);
+  stroke-linecap: round;
+}
+
+.dwg-label,
+.dwg-note,
+.dwg-readout {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.dwg-label {
+  font-size: var(--dwg-label);
+  fill: var(--dwg-gold);
+  stroke: none;
+}
+
+.dwg-note {
+  font-size: var(--dwg-note);
+  fill: var(--dwg-gold);
+  stroke: none;
+}
+
+.dwg-ink {
+  fill: var(--dwg-bone-dim);
+}
+
+/* The panels that give the elevation depth at the very end. */
+.dwg-tint {
+  fill: var(--dwg-bone);
+  stroke: none;
+}
+
+.dwg-readout {
+  font-size: 0.625rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--dwg-bone-dim);
+}
+
+/* The emphasised word in each beat — gold, italic, the site's own
+ * emphasis pattern carried onto the dark surface. */
+[data-drawing] [data-beat] em {
+  color: var(--dwg-gold);
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------------
+ * THE DARK SURFACE — every token for the interlude, in one place.
+ *
+ * Tune the section's blacks, bones and golds here and nowhere else.
+ * Scoped to the attribute rather than to the component so the same
+ * surface can be reused, and so the fixed UI (header, WhatsApp, audio)
+ * can read the same values when `data-surface="dark"` lands on <html>.
+ *
+ * On the greys: the background is warm, never neutral and never #000.
+ * A pure black behind bone-white linework reads as a void with drawing
+ * floating in it; a warm near-black reads as a material the drawing is
+ * ON. The 8-point lift between the vignette's centre and its edge is
+ * what supplies that reading — below about 6 points it disappears, above
+ * about 14 it starts to look like a spotlight.
+ * ------------------------------------------------------------------ */
+[data-surface="dark"] {
+  /* Surface */
+  --dwg-bg: #131110;
+  --dwg-bg-lift: #1b1815;
+
+  /* Linework and type */
+  --dwg-bone: #ede6da;
+  /* 15.2:1 on --dwg-bg. */
+  --dwg-bone-soft: rgba(237, 230, 218, 0.62);
+  /*
+   * The brief asked for 40–45% on the index label, title block and
+   * readout. Measured, 0.40 lands at 2.9:1 and 0.45 at 3.3:1 — both
+   * below AA for the small sizes these are set at. 0.58 measures 5.1:1
+   * and is within a hair of the intended weight, so that is what ships.
+   */
+  --dwg-bone-dim: rgba(237, 230, 218, 0.58);
+
+  /* Annotation. Brighter than the light surface's clay: on charcoal the
+   * palette's --clay drops to 4.1:1 and reads muddy rather than rich. */
+  --dwg-gold: #c9a36b;
+  /* 7.7:1 on --dwg-bg. */
+  --dwg-gold-line: rgba(201, 163, 107, 0.6);
+
+  /* Atmosphere */
+  --dwg-grid: rgba(237, 230, 218, 0.045);
+  --dwg-grid-major: rgba(237, 230, 218, 0.075);
+  --dwg-tint: rgba(237, 230, 218, 0.055);
+  /* The glow underlay — a wider, dimmer copy of the linework rather than
+   * a filter. See #glow in Drawing.tsx for why. */
+  --dwg-halo: rgba(237, 230, 218, 0.1);
+  --dwg-halo-width: 3.2;
+  /* The pen tip. Brighter than the line it leads, and warm. */
+  --dwg-tip: #fffaf0;
+  --dwg-noise-opacity: 0.03;
+}
+
+/*
+ * THE FIXED UI, while the visitor is inside the dark interlude.
+ *
+ * One attribute on <html>, set by a single ScrollTrigger, and every
+ * pinned control follows. The transitions are what stop a fast scroll
+ * across the boundary from strobing — the attribute flips instantly, the
+ * colours take 400ms to agree with it.
+ */
+html[data-surface="dark"] [data-site-header]:not([data-scrolled]) {
+  --header-fg: var(--dwg-bone);
+  --header-fg-dim: var(--dwg-bone-soft);
+  --header-accent: var(--dwg-gold);
+}
+
+html[data-surface="dark"] [data-site-header][data-scrolled] {
+  background: rgba(19, 17, 16, 0.72);
+  --header-fg: var(--dwg-bone);
+  --header-fg-dim: var(--dwg-bone-soft);
+  --header-accent: var(--dwg-gold);
+}
+
+/* The two glass pills. The material is tuned for sand; on charcoal the
+ * same tint reads as a grey smear, so the whole recipe swaps. */
+html[data-surface="dark"] .glass {
+  background: rgba(27, 24, 21, 0.55);
+  border-color: rgba(237, 230, 218, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(237, 230, 218, 0.08),
+    0 24px 60px -24px rgba(0, 0, 0, 0.6);
+  color: var(--dwg-bone);
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease,
+    color 0.4s ease;
+}
+
+html[data-surface="dark"] .glass .text-ink,
+html[data-surface="dark"] .glass.text-ink {
+  color: var(--dwg-bone);
+}
+
+/*
+ * THE SHEET ITSELF — paper, light, and a frame.
+ *
+ * All three are full-bleed DOM layers rather than anything inside the
+ * SVG. The SVG is letterboxed by `preserveAspectRatio`, so anything
+ * drawn in it stops at the sheet's own edges; these have to run to the
+ * corners of the viewport for the section to read as a page rather than
+ * as a picture of one. They also animate on opacity alone, which is the
+ * only way to have a glow on a scrubbed section without paying for a
+ * repaint every frame.
+ */
+
+/* Graph paper. Finer on dark than the light version would be — bone
+ * lines on charcoal carry further than ink lines on sand, so the same
+ * spacing reads as busier. */
+.dwg-grid {
+  background-image:
+    linear-gradient(to right, var(--dwg-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--dwg-grid) 1px, transparent 1px),
+    linear-gradient(to right, var(--dwg-grid-major) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--dwg-grid-major) 1px, transparent 1px);
+  background-size:
+    20px 20px,
+    20px 20px,
+    100px 100px,
+    100px 100px;
+}
+
+/*
+ * The material the sheet is made of: a warm vignette lifting the centre
+ * about eight points above the edges, and a fine noise over the top.
+ *
+ * The noise is a rasterised SVG turbulence tile, not a filter — the
+ * browser decodes it once and then it is an ordinary repeating
+ * background image, so it costs nothing per frame. Kept at 3%: enough to
+ * break the gradient's banding on an 8-bit panel, not enough to read as
+ * texture.
+ */
+.dwg-surface {
+  background:
+    radial-gradient(
+      68% 58% at 50% 44%,
+      var(--dwg-bg-lift) 0%,
+      var(--dwg-bg) 78%
+    ),
+    var(--dwg-bg);
+}
+
+.dwg-noise {
+  opacity: var(--dwg-noise-opacity);
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+}
+
+/* The light the sheet is being read under. Two overlapping radials
+ * rather than one, so the falloff has no visible ring. */
+.dwg-glow {
+  background:
+    radial-gradient(
+      54% 48% at 50% 44%,
+      color-mix(in srgb, var(--dwg-gold) 12%, transparent) 0%,
+      transparent 74%
+    ),
+    radial-gradient(
+      84% 70% at 50% 48%,
+      color-mix(in srgb, var(--dwg-bone) 9%, transparent) 0%,
+      transparent 70%
+    );
+}
+
+/* Copy sits directly on the surface — no card. Where the grid would
+ * fight it, this darkens behind the text instead, with no edge to see. */
+.dwg-copy-wash {
+  background: radial-gradient(
+    120% 100% at 0% 0%,
+    color-mix(in srgb, var(--dwg-bg) 92%, transparent) 0%,
+    color-mix(in srgb, var(--dwg-bg) 55%, transparent) 46%,
+    transparent 78%
+  );
+}
+
+/* The sheet border, with registration ticks at the corners — the two
+ * details that separate "a drawing" from "an illustration of a
+ * drawing". */
+.dwg-frame {
+  border: 1px solid color-mix(in srgb, var(--dwg-gold) 34%, transparent);
+}
+
+.dwg-tick {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+  border-color: var(--dwg-gold);
+}
+
+/* The hovered-unit readout. Only ever holds numbers already on the
+ * sheet, so it can never disagree with the drawing. */
+.dwg-chip {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hit targets are invisible and only listen once the sheet is finished
+ * being drawn — hovering a cabinet that has not been drawn yet is the
+ * one interaction that would make the section feel fake. */
+.dwg-hit {
+  fill: transparent;
+  stroke: none;
+  pointer-events: none;
+}
+
+[data-drawing][data-live] .dwg-hit {
+  pointer-events: all;
+  cursor: crosshair;
+}
+
+/* The single highlight the hit targets move around. */
+.dwg-highlight {
+  fill: color-mix(in srgb, var(--dwg-gold) 14%, transparent);
+  stroke: var(--dwg-gold);
+  stroke-width: var(--dwg-line);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The corner block: title, units note, readout. One column. */
+.dwg-note-dom {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  color: var(--dwg-bone-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * INSPECT MODE
+ *
+ * A typographic block with a gold rule, not a card — a bordered box on a
+ * drawing reads as UI dropped on top of the sheet, where this reads as
+ * an annotation belonging to it.
+ */
+.dwg-spec {
+  max-width: 15rem;
+  transition: opacity 0.3s ease;
+}
+
+.dwg-spec-rule {
+  display: block;
+  width: 2.5rem;
+  height: 1px;
+  margin-bottom: 0.6rem;
+  background: var(--dwg-gold);
+}
+
+.dwg-spec-name {
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--dwg-bone);
+}
+
+.dwg-spec-size,
+.dwg-spec-material {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  margin-top: 0.35rem;
+}
+
+.dwg-spec-size {
+  color: var(--dwg-gold);
+}
+
+.dwg-spec-material {
+  color: var(--dwg-bone-dim);
+}
+
+/* The invitation during the hold. */
+.dwg-hint {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--dwg-gold);
+}
+
+/* A selected unit's own linework, brightened; everything else recedes. */
+[data-drawing][data-inspecting] #carcass,
+[data-drawing][data-inspecting] #dividers,
+[data-drawing][data-inspecting] #fronts,
+[data-drawing][data-inspecting] #countertop,
+[data-drawing][data-inspecting] #appliances,
+[data-drawing][data-inspecting] #details,
+[data-drawing][data-inspecting] #dims,
+[data-drawing][data-inspecting] #glow {
+  opacity: 0.25;
+  transition: opacity 0.35s ease;
+}
+
+/* Keyboard access: the units are real buttons, so they take the site's
+ * focus ring — which on this surface has to be gold, not clay. */
+.dwg-hit:focus-visible {
+  outline: 2px solid var(--dwg-gold);
+  outline-offset: 3px;
+}
+
+/*
+ * The copy holds over the photograph once it arrives, and ink on a
+ * photograph is a coin toss. A sand wash from the edge the copy sits on
+ * — top on a phone, left on desktop — keeps it legible without putting a
+ * box around it.
+ */
+.dwg-scrim {
+  background: linear-gradient(
+    to bottom,
+    var(--sand) 0%,
+    color-mix(in srgb, var(--sand) 62%, transparent) 30%,
+    transparent 58%
+  );
+}
+
+@media (min-width: 1024px) {
+  .dwg-scrim {
+    background: linear-gradient(
+      to right,
+      var(--sand) 0%,
+      color-mix(in srgb, var(--sand) 58%, transparent) 32%,
+      transparent 60%
+    );
+  }
+}
+
+/*
+ * STATIC SHEET — the server's state, and the one a reduced-motion
+ * visitor keeps. The stage stops being a sticky viewport and becomes an
+ * ordinary block: the copy, the completed drawing, then the photograph
+ * below it as a figure. The section still makes its argument — drawing,
+ * then reality — with nothing moving.
+ */
+/* The static sheet paints its own surface — the fixed wash is a scroll
+ * effect, and there is no scroll here to drive it. */
+[data-drawing][data-static] {
+  background: var(--dwg-bg);
+}
+
+[data-drawing][data-static] [data-wash] {
+  display: none;
+}
+
+[data-drawing][data-static] [data-scroller] {
+  height: auto;
+}
+
+[data-drawing][data-static] [data-stage] {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  overflow: visible;
+}
+
+[data-drawing][data-static] [data-photo] {
+  position: relative;
+  order: 3;
+  aspect-ratio: 16 / 10;
+  margin-top: 2.5rem;
+}
+
+[data-drawing][data-static] [data-copy] {
+  position: static;
+  order: 1;
+}
+
+[data-drawing][data-static] [data-sheet] {
+  position: static;
+  order: 2;
+  height: auto;
+  width: 100%;
+}
+
+/* The atmosphere is for the animated sheet; a static reader gets the
+ * drawing on plain paper. */
+[data-drawing][data-static] [data-glow],
+[data-drawing][data-static] [data-grid],
+[data-drawing][data-static] [data-frame] {
+  display: none;
+}
+
+/* The three beats are stacked in one cell while animating; un-stack them
+ * so a static reader gets a column instead of three overprinted lines. */
+[data-drawing][data-static] [data-beat] {
+  position: static;
+}
+
+[data-drawing][data-static] .dwg-readout {
+  display: none;
+}
+
+/* ---------------------------------------------------------------------
  * REDUCED MOTION
  * ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {

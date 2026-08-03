@@ -1,4 +1,5 @@
 import manifest from "@/public/frames/manifest.json";
+import { LINGER, type LingerStop } from "@/lib/motion";
 
 /* =====================================================================
  * WALKTHROUGH CONFIG — the scroll-scrubbed hero.
@@ -40,18 +41,40 @@ export const WALKTHROUGH = {
   /*
    * Narrative beats as scroll-progress windows (0–1). Each overlay fades
    * fully out before the next fades in, so two beats never overlap.
+   *
+   * `linger` additionally paces the FOOTAGE under each beat: the walk
+   * slows through the middle of the window, where the copy is at full
+   * opacity and being read, and covers the ends of the window quickly.
+   * See lingerStops in lib/motion.ts — every window boundary stays
+   * pinned to the frame it was already on, so these values re-pace the
+   * shot without re-timing the story.
+   *
+   * The empty stretch between `craft` and `cue` carries no linger on
+   * purpose. It is the only part of the walk with nothing to read, so it
+   * is the only part that should move at full speed.
    */
   beats: {
-    welcome: { in: 0.0, out: 0.15 },
-    headline: { in: 0.15, out: 0.45 },
-    craft: { in: 0.45, out: 0.75 },
+    welcome: { in: 0.0, out: 0.15, linger: LINGER.brush },
+    headline: { in: 0.15, out: 0.45, linger: LINGER.read },
+    craft: { in: 0.45, out: 0.75, linger: LINGER.read },
     /** 0.75–0.95 is deliberately empty — the space speaks. */
-    cue: { in: 0.95, out: 1.0 },
+    cue: { in: 0.95, out: 1.0, linger: LINGER.brush },
   },
 
   /** Fallback hero (reduced motion / data-saver / load failure). */
   fallback: { fromScale: 1, toScale: 1.15 },
 } as const;
+
+/**
+ * The beats as an ordered stop list, for `lingerStops`. Derived rather
+ * than hand-written so the pacing can never drift out of step with the
+ * windows the copy actually uses — one edit above re-paces both.
+ */
+export const WALKTHROUGH_STOPS: readonly LingerStop[] = Object.values(
+  WALKTHROUGH.beats,
+)
+  .slice()
+  .sort((a, b) => a.in - b.in);
 
 export type FrameTier = "desktop" | "mobile";
 
