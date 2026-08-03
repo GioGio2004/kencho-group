@@ -199,6 +199,19 @@ export const K01: KitchenSpec = {
   heights: { worktop: 900, upper: 2200, backsplash: 600 },
 };
 
+/**
+ * Material per module type. Derived rather than authored per unit: for
+ * the MVP a workshop quotes one material family per module kind, and a
+ * planner that asked the visitor to pick a finish per cabinet would be
+ * a different product. The keys resolve under `drawing.materials`.
+ */
+export function materialFor(type: UnitType, open = false): string {
+  if (open) return "veneer";
+  if (type === "sink") return "stone";
+  if (type === "drawers") return "oak";
+  return "lacquer";
+}
+
 /** A fresh id that will not collide with the ones already in a spec. */
 export function nextUnitId(spec: KitchenSpec): string {
   let n = spec.baseUnits.length + 1;

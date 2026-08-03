@@ -8,37 +8,26 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useTranslations } from "next-intl";
 import { IMAGES, src } from "@/lib/images";
+import ElevationScene from "@/app/_components/ElevationScene";
 import {
-  BASE,
-  CHAINS,
-  DEPTH,
   DIM,
-  GAP,
-  GHOST_OPACITY,
-  H,
-  HOOD_Z,
-  SPEC_BY_ID,
+  K01,
   WAVES,
-  WAVE_AT,
-  WAVE_DUR,
-  type DimChain,
+  buildScene,
+  type SceneHit,
+} from "@/lib/elevation";
+import {
+  GHOST_OPACITY,
   PANEL_TINT,
-  RUN_WIDTH,
   SCROLL_LENGTH,
   SHEET,
   SHEET_BREAKPOINT,
   STAGE,
   TIMELINE,
-  UPPER,
-  UPPER_Z,
-  UPPER_DEPTH,
-  DZ,
+  WAVE_AT,
+  WAVE_DUR,
   WEIGHT,
-  WORKTOP_OVERHANG,
-  WORKTOP_THICKNESS,
-  project,
   stageAt,
-  type Unit,
 } from "@/lib/drawing";
 import { DUR, EASE, MASK_DESCENDER, smoothstep } from "@/lib/motion";
 
@@ -82,51 +71,6 @@ import { DUR, EASE, MASK_DESCENDER, smoothstep } from "@/lib/motion";
  * anything.
  */
 
-/* ---------------------------------------------------------------------
- * PATH HELPERS — every shape is a <path> so the draw direction is ours.
- *
- * A <rect> cannot say where its stroke starts, and a box that draws from
- * a random corner reads as a glitch rather than as a hand.
- * ------------------------------------------------------------------ */
-
-/** Rounds a projected point to one decimal — the sheet is millimetres,
- *  and a tenth of a millimetre is well past what any screen can show. */
-const p = (x: number, y: number, z = 0) => {
-  const [px, py] = project(x, y, z);
-  return `${Math.round(px * 10) / 10} ${Math.round(py * 10) / 10}`;
-};
-
-/** Rectangle on a depth plane, clockwise from its top-left corner. */
-const box = (x: number, y: number, w: number, h: number, z = 0) =>
-  `M${p(x, y, z)} L${p(x + w, y, z)} L${p(x + w, y + h, z)} L${p(x, y + h, z)} Z`;
-
-/** Straight segment on a single depth plane. */
-const seg = (x1: number, y1: number, x2: number, y2: number, z = 0) =>
-  `M${p(x1, y1, z)} L${p(x2, y2, z)}`;
-
-/** The top face of a solid: the front top edge swept back to the wall. */
-const topFace = (x: number, y: number, w: number, zFront: number, zBack: number) =>
-  `M${p(x, y, zFront)} L${p(x, y, zBack)} L${p(x + w, y, zBack)} L${p(x + w, y, zFront)} Z`;
-
-/** The right-hand end of a solid — the only side face this projection
- *  shows, because depth runs up and to the right. */
-const endFace = (
-  x: number,
-  y: number,
-  h: number,
-  zFront: number,
-  zBack: number,
-) =>
-  `M${p(x, y, zFront)} L${p(x, y, zBack)} L${p(x, y + h, zBack)} L${p(x, y + h, zFront)} Z`;
-
-/** A single depth edge — used where only the recession needs showing. */
-const depthEdge = (x: number, y: number, zFront: number, zBack: number) =>
-  `M${p(x, y, zFront)} L${p(x, y, zBack)}`;
-
-/** Length of the projected depth vector, for normalising arrowheads that
- *  point along it rather than along a screen axis. */
-const OBLIQUE_LEN = Math.hypot(DZ.x, DZ.y);
-
 /** The pen tip's length on screen, in CSS pixels. Converted to
  *  millimetres per sheet width, so it looks the same at 390 and 1440. */
 const TIP_PX = 22;
@@ -135,152 +79,17 @@ const TIP_PX = 22;
  *  share of the viewport. The dark has to arrive before the sheet does. */
 const SURFACE_RAMP = 0.4;
 
-/** Arrowhead as a filled triangle, pointing along `dir` (unit vector). */
-const arrow = (x: number, y: number, dx: number, dy: number) => {
-  const len = 92;
-  const half = 26;
-  const tx = x + dx * len;
-  const ty = y + dy * len;
-  // Perpendicular, for the base corners.
-  const px = -dy * half;
-  const py = dx * half;
-  return `M${x} ${y} L${tx + px} ${ty + py} L${tx - px} ${ty - py} Z`;
-};
-
-/**
- * Fronts of a unit, top to bottom, as boxes inside its carcass.
+/*
+ * The sheet this section draws. Built once at module scope: the spec is
+ * constant, buildScene is pure, and the wide variant is always rendered
+ * because the handheld sheet hides its extra chains with .dwg-wide
+ * rather than omitting them.
  *
- * `fronts` is now absolute millimetres rather than fractions, so a
- * drawer chain can label 180/290/290 instead of the 182/289/289 that
- * fractions of 760 produced — a drawing whose own numbers are not round
- * reads as measured off a screenshot.
+ * `sky` is the headroom the copy block sits in — the section frames the
+ * sheet through SHEET below rather than through scene.viewBox, so this
+ * only has to match what that framing expects.
  */
-function frontRows(unit: Unit, top: number, height: number) {
-  const heights = unit.fronts ?? [height];
-  const rows: { y: number; h: number }[] = [];
-  let y = top;
-  heights.forEach((h) => {
-    rows.push({ y: y + GAP / 2, h: h - GAP });
-    y += h;
-  });
-  return rows;
-}
-
-/* ---------------------------------------------------------------------
- * SVG SUB-TREES
- * ------------------------------------------------------------------ */
-
-const BASE_TOP = H.baseTop;
-const BASE_H = H.floor - H.plinth - H.baseTop;
-const UPPER_H = H.upperBottom - H.upperTop;
-
-/** Handles. Bars, not knobs — it is what the workshop fits. Drawn on the
- *  front plane they belong to, which is proud of the carcass. */
-function Handle({
-  unit,
-  y,
-  h,
-  z,
-}: {
-  unit: Unit;
-  y: number;
-  h: number;
-  z: number;
-}) {
-  if (unit.kind === "shelf" || unit.kind === "hood") return null;
-
-  // Doors take a vertical bar on the opening edge; drawers a horizontal
-  // one, centred. Both are stroked paths so they can pop.
-  if (unit.kind === "door") {
-    const x = unit.x + unit.w - 70;
-    const len = Math.min(h * 0.34, 260);
-    const top = y + (h - len) / 2;
-    return <path data-pop d={seg(x, top, x, top + len, z)} />;
-  }
-
-  const len = Math.min(unit.w * 0.42, 300);
-  const x = unit.x + (unit.w - len) / 2;
-  const cy = y + Math.min(h * 0.5, 70);
-  return <path data-pop d={seg(x, cy, x + len, cy, z)} />;
-}
-
-/* ---------------------------------------------------------------------
- * DIMENSIONS
- * ------------------------------------------------------------------ */
-
-/**
- * One dimension chain: a single baseline, one extension line per stop,
- * and a measured segment between each neighbouring pair.
- *
- * Interior stops carry two arrowheads pointing opposite ways, which is
- * what makes a run of five cabinets read as one chain rather than as
- * five dimensions that happen to be level with each other. Every offset
- * comes from DIM in lib/drawing.ts, so the geometry is identical across
- * all six chains by construction rather than by care.
- */
-function Chain({ chain }: { chain: DimChain }) {
-  const { id, wave, axis, stops, at, feature, flip, wide } = chain;
-  // Points from the drawing towards the dimension line.
-  const dir = Math.sign(at - feature) || 1;
-  const horizontal = axis === "h";
-
-  const ext = (s: number) =>
-    horizontal
-      ? seg(s, feature + dir * DIM.extGap, s, at + dir * DIM.extPast)
-      : seg(feature + dir * DIM.extGap, s, at + dir * DIM.extPast, s);
-
-  return (
-    <g
-      data-chain={id}
-      data-wave={wave}
-      className={wide ? "dwg-wide" : undefined}
-    >
-      {stops.map((s) => (
-        <path key={`e${s}`} data-draw d={ext(s)} />
-      ))}
-
-      {stops.slice(0, -1).map((s, i) => {
-        const e = stops[i + 1]!;
-        const value = Math.round(e - s);
-        const mid = (s + e) / 2;
-        const labelAt = at + (flip ? DIM.label : -DIM.label);
-
-        return (
-          <g key={`s${s}`}>
-            <path
-              data-draw
-              d={horizontal ? seg(s, at, e, at) : seg(at, s, at, e)}
-            />
-            <path
-              data-pop
-              className="dwg-solid"
-              d={horizontal ? arrow(s, at, 1, 0) : arrow(at, s, 0, 1)}
-            />
-            <path
-              data-pop
-              className="dwg-solid"
-              d={horizontal ? arrow(e, at, -1, 0) : arrow(at, e, 0, -1)}
-            />
-            {/* Vertical numbers read up the sheet — the drafting
-                convention — and sit on the far side of their own line. */}
-            <text
-              data-value={value}
-              x={horizontal ? mid : labelAt}
-              y={horizontal ? at - DIM.label : mid}
-              textAnchor="middle"
-              transform={
-                horizontal ? undefined : `rotate(-90 ${labelAt} ${mid})`
-              }
-              className="dwg-label"
-            >
-              {value}
-            </text>
-          </g>
-        );
-      })}
-    </g>
-  );
-}
+const scene = buildScene(K01, { wide: true, sky: 520 });
 
 /* ---------------------------------------------------------------------
  * COMPONENT
@@ -383,8 +192,8 @@ export default function Drawing() {
           });
           gsap.set(live("[data-pop]"), { scale: 0, transformOrigin: "50% 50%" });
           gsap.set(qsa("[data-tint]"), { opacity: 0 });
-          gsap.set(qsa("[data-dim] text"), { opacity: 0 });
-          qsa<SVGTextElement>("[data-dim] text").forEach((el) => {
+          gsap.set(qsa("[data-chain] text"), { opacity: 0 });
+          qsa<SVGTextElement>("[data-chain] text").forEach((el) => {
             el.textContent = "0";
           });
 
@@ -410,6 +219,9 @@ export default function Drawing() {
                 if (pct) {
                   pct.textContent = `${String(Math.round(self.progress * 100)).padStart(3, "0")}%`;
                 }
+                // Every dimension number, computed from where the scroll
+                // is rather than from whether a tween happened to render.
+                paintCounters(self.progress);
               },
             },
           });
@@ -563,6 +375,27 @@ export default function Drawing() {
 
           const everyChain = WAVES.flatMap(chainsOf);
 
+          /**
+           * Every dimension number on the sheet, with the timeline window
+           * it counts up across. Read from scroll position rather than
+           * animated, so the value is correct at ANY scroll position
+           * including one arrived at without passing through the others.
+           */
+          const counters: {
+            el: SVGTextElement;
+            target: number;
+            start: number;
+            dur: number;
+          }[] = [];
+
+          const paintCounters = (progress: number) => {
+            const time = progress * TIMELINE;
+            for (const c of counters) {
+              const f = gsap.utils.clamp(0, 1, (time - c.start) / c.dur);
+              c.el.textContent = String(Math.round(f * c.target));
+            }
+          };
+
           WAVES.forEach((wave, i) => {
             const groups = chainsOf(wave);
             if (!groups.length) return;
@@ -602,24 +435,28 @@ export default function Drawing() {
             // Then every number in the wave counts up at once — a chain
             // is one measurement of one thing, so its segments should
             // resolve together rather than in sequence.
+            //
+            // The COUNT itself is not a tween. Its window is registered
+            // here and the value is computed from scroll position in the
+            // trigger's onUpdate below, because a tween writing text
+            // through onUpdate only writes while it is being rendered:
+            // land in the middle of this section from a deep link, a
+            // restored scroll position or a hard flick and the tweens are
+            // seeked past rather than played, so every label stays on its
+            // start value. Measured — a direct jump to the hold showed a
+            // fully drawn sheet dimensioned entirely in zeroes, while the
+            // verifier missed it because it scrolls through 0.5 and 0.005
+            // on its way and those renders happen to write the numbers.
             texts.forEach((text) => {
-              const target = Number(text.dataset.value ?? 0);
-              const counter = { v: 0 };
+              counters.push({
+                el: text,
+                target: Number(text.dataset.value ?? 0),
+                start: at + WAVE_DUR * 0.42,
+                dur: WAVE_DUR * 0.45,
+              });
               tl.to(
                 text,
                 { opacity: 1, duration: WAVE_DUR * 0.12 },
-                at + WAVE_DUR * 0.42,
-              );
-              tl.to(
-                counter,
-                {
-                  v: target,
-                  duration: WAVE_DUR * 0.45,
-                  snap: { v: 1 },
-                  onUpdate: () => {
-                    text.textContent = String(Math.round(counter.v));
-                  },
-                },
                 at + WAVE_DUR * 0.42,
               );
             });
@@ -687,7 +524,7 @@ export default function Drawing() {
             cleanups.push(() => gsap.set(photo, { clearProps: "filter" }));
           }
           tl.to(
-            qsa("[data-dim]"),
+            qsa("[data-chain]"),
             { opacity: 0, duration: built.dur * 0.25, ease: smoothstep },
             built.at + built.dur * 0.05,
           );
@@ -874,18 +711,25 @@ export default function Drawing() {
               });
             };
 
+            // Specs come off the scene the sheet was built from, so an
+            // inspected cabinet can never report a size the drawing does
+            // not have.
+            const specById = new Map<string, SceneHit>(
+              scene.hits.map((hit) => [hit.unitId, hit]),
+            );
+
             const select = (hit: SVGPathElement) => {
               const id = hit.dataset.hit ?? "";
-              const unitSpec = SPEC_BY_ID.get(id);
+              const unitSpec = specById.get(id);
               if (!unitSpec) return;
 
               selected = hit;
               root.setAttribute("data-inspecting", "");
               highlight.setAttribute("d", hit.getAttribute("d") ?? "");
 
-              if (specName) specName.textContent = t(`units.${unitSpec.name}`);
+              if (specName) specName.textContent = t(`units.${unitSpec.type}`);
               if (specSize) {
-                specSize.textContent = `${unitSpec.w} × ${unitSpec.h} × ${unitSpec.d} mm`;
+                specSize.textContent = `${unitSpec.w} × ${unitSpec.h} × ${unitSpec.d3} mm`;
               }
               if (specMaterial) {
                 specMaterial.textContent = t(`materials.${unitSpec.material}`);
@@ -1125,18 +969,6 @@ export default function Drawing() {
    * MARKUP
    * ---------------------------------------------------------------- */
 
-  const worktopX = -WORKTOP_OVERHANG;
-  const worktopW = RUN_WIDTH + WORKTOP_OVERHANG * 2;
-  /** Doors and drawers stand this far proud of their carcass. */
-  const FRONT_Z = -18;
-  /** The worktop overhangs the fronts at the front edge. */
-  const WT_FRONT_Z = -46;
-  const oven = BASE[0]!;
-  const ovenRows = frontRows(oven, BASE_TOP, BASE_H);
-  const hood = UPPER[2]!;
-  const shelf = UPPER[4]!;
-  const sink = BASE[4]!;
-
   return (
     <section
       ref={rootRef}
@@ -1302,473 +1134,12 @@ export default function Drawing() {
                 <title id="drawing-svg-title">{t("svgTitle")}</title>
                 <desc id="drawing-svg-desc">{t("svgDesc")}</desc>
 
-                {/*
-                  THE HALO. One <use> per structural group, painted first
-                  so it sits under everything. Each clone inherits the two
-                  custom properties #glow overrides — a wider, dimmer
-                  stroke — and, because a <use> shadow tree mirrors the
-                  live element, it also inherits the dash state GSAP is
-                  writing. So the glow draws itself in step with the line
-                  it is glowing under, for six elements and zero tweens.
-                */}
-                <g id="glow" aria-hidden="true">
-                  <use href="#carcass" />
-                  <use href="#dividers" />
-                  <use href="#fronts" />
-                  <use href="#countertop" />
-                  <use href="#appliances" />
-                  <use href="#details" />
-                </g>
-
-                {/* Where the pen tips are appended, above the linework. */}
-                <g id="tips" aria-hidden="true" />
-
-                {/* ---- 1. CARCASS — the solids, the floor, the wall ---- */}
-                <g id="carcass" className="dwg-line">
-                  {/* The room: floor front edge, the line where floor meets
-                      wall, and the two depth edges that connect them. */}
-                  <path data-draw d={seg(-320, H.floor, RUN_WIDTH + 320, H.floor)} />
-                  <path
-                    data-draw
-                    d={seg(-320, H.floor, RUN_WIDTH + 320, H.floor, DEPTH)}
-                  />
-                  <path data-draw d={depthEdge(-320, H.floor, 0, DEPTH)} />
-                  <path
-                    data-draw
-                    d={depthEdge(RUN_WIDTH + 320, H.floor, 0, DEPTH)}
-                  />
-
-                  {/* Base carcasses — front faces only. Their tops are
-                      under the worktop and their left ends behind the
-                      neighbour, so nothing else of them is visible. */}
-                  {BASE.map((u) => (
-                    <path key={u.id} data-draw d={box(u.x, BASE_TOP, u.w, BASE_H)} />
-                  ))}
-                  {/* The run's right-hand end panel — the one side face
-                      this projection shows. */}
-                  <path
-                    data-draw
-                    d={endFace(RUN_WIDTH, BASE_TOP, BASE_H, 0, DEPTH)}
-                  />
-
-                  {/* Recessed plinth, set back so it reads as a shadow. */}
-                  <path
-                    data-draw
-                    d={box(0, H.floor - H.plinth, RUN_WIDTH, H.plinth, 60)}
-                  />
-
-                  {/* Wall units — flush to the wall, so their fronts sit
-                      UPPER_Z further back than the base run. Tops show,
-                      which is what makes the sheet read as a solid. */}
-                  {UPPER.filter((u) => u.kind !== "hood").map((u) => (
-                    <g key={u.id}>
-                      <path
-                        data-draw
-                        d={box(u.x, H.upperTop, u.w, UPPER_H, UPPER_Z)}
-                      />
-                      <path
-                        data-draw
-                        d={topFace(u.x, H.upperTop, u.w, UPPER_Z, DEPTH)}
-                      />
-                    </g>
-                  ))}
-                  <path
-                    data-draw
-                    d={endFace(RUN_WIDTH, H.upperTop, UPPER_H, UPPER_Z, DEPTH)}
-                  />
-                </g>
-
-                {/* ---- 2. DIVIDERS — internal panels and shelves ---- */}
-                <g id="dividers" className="dwg-line">
-                  {/* The open unit is the only one whose insides show, so
-                      its shelves get their real depth: front edge, then
-                      the shelf surface running back to the wall. */}
-                  {[0.36, 0.68].map((share) => {
-                    const y = H.upperTop + UPPER_H * share;
-                    return (
-                      <g key={`open-${share}`}>
-                        <path
-                          data-draw
-                          d={seg(shelf.x, y, shelf.x + shelf.w, y, UPPER_Z)}
-                        />
-                        <path
-                          data-draw
-                          d={topFace(shelf.x, y, shelf.w, UPPER_Z, DEPTH)}
-                        />
-                      </g>
-                    );
-                  })}
-                  {/* Its back panel, against the wall. */}
-                  <path
-                    data-draw
-                    d={box(shelf.x, H.upperTop, shelf.w, UPPER_H, DEPTH)}
-                  />
-                  {/* Centre panel of the 1000 sink unit. */}
-                  <path
-                    data-draw
-                    d={seg(
-                      sink.x + sink.w / 2,
-                      BASE_TOP + 24,
-                      sink.x + sink.w / 2,
-                      H.floor - H.plinth - 24,
-                    )}
-                  />
-                  {/* Rail under the worktop over the sink run. */}
-                  <path
-                    data-draw
-                    d={seg(
-                      sink.x + 24,
-                      BASE_TOP + 120,
-                      sink.x + sink.w - 24,
-                      BASE_TOP + 120,
-                    )}
-                  />
-                </g>
-
-                {/* ---- 3. FRONTS — doors, drawers, handles ----
-                    Every front sits FRONT_Z proud of its carcass, which
-                    in this projection offsets it by a couple of pixels
-                    down-left. That small step is what makes the run read
-                    as doors on boxes rather than as lines on a plane. */}
-                <g id="fronts" className="dwg-line">
-                  {BASE.map((u) => {
-                    if (u.kind === "oven") {
-                      // The middle opening is the appliance, drawn later.
-                      return ovenRows
-                        .filter((_, i) => i !== 1)
-                        .map((row, i) => (
-                          <g key={`${u.id}-${i}`}>
-                            <path
-                              data-draw
-                              d={box(u.x + GAP / 2, row.y, u.w - GAP, row.h, FRONT_Z)}
-                            />
-                            <Handle unit={u} y={row.y} h={row.h} z={FRONT_Z} />
-                          </g>
-                        ));
-                    }
-                    if (u.kind === "drawers") {
-                      return frontRows(u, BASE_TOP, BASE_H).map((row, i) => (
-                        <g key={`${u.id}-${i}`}>
-                          <path
-                            data-draw
-                            d={box(u.x + GAP / 2, row.y, u.w - GAP, row.h, FRONT_Z)}
-                          />
-                          <Handle unit={u} y={row.y} h={row.h} z={FRONT_Z} />
-                        </g>
-                      ));
-                    }
-                    // Doors and the sink unit: a leaf either side.
-                    const leaf = (u.w - GAP * 3) / 2;
-                    return [0, 1].map((k) => {
-                      const lx = u.x + GAP + k * (leaf + GAP);
-                      const hx = k === 0 ? lx + leaf - 60 : lx + 60;
-                      return (
-                        <g key={`${u.id}-${k}`}>
-                          <path
-                            data-draw
-                            d={box(lx, BASE_TOP + GAP / 2, leaf, BASE_H - GAP, FRONT_Z)}
-                          />
-                          <path
-                            data-pop
-                            d={seg(
-                              hx,
-                              BASE_TOP + BASE_H * 0.28,
-                              hx,
-                              BASE_TOP + BASE_H * 0.52,
-                              FRONT_Z,
-                            )}
-                          />
-                        </g>
-                      );
-                    });
-                  })}
-
-                  {UPPER.filter((u) => u.kind === "door").map((u) => (
-                    <g key={`uf-${u.id}`}>
-                      <path
-                        data-draw
-                        d={box(
-                          u.x + GAP / 2,
-                          H.upperTop + GAP / 2,
-                          u.w - GAP,
-                          UPPER_H - GAP,
-                          UPPER_Z + FRONT_Z,
-                        )}
-                      />
-                      <Handle
-                        unit={u}
-                        y={H.upperTop}
-                        h={UPPER_H}
-                        z={UPPER_Z + FRONT_Z}
-                      />
-                    </g>
-                  ))}
-                </g>
-
-                {/* ---- 4. COUNTERTOP — one slab, swept in one gesture ----
-                    The top face is the largest single surface on the
-                    sheet and the one that sells the projection. */}
-                <g id="countertop" className="dwg-line">
-                  <path
-                    data-draw
-                    d={box(worktopX, H.worktop, worktopW, WORKTOP_THICKNESS, WT_FRONT_Z)}
-                  />
-                  <path
-                    data-draw
-                    d={topFace(worktopX, H.worktop, worktopW, WT_FRONT_Z, DEPTH)}
-                  />
-                  <path
-                    data-draw
-                    d={endFace(
-                      worktopX + worktopW,
-                      H.worktop,
-                      WORKTOP_THICKNESS,
-                      WT_FRONT_Z,
-                      DEPTH,
-                    )}
-                  />
-                </g>
-
-                {/* ---- 5. APPLIANCES — oven and extractor ---- */}
-                <g id="appliances" className="dwg-line">
-                  <path
-                    data-draw
-                    d={box(
-                      oven.x + GAP / 2,
-                      ovenRows[1]!.y,
-                      oven.w - GAP,
-                      ovenRows[1]!.h,
-                      FRONT_Z,
-                    )}
-                  />
-                  {/* Oven glass, inset. */}
-                  <path
-                    data-draw
-                    d={box(
-                      oven.x + 70,
-                      ovenRows[1]!.y + 80,
-                      oven.w - 140,
-                      ovenRows[1]!.h - 160,
-                      FRONT_Z,
-                    )}
-                  />
-
-                  {/* Extractor. Front canopy, its top edge swept back to
-                      the wall, and the duct standing on top of it. */}
-                  <path
-                    data-draw
-                    d={`M${p(hood.x, H.upperBottom, HOOD_Z)} L${p(hood.x + 150, H.upperTop + 260, HOOD_Z)} L${p(hood.x + hood.w - 150, H.upperTop + 260, HOOD_Z)} L${p(hood.x + hood.w, H.upperBottom, HOOD_Z)} Z`}
-                  />
-                  <path
-                    data-draw
-                    d={topFace(
-                      hood.x + 150,
-                      H.upperTop + 260,
-                      hood.w - 300,
-                      HOOD_Z,
-                      DEPTH,
-                    )}
-                  />
-                  {/* Both ends of the canopy recede to the wall. */}
-                  <path
-                    data-draw
-                    d={depthEdge(hood.x, H.upperBottom, HOOD_Z, DEPTH)}
-                  />
-                  <path
-                    data-draw
-                    d={depthEdge(hood.x + hood.w, H.upperBottom, HOOD_Z, DEPTH)}
-                  />
-                  <path
-                    data-draw
-                    d={box(
-                      hood.x + hood.w / 2 - 130,
-                      H.upperTop,
-                      260,
-                      260,
-                      HOOD_Z + 60,
-                    )}
-                  />
-                  <path
-                    data-draw
-                    d={topFace(
-                      hood.x + hood.w / 2 - 130,
-                      H.upperTop,
-                      260,
-                      HOOD_Z + 60,
-                      DEPTH,
-                    )}
-                  />
-                </g>
-
-                {/* ---- 6. DETAILS — splashback, hob, tap, sink ---- */}
-                <g id="details" className="dwg-line">
-                  {/* The wall itself, between worktop and wall units. */}
-                  <path
-                    data-draw
-                    d={box(
-                      0,
-                      H.upperBottom,
-                      RUN_WIDTH,
-                      H.worktop - H.upperBottom,
-                      DEPTH,
-                    )}
-                  />
-                  {/* Hob, lying ON the worktop — a face in the top plane,
-                      which only exists because the drawing is a solid. */}
-                  <path
-                    data-draw
-                    d={`M${p(1280, H.worktop, 60)} L${p(1920, H.worktop, 60)} L${p(1920, H.worktop, 560)} L${p(1280, H.worktop, 560)} Z`}
-                  />
-                  {/* Sink bowl, likewise. */}
-                  <path
-                    data-draw
-                    d={`M${p(sink.x + 180, H.worktop, 90)} L${p(sink.x + 700, H.worktop, 90)} L${p(sink.x + 700, H.worktop, 500)} L${p(sink.x + 180, H.worktop, 500)} Z`}
-                  />
-                  {/* Tap, standing off the back of the worktop. */}
-                  <path
-                    data-draw
-                    d={`M${p(sink.x + 440, H.worktop, 520)} L${p(sink.x + 440, H.worktop - 260, 520)} L${p(sink.x + 440, H.worktop - 300, 380)} L${p(sink.x + 440, H.worktop - 190, 300)}`}
-                  />
-                </g>
-
-                {/* Panel tints — depth, arriving late and barely there.
-                    Faces rather than flat rectangles, so the light reads
-                    as falling on surfaces. */}
-                <g id="tints" aria-hidden="true">
-                  <path
-                    data-tint
-                    className="dwg-tint"
-                    d={topFace(worktopX, H.worktop, worktopW, WT_FRONT_Z, DEPTH)}
-                  />
-                  <path
-                    data-tint
-                    className="dwg-tint"
-                    d={box(oven.x + GAP / 2, BASE_TOP, oven.w - GAP, BASE_H, FRONT_Z)}
-                  />
-                  <path
-                    data-tint
-                    className="dwg-tint"
-                    d={box(shelf.x, H.upperTop, shelf.w, UPPER_H, DEPTH)}
-                  />
-                </g>
-
-                {/* ---- 7. DIMENSIONS, in four waves ---- */}
-                <g id="dims" className="dwg-dim">
-                  {CHAINS.map((chain) => (
-                    <Chain key={chain.id} chain={chain} />
-                  ))}
-
-                  {/*
-                    Depth. In the elevation this had to be a leader with a
-                    number on the end of it, because a front view cannot
-                    show depth at all. The projection changed that: the
-                    worktop's right-hand end is now a real edge running
-                    from the front lip to the wall, so this is a true
-                    dimension lying along it rather than a note about it.
-                    Kept short — a long leader out to the right ran into
-                    the journey rail.
-                  */}
-                  <g data-chain="depth" data-wave={4} className="dwg-wide">
-                    <path
-                      data-draw
-                      d={`M${p(worktopX + worktopW, H.worktop, WT_FRONT_Z)} L${p(worktopX + worktopW + 200, H.worktop - 120, WT_FRONT_Z)}`}
-                    />
-                    <path
-                      data-draw
-                      d={`M${p(worktopX + worktopW, H.worktop, DEPTH)} L${p(worktopX + worktopW + 200, H.worktop - 120, DEPTH)}`}
-                    />
-                    <path
-                      data-draw
-                      d={`M${p(worktopX + worktopW + 150, H.worktop - 90, WT_FRONT_Z)} L${p(worktopX + worktopW + 150, H.worktop - 90, DEPTH)}`}
-                    />
-                    <path
-                      data-pop
-                      className="dwg-solid"
-                      d={arrow(
-                        ...(project(
-                          worktopX + worktopW + 150,
-                          H.worktop - 90,
-                          WT_FRONT_Z,
-                        ) as [number, number]),
-                        DZ.x / OBLIQUE_LEN,
-                        DZ.y / OBLIQUE_LEN,
-                      )}
-                    />
-                    <path
-                      data-pop
-                      className="dwg-solid"
-                      d={arrow(
-                        ...(project(
-                          worktopX + worktopW + 150,
-                          H.worktop - 90,
-                          DEPTH,
-                        ) as [number, number]),
-                        -DZ.x / OBLIQUE_LEN,
-                        -DZ.y / OBLIQUE_LEN,
-                      )}
-                    />
-                    {/* Lifted clear of the worktop line: the journey rail
-                        is pinned to the vertical centre of the viewport,
-                        which is almost exactly where this dimension sits,
-                        and the two labels were landing on each other. */}
-                    <text
-                      data-value={DEPTH}
-                      x={project(worktopX + worktopW + 300, H.worktop - 560, DEPTH / 2)[0]}
-                      y={project(worktopX + worktopW + 300, H.worktop - 560, DEPTH / 2)[1]}
-                      textAnchor="middle"
-                      className="dwg-label"
-                    >
-                      {DEPTH}
-                    </text>
-                  </g>
-                </g>
-
-                {/*
-                  HIT TARGETS — the interactive layer, and the last thing
-                  in the tree so it sits above every line it covers.
-
-                  One invisible rectangle per cabinet, on that cabinet's
-                  own front plane, so the target is exactly the shape the
-                  visitor can see. They only start listening once the
-                  sheet has finished drawing (the [data-live] gate in
-                  globals.css): letting someone hover a cabinet that has
-                  not been drawn yet is the one interaction that would
-                  give the whole conceit away.
-                */}
-                <g id="hits">
-                  {BASE.map((u) => (
-                    <path
-                      key={`hit-${u.id}`}
-                      className="dwg-hit"
-                      data-hit={u.id}
-                      role="button"
-                      tabIndex={-1}
-                      aria-label={`${t(`units.${u.kind}`)} — ${u.w} × ${BASE_H} × ${DEPTH} mm`}
-                      d={box(u.x, BASE_TOP, u.w, BASE_H, FRONT_Z)}
-                    />
-                  ))}
-                  {UPPER.filter((u) => u.kind !== "hood").map((u) => (
-                    <path
-                      key={`hit-${u.id}`}
-                      className="dwg-hit"
-                      data-hit={u.id}
-                      role="button"
-                      tabIndex={-1}
-                      aria-label={`${t(`units.${u.kind}`)} — ${u.w} × ${UPPER_H} × ${UPPER_DEPTH} mm`}
-                      d={box(u.x, H.upperTop, u.w, UPPER_H, UPPER_Z)}
-                    />
-                  ))}
-                </g>
-
-                {/* The highlight the hit targets drive. Drawn once and
-                    moved, rather than one per cabinet — only ever a
-                    single unit is under the pointer. */}
-                <path
-                  data-highlight
-                  className="dwg-highlight"
-                  d=""
-                  aria-hidden="true"
-                />
+            <ElevationScene
+              scene={scene}
+              unitLabel={(hit) =>
+                `${t(`units.${hit.type}`)} — ${hit.w} × ${hit.h} × ${hit.d3} mm`
+              }
+            />
               </svg>
 
               {/*

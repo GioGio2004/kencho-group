@@ -25,30 +25,25 @@
  */
 
 import { chromium } from "playwright";
-import {
-  CHAINS,
-  DEPTH,
-  GHOST_OPACITY,
-  SHEET,
-  STAGE,
-  TIMELINE,
-} from "../lib/drawing.ts";
+import { GHOST_OPACITY, SHEET, STAGE, TIMELINE } from "../lib/drawing.ts";
+import { K01, buildScene, chainValues } from "../lib/elevation/index.ts";
 
 const BASE_URL = process.argv[2] ?? "http://localhost:3000";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /**
- * What every chain must arrive at, derived from its own stops — so the
- * check cannot drift from the drawing the way a hand-written expectation
- * does. `depth` is the one annotation that is not a chain of stops.
+ * What every chain must arrive at, taken from the SCENE the section
+ * actually renders rather than from a hand-written list.
+ *
+ * This is the whole point of the extraction: the section, the planner and
+ * this check now read one source, so a geometry change shows up here as a
+ * failure instead of as a drawing that quietly disagrees with its own
+ * labels. The `fronts` chain reports the FIRST multi-front unit, which is
+ * the oven housing at 230/340/190 — b4's front division changed from a
+ * hand-authored two drawers to a derived three when the engine took over,
+ * and it is not what this chain measures.
  */
-const EXPECT = Object.fromEntries([
-  ...CHAINS.map((c) => [
-    c.id,
-    c.stops.slice(0, -1).map((s, i) => Math.round(c.stops[i + 1] - s)),
-  ]),
-  ["depth", [DEPTH]],
-]);
+const EXPECT = chainValues(buildScene(K01, { wide: true }));
 
 let failures = 0;
 const check = (name, ok, detail = "") => {
@@ -214,6 +209,41 @@ for (const vp of [
     done.done === done.total,
     `${done.done}/${done.total} complete, ${done.part} partial`,
   );
+
+  /*
+   * Read the numbers after a COLD jump — a fresh page landed straight in
+   * the middle of the section, the way a deep link, a restored scroll
+   * position or a hard flick arrives.
+   *
+   * The warm path above (this run has already scrolled to 0.5 and 0.005)
+   * is not the same test and used to pass while the cold one produced a
+   * fully drawn sheet dimensioned entirely in zeroes: the counters were
+   * tween-driven, and a tween that gets SEEKED past rather than played
+   * never runs its onUpdate. Both paths are checked now.
+   */
+  const cold = await ctx.newPage();
+  await cold.goto(`${BASE_URL}/en`, { waitUntil: "networkidle" });
+  await cold
+    .waitForFunction(
+      () => !document.documentElement.classList.contains("is-loading"),
+      { timeout: 20000 },
+    )
+    .catch(() => {});
+  await sleep(1200);
+  await at(cold, (STAGE.approved.at + STAGE.approved.dur * 0.5) / TIMELINE);
+  const coldLabels = await cold.evaluate(LABELS);
+  await cold.close();
+
+  for (const [id, expected] of Object.entries(EXPECT)) {
+    const got = coldLabels[id];
+    if (!got || got.hidden) continue;
+    const shown = got.shown.map(Number);
+    check(
+      `${id} is right after a cold jump`,
+      shown.length === expected.length && shown.every((n, i) => n === expected[i]),
+      `shows ${got.shown.join("/")}`,
+    );
+  }
 
   const labels = await page.evaluate(LABELS);
   for (const [id, expected] of Object.entries(EXPECT)) {

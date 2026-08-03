@@ -41,6 +41,7 @@ import {
   type Levels,
   type PlacedUnit,
 } from "./geometry";
+import { materialFor } from "./spec";
 import type { KitchenSpec, UnitType } from "./spec";
 
 /* ---------------------------------------------------------------------
@@ -86,6 +87,9 @@ export interface SceneLabel {
 
 export type Wave = 1 | 2 | 3 | 4;
 
+/** Wave order, for the section choreography. */
+export const WAVES: readonly Wave[] = [1, 2, 3, 4];
+
 export interface SceneChain {
   id: string;
   wave: Wave;
@@ -102,6 +106,8 @@ export interface SceneHit {
   w: number;
   h: number;
   d3: number;
+  /** Key under `drawing.materials`. */
+  material: string;
 }
 
 export interface Scene {
@@ -358,6 +364,7 @@ export function buildScene(spec: KitchenSpec, opts: SceneOptions = {}): Scene {
       w: u.width,
       h: Math.round(u.h),
       d3: u.depth,
+      material: materialFor(u.type, !!u.open),
       d: box(u.x, u.y, u.width, u.h, u.upper ? UPPER_Z : FRONT_Z),
     });
   });
