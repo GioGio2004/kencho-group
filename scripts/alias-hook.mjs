@@ -24,8 +24,8 @@ const ROOT = new URL("../", import.meta.url).href;
  *  needs the real filename. */
 const EXTENSIONS = [".ts", ".tsx", ".mjs", ".js", ""];
 
-function alias(specifier) {
-  const base = new URL(specifier.slice(2), ROOT).href;
+/** Appends the real extension to an extensionless URL, if one exists. */
+function withExtension(base) {
   for (const ext of EXTENSIONS) {
     if (existsSync(fileURLToPath(base + ext))) return base + ext;
   }
@@ -34,10 +34,23 @@ function alias(specifier) {
 
 registerHooks({
   resolve(specifier, context, nextResolve) {
-    return nextResolve(
-      specifier.startsWith("@/") ? alias(specifier) : specifier,
-      context,
-    );
+    // `@/lib/thing` — the project's tsconfig alias.
+    if (specifier.startsWith("@/")) {
+      return nextResolve(withExtension(new URL(specifier.slice(2), ROOT).href), context);
+    }
+    /*
+     * `./thing` — TypeScript writes relative imports without an
+     * extension too, and Node's ESM resolver requires one. Without this
+     * a lib module that imports a sibling cannot be tested at all,
+     * which is exactly what lib/elevation/ does.
+     */
+    if (specifier.startsWith(".") && context.parentURL?.startsWith("file:")) {
+      const resolved = new URL(specifier, context.parentURL).href;
+      if (!/\.[a-z]+$/i.test(specifier)) {
+        return nextResolve(withExtension(resolved), context);
+      }
+    }
+    return nextResolve(specifier, context);
   },
 
   load(url, context, nextLoad) {
