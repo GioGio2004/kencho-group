@@ -240,6 +240,69 @@ export const CLIP = {
  */
 export const MASK_DESCENDER = 0.15;
 
+/* =====================================================================
+ * RULING CADENCE — how a hairline arrives.
+ * ---------------------------------------------------------------------
+ * A page carrying forty hairlines that all grow left-to-right at the
+ * same speed does not read as drawn; it reads as a loading skeleton.
+ * Every line looks like the same line because it is the same tween.
+ *
+ * So the cadence is a TABLE, cycled by document index — the same device
+ * PARALLAX.items uses and for the same reason: a formula reads
+ * mechanical, and true randomness reads as a bug. These seven were
+ * authored, and the unevenness in them is the whole point. Seven rather
+ * than four or six so the cycle never lines up with a column grid; a
+ * three-up row of cards would otherwise get the identical entry three
+ * times and the variety would vanish exactly where it is most visible.
+ *
+ * TWO MODES, and the difference is physical:
+ *
+ *   `scale`  stretches the line out of nothing. Elastic — the line is
+ *            being pulled into existence.
+ *   `wipe`   clips it open at constant length. That is a pen: the line
+ *            was always that long, you are watching it be laid down.
+ *
+ * Mixing them is most of what makes the page feel ruled by a hand
+ * rather than rendered by a loop. `tip` adds the brass nib running ahead
+ * of the stroke — the same idea THE DRAWING spends a whole section on,
+ * and rare enough here (two entries in seven) to stay an accent.
+ * ================================================================== */
+export interface RuleStep {
+  mode: "scale" | "wipe";
+  from: "left" | "right" | "center";
+  /** Seconds. */
+  dur: number;
+  /** Seconds after its batch lands. */
+  delay: number;
+  /** Key into EASE. */
+  ease: keyof typeof EASE;
+  tip?: boolean;
+}
+
+export const RULE_CADENCE: readonly RuleStep[] = [
+  { mode: "wipe", from: "left", dur: 1.5, delay: 0, ease: "narrative", tip: true },
+  { mode: "scale", from: "right", dur: 0.8, delay: 0.18, ease: "pointer" },
+  { mode: "wipe", from: "center", dur: 2, delay: 0.05, ease: "narrative" },
+  { mode: "scale", from: "left", dur: 0.6, delay: 0.34, ease: "out" },
+  { mode: "wipe", from: "right", dur: 1.2, delay: 0.11, ease: "pointer", tip: true },
+  { mode: "scale", from: "center", dur: 1.7, delay: 0.42, ease: "narrative" },
+  { mode: "wipe", from: "left", dur: 0.9, delay: 0.08, ease: "out" },
+];
+
+/** The nib's length, as a share of the rule it runs along. */
+export const RULE_TIP_LENGTH = 0.14;
+/** How far past the far end it runs before it is lifted. */
+export const RULE_TIP_OVERRUN = 1.1;
+
+/**
+ * Registration ticks, in seconds after their frame arrives. Four corners
+ * marked in a lazy diagonal rather than clockwise — a corner mark is a
+ * thing a draughtsman puts down when they reach it, and four ticks
+ * appearing in a neat rotation is the one arrangement that reads as
+ * generated.
+ */
+export const TICK_DELAY = [0.06, 0.42, 0.19, 0.61] as const;
+
 /** Magnetic pointer fields — repelled type, drifting shapes, trailing
  *  cursors. Handheld gets a smaller field so a thumb cannot pin the whole
  *  composition at once. */

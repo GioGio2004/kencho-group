@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { useTranslations } from "next-intl";
 import { DUR, EASE, REVEAL_START, STAGGER, prefersReducedMotion } from "@/lib/motion";
+import { Sheet } from "@/app/_components/LineWork";
 
 /*
  * FAQ — four questions on a quiet sand ground, hairline-separated.
@@ -131,8 +132,11 @@ export default function FAQ() {
       id="faq"
       ref={rootRef}
       aria-labelledby="faq-title"
-      className="bg-sand px-5 py-24 sm:px-8 sm:py-32 lg:px-12 lg:py-40"
+      className="relative bg-sand px-5 py-24 sm:px-8 sm:py-32 lg:px-12 lg:py-40"
     >
+      {/* The page, set out the way the drawing is. */}
+      <Sheet guides={2} inset="inset-x-5 inset-y-12 sm:inset-x-8 lg:inset-x-12" />
+
       <div className="mx-auto w-full max-w-4xl">
         <p data-reveal className="u-eyebrow">
           {t("eyebrow")}

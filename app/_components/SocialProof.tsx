@@ -7,6 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslations } from "next-intl";
 import { DUR, EASE, REVEAL_START, STAGGER } from "@/lib/motion";
 import { SITE } from "@/lib/site";
+import { Sheet } from "@/app/_components/LineWork";
 
 /*
  * SOCIAL PROOF — two large counting figures and three quiet review quotes.
@@ -134,8 +135,11 @@ export default function SocialProof() {
       ref={rootRef}
       id="trust"
       aria-labelledby="trust-title"
-      className="bg-sand-deep py-24 sm:py-32 lg:py-40"
+      className="relative bg-sand-deep py-24 sm:py-32 lg:py-40"
     >
+      {/* The page, set out the way the drawing is. */}
+      <Sheet guides={3} inset="inset-x-5 inset-y-10 sm:inset-x-8 lg:inset-x-12" />
+
       <div className="px-5 sm:px-8 lg:px-12">
         <div className="mx-auto w-full max-w-7xl">
           <p data-reveal className="u-eyebrow">

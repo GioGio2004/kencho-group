@@ -1,28 +1,32 @@
 /*
- * PALETTE — the two colours that cannot come from app/theme.css.
+ * PALETTE — the colours that cannot come from app/theme.css.
  *
  * The OpenGraph card renders through Satori, which has no CSSOM and
  * cannot resolve a custom property; `viewport.themeColor` is serialised
- * into a <meta> tag at build time, long before any stylesheet exists.
- * Both need literals, so both take them from HERE rather than each
- * inventing their own — keeping the theme file's "no hex outside this
- * file" rule true in spirit even where CSS cannot reach.
+ * into <meta> at build time, long before any stylesheet exists. Both
+ * need literals, so both take them from HERE rather than each inventing
+ * their own — keeping the theme file's "no hex outside this file" rule
+ * true in spirit even where CSS cannot reach.
+ *
+ * These are the RAW palette entries, not the semantic ones: an OG card
+ * is a fixed artefact with no theme to follow, so it is drawn on paper
+ * in ink whatever the visitor's machine prefers.
  *
  * KEEP IN SYNC with the matching tokens in app/theme.css. There is no
  * mechanism that can enforce this; it is four values, checked by the
  * theme-parity test in scripts/verify-theme.mjs.
  */
 export const PALETTE = {
-  /** --sand */
-  sand: "#efe7dd",
-  /** --ink */
-  ink: "#2b2420",
-  /** --clay */
-  clay: "#b08d57",
-  /** --ink at 62%, the OG subtitle weight. */
-  inkSoft: "rgba(43, 36, 32, 0.62)",
-  /** --dwg-bg, for the browser chrome during the dark interlude. */
-  charcoalDeep: "#131110",
+  /** --stone-1, the light surface. */
+  sand: "#e9ebee",
+  /** --espresso. */
+  ink: "#14171b",
+  /** --brass. */
+  clay: "#8d7448",
+  /** --espresso at 62%, the OG subtitle weight. */
+  inkSoft: "rgba(20, 23, 27, 0.62)",
+  /** --coal-0, the dark surface — browser chrome in dark mode. */
+  charcoalDeep: "#0d0e10",
 } as const;
 
 /*

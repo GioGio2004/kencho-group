@@ -16,14 +16,14 @@ export default function MarqueeBand() {
   const t = useTranslations("kinetic");
 
   return (
-    <div className="border-y border-sand/10 bg-charcoal py-6 sm:py-8">
+    <div className="border-y border-bone/10 bg-charcoal py-6 sm:py-8">
       <Marquee
         className="u-display text-[clamp(1.5rem,4.4vw,3rem)] text-clay uppercase"
         direction={-1}
       >
         {t("marquee")}
         {/* The separator belongs to the decoration, not the sentence. */}
-        <span aria-hidden="true" className="px-[0.6em] text-sand/25">
+        <span aria-hidden="true" className="px-[0.6em] text-bone/25">
           ·
         </span>
       </Marquee>

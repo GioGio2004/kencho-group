@@ -7,6 +7,7 @@ import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import { useTranslations } from "next-intl";
 import { DUR, EASE, REVEAL_START, STAGGER } from "@/lib/motion";
+import { Sheet } from "@/app/_components/LineWork";
 
 /*
  * MANIFESTO — the calm after the hero. One statement, two footnotes, and a
@@ -112,8 +113,11 @@ export default function Manifesto() {
       id="manifesto"
       ref={rootRef}
       aria-labelledby="manifesto-title"
-      className="bg-sand px-6 py-28 sm:px-10 sm:py-40 lg:py-56"
+      className="relative bg-sand px-6 py-28 sm:px-10 sm:py-40 lg:py-56"
     >
+      {/* The page, set out the way the drawing is. */}
+      <Sheet guides={3} inset="inset-x-6 inset-y-16 sm:inset-x-10" />
+
       <div className="mx-auto max-w-4xl">
         <p ref={eyebrowRef} className="u-eyebrow flex items-center gap-4">
           <span

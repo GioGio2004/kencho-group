@@ -7,6 +7,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import { fontClassesFor } from "@/lib/fonts";
 import { IMAGES, src } from "@/lib/images";
 import { PALETTE, SITE } from "@/lib/site";
+import { THEME_BOOT } from "@/lib/theme";
 import "../globals.css";
 
 /*
@@ -72,13 +73,23 @@ export async function generateMetadata({
 }
 
 export const viewport: Viewport = {
-  themeColor: PALETTE.sand,
   /*
-   * Deliberately unset rather than "light". The page flips
-   * <html data-surface="dark"> for the whole drawing interlude, so
-   * declaring a fixed scheme tells the browser something that stops
-   * being true a third of the way down.
+   * Serialised into <meta> at build time, long before any stylesheet or
+   * the boot script exists — so it cannot read `data-theme` and has to
+   * answer with a media query instead. A visitor whose OS is dark gets
+   * dark browser chrome on the very first frame, which is the same
+   * promise the boot script makes about the page itself.
+   *
+   * A visitor who has explicitly chosen the theme that disagrees with
+   * their OS gets chrome from the other one. That is a genuine gap and
+   * it is the only one available: the tag is static, and the alternative
+   * is a chrome colour that is wrong for everyone on dark.
    */
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: PALETTE.sand },
+    { media: "(prefers-color-scheme: dark)", color: PALETTE.charcoalDeep },
+  ],
+  colorScheme: "light dark",
 };
 
 /** LocalBusiness (FurnitureStore) + per-locale FAQPage structured data. */
@@ -152,6 +163,14 @@ export default async function LocaleLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: faqLd }}
         />
+        {/*
+         * Theme first, and before everything else in this head that
+         * could paint. It stamps <html data-theme> synchronously, which
+         * is the only way to avoid a flash of the wrong surface — a
+         * white flash on a dark-mode phone at night being the most
+         * visible defect a theme system can ship.
+         */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
         <script dangerouslySetInnerHTML={{ __html: loaderGuard }} />
       </head>
       <body>

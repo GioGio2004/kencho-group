@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslations } from "next-intl";
 import { DUR, EASE, REVEAL_START, STAGGER } from "@/lib/motion";
+import { Sheet } from "@/app/_components/LineWork";
 
 /*
  * PROCESS — five calm steps from measurement to installation.
@@ -141,8 +142,11 @@ export default function Process() {
       ref={rootRef}
       id="process"
       aria-labelledby="process-title"
-      className="bg-sand py-24 sm:py-32 lg:py-40"
+      className="relative bg-sand py-24 sm:py-32 lg:py-40"
     >
+      {/* The page, set out the way the drawing is. */}
+      <Sheet guides={4} inset="inset-x-5 inset-y-10 sm:inset-x-8 lg:inset-x-12" />
+
       <div className="px-5 sm:px-8 lg:px-12">
         <div className="mx-auto w-full max-w-7xl">
           <p data-head className="u-eyebrow">

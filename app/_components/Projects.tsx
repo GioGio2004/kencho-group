@@ -659,7 +659,7 @@ export default function Projects() {
                             up on hover/focus where a fine pointer exists.
                             Transform-only, on an ink scrim. */}
                         <span
-                          className="pointer-events-none absolute inset-x-0 bottom-0 block px-3 pt-10 pb-2.5 text-left text-[0.6875rem] leading-snug tracking-[0.14em] text-shell transition-transform duration-500 ease-out pointer-fine:translate-y-full pointer-fine:group-hover:translate-y-0 pointer-fine:group-focus-within:translate-y-0"
+                          className="pointer-events-none absolute inset-x-0 bottom-0 block px-3 pt-10 pb-2.5 text-left text-[0.6875rem] leading-snug tracking-[0.14em] text-bone transition-transform duration-500 ease-out pointer-fine:translate-y-full pointer-fine:group-hover:translate-y-0 pointer-fine:group-focus-within:translate-y-0"
                           style={{
                             background:
                               "linear-gradient(to top, color-mix(in srgb, var(--ink) 65%, transparent), transparent)",
@@ -701,9 +701,9 @@ export default function Projects() {
             type="button"
             aria-label={tCommon("close")}
             onClick={() => actionsRef.current?.close()}
-            className="u-press absolute top-4 right-4 z-20 flex h-11 w-11 cursor-pointer items-center justify-center border text-shell sm:top-6 sm:right-6"
+            className="u-press absolute top-4 right-4 z-20 flex h-11 w-11 cursor-pointer items-center justify-center border text-bone sm:top-6 sm:right-6"
             style={{
-              borderColor: "color-mix(in srgb, var(--shell) 30%, transparent)",
+              borderColor: "color-mix(in srgb, var(--invert-fg) 30%, transparent)",
             }}
           >
             <svg
@@ -724,9 +724,9 @@ export default function Projects() {
             type="button"
             aria-label={t("lightboxPrev")}
             onClick={() => actionsRef.current?.navigate(-1)}
-            className="u-press absolute top-1/2 left-2 z-20 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center border text-shell sm:left-5"
+            className="u-press absolute top-1/2 left-2 z-20 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center border text-bone sm:left-5"
             style={{
-              borderColor: "color-mix(in srgb, var(--shell) 30%, transparent)",
+              borderColor: "color-mix(in srgb, var(--invert-fg) 30%, transparent)",
               background: "color-mix(in srgb, var(--charcoal) 45%, transparent)",
             }}
           >
@@ -748,9 +748,9 @@ export default function Projects() {
             type="button"
             aria-label={t("lightboxNext")}
             onClick={() => actionsRef.current?.navigate(1)}
-            className="u-press absolute top-1/2 right-2 z-20 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center border text-shell sm:right-5"
+            className="u-press absolute top-1/2 right-2 z-20 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center border text-bone sm:right-5"
             style={{
-              borderColor: "color-mix(in srgb, var(--shell) 30%, transparent)",
+              borderColor: "color-mix(in srgb, var(--invert-fg) 30%, transparent)",
               background: "color-mix(in srgb, var(--charcoal) 45%, transparent)",
             }}
           >
@@ -826,7 +826,7 @@ export default function Projects() {
               <p
                 className="text-xs tracking-[0.18em]"
                 style={{
-                  color: "color-mix(in srgb, var(--shell) 78%, transparent)",
+                  color: "color-mix(in srgb, var(--invert-fg) 78%, transparent)",
                 }}
               >
                 {t(`items.${lbCurrent.key}.caption`)}

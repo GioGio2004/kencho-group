@@ -34,33 +34,13 @@ export const SHEET = {
 /** Above this width the desktop framing is used. */
 export const SHEET_BREAKPOINT = 768;
 
-/* ---------------------------------------------------------------------
- * RENDERED SIZES
- *
- * A technical drawing's line weight is a property of the DRAWING, not of
- * the zoom: 1.5px at 390px and 1.5px at 1440px, or it stops reading as a
- * sheet and starts reading as clip art. Since user units are millimetres,
- * these are px targets the component converts each time it measures.
- *
- * `vector-effect: non-scaling-stroke` is the obvious way to hold a line
- * weight and it CANNOT be used here. It moves the whole stroke — dash
- * pattern included — into device space, while getTotalLength() keeps
- * returning millimetres, so a dash-based draw-on is measured in one unit
- * and rendered in another. Verified in Chromium: a 4000-unit path at
- * dashoffset 2000 renders half-drawn without the vector-effect and
- * essentially COMPLETE with it.
- * ------------------------------------------------------------------ */
-export const WEIGHT = {
-  /** Cabinet work — the drawing proper. */
-  line: 1.5,
-  /** Dimension lines, extension lines, leaders. Deliberately lighter:
-   *  annotation must never out-weigh the thing annotated. */
-  dim: 1,
-  /** Dimension numbers and notes. */
-  label: 11,
-  /** Title block and the units note. */
-  note: 9.5,
-} as const;
+/*
+ * WEIGHT moved to lib/elevation/scene.ts when the planner arrived. A
+ * rendered line weight describes the SHEET, not the scroll, and three
+ * surfaces now draw that sheet — leaving it here would have made the
+ * planner import the scroll section's choreography module to find out
+ * how thick a cabinet line is.
+ */
 
 /* ---------------------------------------------------------------------
  * CHOREOGRAPHY

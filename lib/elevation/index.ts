@@ -8,3 +8,4 @@
 export * from "./spec";
 export * from "./geometry";
 export * from "./scene";
+export * from "./validate";

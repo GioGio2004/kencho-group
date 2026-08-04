@@ -13,6 +13,7 @@ import { SHOWCASE, SHOWCASE_MOTION as M } from "@/lib/showcase";
 import { whatsappUrl } from "@/lib/site";
 import { track } from "@/lib/analytics";
 import { DUR, EASE, REVEAL_START, STAGGER } from "@/lib/motion";
+import { Sheet } from "@/app/_components/LineWork";
 
 /*
  * SHOWCASE — the split-screen synced gallery.
@@ -166,8 +167,11 @@ export default function Showcase() {
       ref={rootRef}
       id="showcase"
       aria-labelledby="showcase-title"
-      className="relative bg-charcoal text-sand"
+      className="relative bg-charcoal text-bone"
     >
+      {/* The page, set out the way the drawing is. */}
+      <Sheet tone="invert" guides={3} inset="inset-x-5 inset-y-10 sm:inset-x-8 lg:inset-x-12" />
+
       {/* Neither of these carries [data-srev]: each primitive brings its
           own trigger, and a second `from` tween on the same element would
           be fighting it for the transform. */}
@@ -181,7 +185,7 @@ export default function Showcase() {
           as="h2"
           id="showcase-title"
           variant="stack"
-          className="u-display mt-4 text-[clamp(2rem,6vw,4.5rem)] text-sand uppercase"
+          className="u-display mt-4 text-[clamp(2rem,6vw,4.5rem)] text-bone uppercase"
         >
           {t("title")}
         </RevealText>
@@ -292,7 +296,7 @@ export default function Showcase() {
               <div className="px-5 pb-20 sm:px-8 lg:px-[12%]">
                 <p
                   data-srev
-                  className="max-w-md text-sm leading-relaxed text-sand/70 sm:text-base"
+                  className="max-w-md text-sm leading-relaxed text-bone/70 sm:text-base"
                 >
                   {t(`items.${project.id}.line`)}
                 </p>

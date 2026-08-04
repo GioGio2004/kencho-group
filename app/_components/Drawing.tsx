@@ -7,12 +7,14 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { IMAGES, src } from "@/lib/images";
 import ElevationScene from "@/app/_components/ElevationScene";
 import {
   DIM,
   K01,
   WAVES,
+  WEIGHT,
   buildScene,
   type SceneHit,
 } from "@/lib/elevation";
@@ -26,7 +28,6 @@ import {
   TIMELINE,
   WAVE_AT,
   WAVE_DUR,
-  WEIGHT,
   stageAt,
 } from "@/lib/drawing";
 import { DUR, EASE, MASK_DESCENDER, smoothstep } from "@/lib/motion";
@@ -190,9 +191,33 @@ export default function Drawing() {
             const len = el.getTotalLength();
             gsap.set(el, { strokeDasharray: len, strokeDashoffset: len });
           });
-          gsap.set(live("[data-pop]"), { scale: 0, transformOrigin: "50% 50%" });
+          /*
+           * THE STARFIELD BUG.
+           *
+           * `scale: 0` alone does NOT hide these. A handle is a two-point
+           * <path> with `stroke-linecap: round`, and a round cap on a
+           * zero-length stroke is a filled CIRCLE of the stroke's own
+           * width — so scaling forty handles to nothing left forty
+           * bone-white dots scattered over the sheet, which on charcoal
+           * read as a night sky. Invisible on paper, obvious on coal,
+           * and shipped for as long as the section had existed.
+           *
+           * `autoAlpha` is what actually removes them; the scale stays
+           * because it is what makes them pop rather than fade.
+           */
+          gsap.set(live("[data-pop]"), {
+            scale: 0,
+            autoAlpha: 0,
+            transformOrigin: "50% 50%",
+          });
           gsap.set(qsa("[data-tint]"), { opacity: 0 });
           gsap.set(qsa("[data-chain] text"), { opacity: 0 });
+          // K-01 has no tall units, so this sheet carries no written
+          // notes — but the scene builder emits them for any spec that
+          // does, and a note left out of every stage would sit at full
+          // dashoffset forever. Same class of bug as the title block's
+          // rule below; handled rather than left to be rediscovered.
+          gsap.set(qsa("#notes text"), { opacity: 0 });
           qsa<SVGTextElement>("[data-chain] text").forEach((el) => {
             el.textContent = "0";
           });
@@ -324,6 +349,7 @@ export default function Drawing() {
               items,
               {
                 scale: 1,
+                autoAlpha: 1,
                 duration: slot.dur * 0.3,
                 ease: EASE.pop,
                 stagger: { amount: slot.dur * 0.6 },
@@ -344,7 +370,19 @@ export default function Drawing() {
           // every stage it simply never drew, and sat at full dashoffset
           // for the life of the section. Invisible, so nothing looked
           // broken; the verifier is what found it (52 of 53 paths).
-          draw("#details [data-draw], #titleblock [data-draw]", STAGE.details);
+          draw(
+            "#details [data-draw], #titleblock [data-draw], #notes [data-draw]",
+            STAGE.details,
+          );
+          pop("#notes [data-pop]", STAGE.details);
+          const noteText = qsa("#notes text");
+          if (noteText.length) {
+            tl.to(
+              noteText,
+              { opacity: 1, duration: STAGE.details.dur * 0.4 },
+              STAGE.details.at + STAGE.details.dur * 0.6,
+            );
+          }
           tl.to(
             qsa("[data-tint]"),
             {
@@ -425,6 +463,7 @@ export default function Drawing() {
               heads,
               {
                 scale: 1,
+                autoAlpha: 1,
                 duration: WAVE_DUR * 0.18,
                 ease: EASE.pop,
                 stagger: { amount: WAVE_DUR * 0.2 },
@@ -612,6 +651,32 @@ export default function Drawing() {
                   },
                   slot.in,
                 );
+
+                /*
+                 * The planner link belongs to the closing beat, so it
+                 * arrives with it and holds with it. `autoAlpha` rather
+                 * than `opacity`: an invisible link that is still in the
+                 * tab order is a keyboard trap in an otherwise empty
+                 * section, and this is a link rather than a heading, so
+                 * taking it out of the accessibility tree while it is
+                 * not being offered is the correct reading.
+                 */
+                if (i === beatSlots.length - 1) {
+                  const cta = q("[data-cta]")[0];
+                  if (cta) {
+                    gsap.set(cta, { autoAlpha: 0, y: 14 });
+                    tl.to(
+                      cta,
+                      {
+                        autoAlpha: 1,
+                        y: 0,
+                        duration: span * 0.14,
+                        ease: EASE.narrative,
+                      },
+                      slot.in + span * 0.12,
+                    );
+                  }
+                }
 
                 // The last beat never leaves — it is the section's
                 // closing line, and it holds over the photograph.
@@ -865,16 +930,22 @@ export default function Drawing() {
            * ramps overlap nothing and a pair of scrubbed tweens on one
            * property would spend the middle of the section arguing.
            *
-           * The `data-surface` flip on <html> is what swaps the header
-           * and the two glass pills. It carries HYSTERESIS: flipping on a
-           * bare 0.5 crossing makes a fast scroll across the boundary
-           * strobe, because the wash opacity dithers either side of the
-           * threshold. Enter dark at 0.55, leave at 0.45, and the flip
-           * happens once in each direction no matter how fast the
-           * crossing is.
+           * The `data-chapter` flip on <html> tells the fixed header it
+           * is over the deep surface rather than the page one. It used to
+           * say `data-surface="dark"` and force a charcoal theme onto a
+           * light page — which is precisely why this section read as a
+           * different website for four screens. The sheet now takes its
+           * ink and its paper from whatever theme is running, so all
+           * this has left to announce is the change of DEPTH.
+           *
+           * It carries HYSTERESIS: flipping on a bare 0.5 crossing makes
+           * a fast scroll across the boundary strobe, because the wash
+           * opacity dithers either side of the threshold. Enter at 0.55,
+           * leave at 0.45, and the flip happens once in each direction no
+           * matter how fast the crossing is.
            * ------------------------------------------------------ */
           const wash = q("[data-wash]")[0];
-          let dark = false;
+          let deep = false;
           let surfaceFrame = 0;
 
           const readSurface = () => {
@@ -898,12 +969,11 @@ export default function Drawing() {
             if (wash) gsap.set(wash, { opacity: level });
 
             /*
-             * The wash stays dark through the finale, but what is behind
-             * the fixed pills by then is not the wash — it is a bright
-             * photograph filling the viewport. Leaving them in their
-             * dark variant put bone-white type on a white worktop.
-             * So the surface flag also closes once the photograph has
-             * substantially arrived, a beat before the exit ramp starts.
+             * The wash holds through the finale, but what is behind the
+             * fixed pills by then is not the wash — it is a bright
+             * photograph filling the viewport. So the flag also closes
+             * once the photograph has substantially arrived, a beat
+             * before the exit ramp starts.
              */
             const pinned = gsap.utils.clamp(
               0,
@@ -913,15 +983,15 @@ export default function Drawing() {
             const litByPhoto =
               pinned > (built.at + built.dur * 0.3) / TIMELINE;
 
-            const wantDark = level > 0.55 && !litByPhoto;
-            const keepDark = level > 0.45 && !litByPhoto;
+            const wantDeep = level > 0.55 && !litByPhoto;
+            const keepDeep = level > 0.45 && !litByPhoto;
 
-            if (!dark && wantDark) {
-              dark = true;
-              document.documentElement.setAttribute("data-surface", "dark");
-            } else if (dark && !keepDark) {
-              dark = false;
-              document.documentElement.removeAttribute("data-surface");
+            if (!deep && wantDeep) {
+              deep = true;
+              document.documentElement.setAttribute("data-chapter", "drawing");
+            } else if (deep && !keepDeep) {
+              deep = false;
+              document.documentElement.removeAttribute("data-chapter");
             }
           };
 
@@ -943,7 +1013,7 @@ export default function Drawing() {
           cleanups.push(() => {
             surfaceListeners.abort();
             if (surfaceFrame) cancelAnimationFrame(surfaceFrame);
-            document.documentElement.removeAttribute("data-surface");
+            document.documentElement.removeAttribute("data-chapter");
           });
 
           cleanups.push(() => {
@@ -975,7 +1045,6 @@ export default function Drawing() {
       id="drawing"
       data-static
       data-drawing
-      data-surface="dark"
       aria-labelledby="drawing-title"
       className="relative"
     >
@@ -1119,6 +1188,28 @@ export default function Drawing() {
                   {t.rich("beatThree", { em: (chunks) => <em>{chunks}</em> })}
                 </p>
               </div>
+
+              {/*
+                THE HAND-OFF. The section's argument ends at "then we
+                build exactly this" — which is the moment the visitor has
+                the most reason to want a sheet of their own, and the
+                only moment on the page where they have just watched one
+                being made. The planner link belongs here rather than in
+                the nav for the same reason a showroom puts the order
+                desk at the end of the floor.
+
+                Outside the stacked beat cell, so SplitText never sees
+                it, and `pointer-events-auto` because the copy layer it
+                sits in is deliberately transparent to the pointer.
+              */}
+              <Link
+                data-cta
+                href="/planner"
+                className="dwg-cta u-press pointer-events-auto mt-6 inline-flex items-center gap-3 rounded-full border px-5 py-2.5 lg:mt-8"
+              >
+                {t("plannerCta")}
+                <span aria-hidden="true">→</span>
+              </Link>
             </div>
           </div>
 
@@ -1139,6 +1230,7 @@ export default function Drawing() {
               unitLabel={(hit) =>
                 `${t(`units.${hit.type}`)} — ${hit.w} × ${hit.h} × ${hit.d3} mm`
               }
+              noteLabel={(note) => t(`notes.${note.key}`)}
             />
               </svg>
 

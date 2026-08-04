@@ -6,7 +6,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useLocale, useTranslations } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import MagneticType from "@/app/_components/MagneticType";
 import { submitLead } from "@/app/actions";
@@ -32,11 +32,11 @@ const MAGNET_EASE = "elastic.out(1, 0.4)";
 
 /** Small tracked label, always visible above its input or block. */
 const LABEL_CLASS =
-  "block text-[0.6875rem] uppercase tracking-[0.26em] text-sand/55";
+  "block text-[0.6875rem] uppercase tracking-[0.26em] text-bone/55";
 
 /** Minimal underline field: transparent, one hairline, clay on focus. */
 const INPUT_CLASS =
-  "mt-4 block w-full appearance-none rounded-none border-b border-sand/25 bg-transparent px-0 py-3 text-base text-sand caret-clay transition-colors duration-300 placeholder:text-sand/30 focus:border-clay sm:text-lg";
+  "mt-4 block w-full appearance-none rounded-none border-b border-bone/25 bg-transparent px-0 py-3 text-base text-bone caret-clay transition-colors duration-300 placeholder:text-bone/30 focus:border-clay sm:text-lg";
 
 export default function Contact() {
   const t = useTranslations("contact");
@@ -165,7 +165,7 @@ export default function Contact() {
       ref={rootRef}
       id="contact"
       aria-labelledby="contact-title"
-      className="bg-charcoal text-sand py-28 sm:py-40 lg:py-48"
+      className="bg-charcoal text-bone py-28 sm:py-40 lg:py-48"
     >
       <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-16">
         <div className="grid gap-16 lg:grid-cols-12 lg:gap-24">
@@ -173,7 +173,7 @@ export default function Contact() {
           <div className="lg:col-span-6">
             {/* .u-eyebrow is unlayered CSS, so its ink colour outranks a
                 plain utility on this dark band — `!` puts sand back on top. */}
-            <p data-lead className="u-eyebrow text-sand/55!">
+            <p data-lead className="u-eyebrow text-bone/55!">
               {t("eyebrow")}
             </p>
 
@@ -187,7 +187,7 @@ export default function Contact() {
 
             <p
               data-lead
-              className="mt-8 max-w-md text-base leading-[1.7] text-sand/70 sm:text-lg"
+              className="mt-8 max-w-md text-base leading-[1.7] text-bone/70 sm:text-lg"
             >
               {t("sub")}
             </p>
@@ -232,12 +232,12 @@ export default function Contact() {
             {/* Address card — text only, the map stays a link away. */}
             <div
               data-lead
-              className="mt-12 max-w-md border border-sand/15 p-6 sm:p-8"
+              className="mt-12 max-w-md border border-bone/15 p-6 sm:p-8"
             >
               <p className={LABEL_CLASS}>{t("addressLabel")}</p>
               <p className="mt-3 text-base sm:text-lg">{t("address")}</p>
               <a
-                className="u-link mt-5 inline-block text-sm text-sand/70"
+                className="u-link mt-5 inline-block text-sm text-bone/70"
                 href={SITE.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -251,11 +251,11 @@ export default function Contact() {
           <div className="lg:col-span-5 lg:col-start-8">
             <div aria-live="polite">
               {state.ok ? (
-                <div className="border-t border-sand/15 pt-10">
+                <div className="border-t border-bone/15 pt-10">
                   <p className="u-display text-[clamp(1.5rem,4.5vw,2.4rem)] leading-[1.2]!">
                     {t("success")}
                   </p>
-                  <p className="mt-6 max-w-md text-base text-sand/70">
+                  <p className="mt-6 max-w-md text-base text-bone/70">
                     {t("replyNote")}
                   </p>
                 </div>
@@ -291,7 +291,7 @@ export default function Contact() {
                   {state.error === "name" ? (
                     <p
                       id="contact-name-error"
-                      className="mt-3 text-sm text-sand/85"
+                      className="mt-3 text-sm text-bone/85"
                     >
                       {t("errorName")}
                     </p>
@@ -321,7 +321,7 @@ export default function Contact() {
                   {state.error === "phone" ? (
                     <p
                       id="contact-phone-error"
-                      className="mt-3 text-sm text-sand/85"
+                      className="mt-3 text-sm text-bone/85"
                     >
                       {t("errorPhone")}
                     </p>
@@ -332,11 +332,11 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={pending}
-                    className="u-press inline-flex w-full items-center justify-center border border-sand/30 px-12 py-5 text-sm uppercase tracking-[0.18em] text-sand hover:border-sand/60 disabled:opacity-60 sm:w-auto"
+                    className="u-press inline-flex w-full items-center justify-center border border-bone/30 px-12 py-5 text-sm uppercase tracking-[0.18em] text-bone hover:border-bone/60 disabled:opacity-60 sm:w-auto"
                   >
                     {t("submit")}
                   </button>
-                  <p className="mt-6 max-w-sm text-sm text-sand/55">
+                  <p className="mt-6 max-w-sm text-sm text-bone/55">
                     {t("replyNote")}
                   </p>
                 </div>
@@ -392,7 +392,7 @@ export function Footer() {
   const router = useRouter();
 
   return (
-    <footer className="border-t border-sand/10 bg-charcoal text-sand">
+    <footer className="border-t border-bone/10 bg-charcoal text-bone">
       <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-16">
         <div className="flex flex-col gap-14 py-16 lg:flex-row lg:items-start lg:justify-between lg:gap-12 lg:py-20">
           {/* Wordmark lockup — type only. Inline letter-spacing: the
@@ -413,8 +413,8 @@ export function Footer() {
                 {SITE.wordmarkSub}
               </span>
             </p>
-            <p className="mt-6 text-sm text-sand/55">{t("tagline")}</p>
-            <p className="mt-2 text-sm text-sand/55">{tContact("address")}</p>
+            <p className="mt-6 text-sm text-bone/55">{t("tagline")}</p>
+            <p className="mt-2 text-sm text-bone/55">{tContact("address")}</p>
           </div>
 
           <nav>
@@ -422,13 +422,24 @@ export function Footer() {
               {FOOTER_NAV.map((item) => (
                 <li key={item.href}>
                   <a
-                    className="u-link text-sand/70 transition-colors hover:text-sand"
+                    className="u-link text-bone/70 transition-colors hover:text-bone"
                     href={item.href}
                   >
                     {tNav(item.key)}
                   </a>
                 </li>
               ))}
+              {/* The header only has room for this from `sm` up, and the
+                  planner is the one thing on the site a phone visitor
+                  might come back for. */}
+              <li>
+                <Link
+                  className="u-link text-clay transition-colors hover:text-bone"
+                  href="/planner"
+                >
+                  {tNav("planner")}
+                </Link>
+              </li>
             </ul>
           </nav>
 
@@ -438,7 +449,7 @@ export function Footer() {
               {SOCIAL_LINKS.map((social) => (
                 <li key={social.label}>
                   <a
-                    className="u-link text-sand/70 transition-colors hover:text-sand"
+                    className="u-link text-bone/70 transition-colors hover:text-bone"
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -461,7 +472,7 @@ export function Footer() {
           a horizontal scrollbar. Letters are Latin in all three locales,
           which is what makes the per-character split safe here.
         */}
-        <div className="overflow-hidden border-t border-sand/10 pt-12 pb-4">
+        <div className="overflow-hidden border-t border-bone/10 pt-12 pb-4">
           {/*
             `strength` well under 1. REPEL is tuned for a headline, where
             a word has to clear its neighbour to read as pushed at all;
@@ -474,14 +485,14 @@ export function Footer() {
             as="p"
             unit="chars"
             strength={0.34}
-            className="u-display block text-center text-[clamp(2.2rem,12vw,9.5rem)] leading-[0.9] text-sand/90 select-none"
+            className="u-display block text-center text-[clamp(2.2rem,12vw,9.5rem)] leading-[0.9] text-bone/90 select-none"
           >
             {`${SITE.wordmark} ${SITE.wordmarkSub}`}
           </MagneticType>
         </div>
 
-        <div className="flex flex-col gap-6 border-t border-sand/10 py-8 lg:flex-row lg:items-center lg:justify-between">
-          <p className="text-xs text-sand/45">
+        <div className="flex flex-col gap-6 border-t border-bone/10 py-8 lg:flex-row lg:items-center lg:justify-between">
+          <p className="text-xs text-bone/45">
             {t("rights", { year: SITE.year })}
           </p>
 
@@ -509,7 +520,7 @@ export function Footer() {
                     }
                   }}
                   className={`u-press text-xs tracking-[0.12em] ${
-                    active ? "text-sand" : "text-sand/45 hover:text-sand/70"
+                    active ? "text-bone" : "text-bone/45 hover:text-bone/70"
                   }`}
                 >
                   {option.short}

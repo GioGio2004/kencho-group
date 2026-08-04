@@ -9,6 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTranslations } from "next-intl";
 import { IMAGES, src } from "@/lib/images";
 import { DUR, EASE, REVEAL_START, prefersReducedMotion } from "@/lib/motion";
+import { Sheet } from "@/app/_components/LineWork";
 
 /*
  * BEFORE / AFTER — the signature interactive moment.
@@ -305,8 +306,11 @@ export default function BeforeAfter() {
       ref={sectionRef}
       id="transformation"
       aria-labelledby="transformation-title"
-      className="bg-sand-deep py-24 sm:py-32 lg:py-40"
+      className="relative bg-sand-deep py-24 sm:py-32 lg:py-40"
     >
+      {/* The page, set out the way the drawing is. */}
+      <Sheet guides={3} inset="inset-x-5 inset-y-10 sm:inset-x-8 lg:inset-x-12" />
+
       <div className="mx-auto w-full max-w-[86rem] px-5 sm:px-8 lg:px-12">
         <div className="flex items-center gap-4">
           <span aria-hidden="true" className="block h-px w-8 bg-clay" />

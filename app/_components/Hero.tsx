@@ -521,7 +521,7 @@ export default function Hero() {
         {/* Gold progress rail, right edge. */}
         <div
           aria-hidden="true"
-          className="absolute top-1/2 right-3 z-10 h-24 w-px -translate-y-1/2 bg-sand/20 sm:right-6 sm:h-32"
+          className="absolute top-1/2 right-3 z-10 h-24 w-px -translate-y-1/2 bg-bone/20 sm:right-6 sm:h-32"
         >
           <div
             data-hero-progress
@@ -541,7 +541,7 @@ export default function Hero() {
           {/* 0–15% — the door opens. */}
           <p
             data-beat="welcome"
-            className="col-start-1 row-start-1 self-end justify-self-start px-5 pb-28 text-xs tracking-[0.28em] text-sand/85 uppercase sm:px-8 sm:pb-24 sm:text-sm lg:px-12"
+            className="col-start-1 row-start-1 self-end justify-self-start px-5 pb-28 text-xs tracking-[0.28em] text-bone/85 uppercase sm:px-8 sm:pb-24 sm:text-sm lg:px-12"
           >
             {t("beatWelcome")}
           </p>
@@ -554,7 +554,7 @@ export default function Hero() {
             <h1
               id="hero-title"
               data-hero-heading
-              className="u-display max-w-[20ch] text-[clamp(2.4rem,9vw,6.5rem)] text-sand"
+              className="u-display max-w-[20ch] text-[clamp(2.4rem,9vw,6.5rem)] text-bone"
             >
               {headlineLines.map((line, i) => (
                 <span key={i} className="block">
@@ -569,7 +569,7 @@ export default function Hero() {
             data-beat="craft"
             className="col-start-1 row-start-1 self-end px-5 pb-32 sm:px-8 sm:pb-28 lg:px-12 lg:pb-24"
           >
-            <p className="max-w-md text-base leading-relaxed text-sand sm:text-lg">
+            <p className="max-w-md text-base leading-relaxed text-bone sm:text-lg">
               {t("beatCraft")}
             </p>
             <p className="mt-4 text-[0.6rem] tracking-[0.55em] text-clay uppercase">
@@ -582,11 +582,11 @@ export default function Hero() {
             data-beat="cue"
             className="col-start-1 row-start-1 flex flex-col items-center gap-2 self-end justify-self-center pb-28 sm:pb-24"
           >
-            <span className="text-[0.6rem] tracking-[0.3em] text-sand/75 uppercase">
+            <span className="text-[0.6rem] tracking-[0.3em] text-bone/75 uppercase">
               {t("beatContinue")}
             </span>
-            <span className="relative block h-9 w-px overflow-hidden bg-sand/25">
-              <span className="cue-travel absolute inset-x-0 top-0 block h-4 bg-sand/80" />
+            <span className="relative block h-9 w-px overflow-hidden bg-bone/25">
+              <span className="cue-travel absolute inset-x-0 top-0 block h-4 bg-bone/80" />
             </span>
           </div>
         </div>

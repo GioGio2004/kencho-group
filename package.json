@@ -12,7 +12,7 @@
     "verify:kinetic": "node scripts/verify-kinetic.mjs",
     "verify:rail": "node scripts/verify-rail.mjs",
     "verify:drawing": "node --import ./scripts/alias-hook.mjs scripts/verify-drawing.mjs",
-    "verify:dark": "node --import ./scripts/alias-hook.mjs scripts/verify-dark.mjs",
+    "verify:dark": "node --import ./scripts/alias-hook.mjs scripts/verify-dark.mjs http://localhost:3000 light && node --import ./scripts/alias-hook.mjs scripts/verify-dark.mjs http://localhost:3000 dark",
     "verify:theme": "node --import ./scripts/alias-hook.mjs scripts/verify-theme.mjs",
     "verify:perf": "node scripts/verify-perf.mjs",
     "verify:pacing": "node --import ./scripts/alias-hook.mjs scripts/verify-pacing.mjs",

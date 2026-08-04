@@ -110,12 +110,37 @@ export interface SceneHit {
   material: string;
 }
 
+/**
+ * A written note on the sheet — a bracket over the thing it is about, a
+ * leader up into the margin, and a line of text.
+ *
+ * Carries a KEY, never a sentence, so the same note reads Georgian on
+ * the planner, Russian in an exported PDF and English in the section
+ * without any of the three owning the wording. Built here rather than in
+ * a component for the same reason the dimensions are: a note that the
+ * planner draws and the PDF does not is a note that says something about
+ * the kitchen only one of them knows.
+ */
+export interface SceneNote {
+  id: string;
+  /** The base unit the note is about. */
+  unitId: string;
+  /** Key under `drawing.notes`. */
+  key: string;
+  /** Text anchor, in sheet millimetres. */
+  x: number;
+  y: number;
+  /** Bracket and leader. */
+  paths: ScenePath[];
+}
+
 export interface Scene {
   groups: SceneGroup[];
   /** Faces that tint late, for depth. */
   tints: string[];
   chains: SceneChain[];
   hits: SceneHit[];
+  notes: SceneNote[];
   viewBox: { x: number; y: number; w: number; h: number };
   runWidth: number;
   levels: Levels;
@@ -144,6 +169,54 @@ export const CHAIN_OFFSET = {
   left: -300,
   right: 560,
   fronts: -110,
+} as const;
+
+/**
+ * Where a written note sits. `up` clears the extractor's width chain,
+ * which already occupies the 370 mm directly above the wall units — a
+ * note printed into that band would be a sentence lying across a
+ * dimension, which is the one thing a sheet may never do.
+ */
+export const NOTE = {
+  /** Height of the text above the top of the wall units, mm. */
+  up: 560,
+  /** How far the bracket is inset from the bay's own edges. */
+  inset: 50,
+  /** Length of the bracket's end ticks. */
+  tick: 110,
+  /** Gap between the text baseline and the head of the leader. */
+  lift: 90,
+} as const;
+
+/* ---------------------------------------------------------------------
+ * RENDERED SIZES
+ *
+ * A technical drawing's line weight is a property of the DRAWING, not of
+ * the zoom: 1.5px at 390px and 1.5px at 1440px, or it stops reading as a
+ * sheet and starts reading as clip art. Since user units are millimetres,
+ * these are px targets each consumer converts every time it measures —
+ * which is why they live beside the geometry rather than inside either
+ * surface: the section, the planner and the PDF all draw the same sheet,
+ * so they all draw it at the same weight.
+ *
+ * `vector-effect: non-scaling-stroke` is the obvious way to hold a line
+ * weight and it CANNOT be used here. It moves the whole stroke — dash
+ * pattern included — into device space, while getTotalLength() keeps
+ * returning millimetres, so a dash-based draw-on is measured in one unit
+ * and rendered in another. Verified in Chromium: a 4000-unit path at
+ * dashoffset 2000 renders half-drawn without the vector-effect and
+ * essentially COMPLETE with it.
+ * ------------------------------------------------------------------ */
+export const WEIGHT = {
+  /** Cabinet work — the drawing proper. */
+  line: 1.5,
+  /** Dimension lines, extension lines, leaders. Deliberately lighter:
+   *  annotation must never out-weigh the thing annotated. */
+  dim: 1,
+  /** Dimension numbers and notes. */
+  label: 11,
+  /** Title block, the units note, and written notes on the sheet. */
+  note: 9.5,
 } as const;
 
 /* ---------------------------------------------------------------------
@@ -372,6 +445,9 @@ export function buildScene(spec: KitchenSpec, opts: SceneOptions = {}): Scene {
   /* ---- CHAINS ---- */
   const chains = buildChains(spec, base, upper, levels, runWidth, wide);
 
+  /* ---- NOTES ---- */
+  const notes = buildNotes(spec, base, levels);
+
   /* ---- THE SHEET ----
    * Sized from the content rather than from a constant, so a 1200mm
    * kitchen and a 6000mm one are both framed rather than one of them
@@ -379,7 +455,13 @@ export function buildScene(spec: KitchenSpec, opts: SceneOptions = {}): Scene {
   const rightChain = runWidth + CHAIN_OFFSET.right;
   const leftEdge = wide ? CHAIN_OFFSET.left - 260 : -60;
   const rightEdge = rightChain + 200;
-  const topEdge = levels.upperTop - 300 - DIM.extPast - 130 - sky;
+  const topEdge = Math.min(
+    levels.upperTop - 300 - DIM.extPast - 130 - sky,
+    // A note lives above every chain, so the sheet has to grow to hold
+    // it. Deriving the margin instead of reserving one keeps a kitchen
+    // with no notes framed exactly as tightly as it was before.
+    notes.length ? levels.upperTop - NOTE.up - 240 : Infinity,
+  );
   const bottomEdge = FLOOR + 620 + DIM.extPast + 140;
 
   return {
@@ -387,6 +469,7 @@ export function buildScene(spec: KitchenSpec, opts: SceneOptions = {}): Scene {
     tints,
     chains,
     hits,
+    notes,
     viewBox: {
       x: leftEdge,
       y: topEdge,
@@ -396,6 +479,61 @@ export function buildScene(spec: KitchenSpec, opts: SceneOptions = {}): Scene {
     runWidth,
     levels,
   };
+}
+
+/* ---------------------------------------------------------------------
+ * NOTES
+ *
+ * One rule, one note: a tall unit runs floor to ceiling, so the wall run
+ * has no bay above it. `placeUnits` already skips that bay — which means
+ * the drawing shows a hole in the upper row with nothing saying why, and
+ * a hole a visitor cannot explain reads as a bug in the planner rather
+ * than as the cabinet they just asked for.
+ *
+ * The note is emitted only when there IS an upper row to have a gap in.
+ * A base-only kitchen has no wall units anywhere, so a note pointing out
+ * that this particular bay has none would be noise.
+ * ------------------------------------------------------------------ */
+function buildNotes(
+  spec: KitchenSpec,
+  base: PlacedUnit[],
+  levels: Levels,
+): SceneNote[] {
+  if (!spec.upperRow) return [];
+
+  const bandY = (levels.upperTop + levels.upperBottom) / 2;
+  const textY = levels.upperTop - NOTE.up;
+
+  return base
+    .filter((u) => u.type === "tall")
+    .map((u) => {
+      const left = u.x + NOTE.inset;
+      const right = u.x + u.width - NOTE.inset;
+      const cx = u.x + u.width / 2;
+
+      return {
+        id: `note-${u.id}`,
+        unitId: u.id,
+        key: "tallBay",
+        x: cx,
+        y: textY,
+        paths: [
+          // A bracket opening upward around the bay the wall run skips.
+          { role: "draw" as const, d: seg(left, bandY, right, bandY) },
+          { role: "draw" as const, d: seg(left, bandY, left, bandY - NOTE.tick) },
+          {
+            role: "draw" as const,
+            d: seg(right, bandY, right, bandY - NOTE.tick),
+          },
+          // The leader, from just under the text down to the bracket.
+          { role: "draw" as const, d: seg(cx, textY + NOTE.lift, cx, bandY) },
+          {
+            role: "pop" as const,
+            d: arrow(cx, bandY, 0, -1, DIM.arrowLen, DIM.arrowHalf),
+          },
+        ],
+      };
+    });
 }
 
 /* ---------------------------------------------------------------------

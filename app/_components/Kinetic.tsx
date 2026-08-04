@@ -50,7 +50,7 @@ export default function Kinetic() {
     <section
       id="kinetic"
       aria-labelledby="kinetic-title"
-      className="relative bg-charcoal text-sand"
+      className="relative bg-charcoal text-bone"
     >
       {/* The runway. WordMorph measures its scrub against this. */}
       <div data-morph-section className="relative h-[240svh]">
@@ -89,7 +89,7 @@ export default function Kinetic() {
       <div className="px-6 pb-28 sm:px-10 sm:pb-40 lg:px-16">
         <RevealText
           variant="scatter"
-          className="u-display max-w-3xl text-[clamp(1.25rem,3.4vw,2.4rem)] leading-[1.25]! text-sand/80"
+          className="u-display max-w-3xl text-[clamp(1.25rem,3.4vw,2.4rem)] leading-[1.25]! text-bone/80"
         >
           {t("note")}
         </RevealText>

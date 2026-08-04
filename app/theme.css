@@ -16,66 +16,304 @@
  * ORDER MATTERS. This file is imported by globals.css AFTER
  * `@import "tailwindcss"` so the `@theme inline` block below can extend
  * Tailwind's theme rather than be overwritten by it.
+ *
+ * ---------------------------------------------------------------------
+ * THE THREE LAYERS
+ * ---------------------------------------------------------------------
+ * 1. RAW PALETTE — the only literals in the codebase. Named by what they
+ *    ARE (stone, espresso, brass, coal, bone), never by what they do.
+ * 2. SEMANTIC — named by ROLE (--surface, --fg, --accent, --line). This
+ *    is the layer that flips between light and dark, and the only layer
+ *    a component should ever reason about.
+ * 3. COMPATIBILITY — the palette names the site was built on (--sand,
+ *    --ink, --clay, --charcoal, --dwg-*) aliased onto the semantic layer,
+ *    so `text-ink` means "the page's text colour" in both themes rather
+ *    than "brown".
+ *
+ * WHY A ROLE LAYER AT ALL. The site shipped with `bg-charcoal
+ * text-sand` on its inverted bands. Read literally, dark mode turns that
+ * into near-black type on near-black. The roles are what make the
+ * inversion survive: --invert-fg is bone in BOTH themes, because the
+ * band it sits on is dark in both.
  * ================================================================== */
 
 /* ---------------------------------------------------------------------
- * 1. LIGHT SURFACE — the page's default material.
+ * 1. RAW PALETTE — cold graphite, one bronze.
+ *
+ * The first cut of this was warm stone and brass, and it read as
+ * friendly. This is a workshop that measures to the millimetre; the page
+ * should read the way the drawing does — cool, exact, slightly severe.
+ *
+ * So the greys are neutral-to-cool with a trace of blue in the paper and
+ * a true blue-black in the ink, and ALL of the warmth in the palette is
+ * concentrated into a single bronze. One warm value against a cold field
+ * reads as a metal fitting; the same value against a warm field reads as
+ * beige. That is the whole colour argument of the site.
  * ------------------------------------------------------------------ */
 :root {
-  /* Surfaces, warm sand family */
-  --sand: #efe7dd;
-  --sand-deep: #e8dccf;
-  --shell: #f7f2ec;
+  /* Graphite — the light surface family, lightest to deepest. */
+  --stone-0: #f7f8f9;
+  --stone-1: #e9ebee;
+  --stone-2: #dee1e5;
+  --stone-3: #d1d5da;
 
-  /* Ink */
-  --ink: #2b2420;
-  --ink-70: color-mix(in srgb, var(--ink) 70%, transparent);
-  --ink-55: color-mix(in srgb, var(--ink) 55%, transparent);
-  --ink-40: color-mix(in srgb, var(--ink) 40%, transparent);
+  /* Ink. Blue-black rather than brown-black: on a cool paper a warm
+   * black reads as faded, and the difference is most visible in exactly
+   * the place it matters — a hairline. */
+  --espresso: #14171b;
+
+  /* The single accent. `--brass` carries display type and decoration at
+   * 3.2:1; `--brass-deep` is the one that carries body copy, at 5.4:1.
+   * Reach for the deep one whenever the text is small. */
+  --brass: #8d7448;
+  --brass-deep: #695531;
+
+  /* Coal — the dark surface family. Near-neutral and very close to
+   * black: the warm near-black the first cut used made the dark theme
+   * read as candlelight, and this section is a drawing board under a
+   * lamp. The lift between --coal-0 and --coal-1 is deliberately small
+   * so the page reads as flat stock rather than as a vignette. */
+  --coal-0: #0d0e10;
+  --coal-1: #14161a;
+  --coal-2: #08090b;
+
+  /* Ink, inverted. Cool bone — a warm bone on a cold black is the one
+   * combination that reads as cheap. */
+  --bone: #e6e9ec;
+
+  /* The accent, lit. Brighter than --brass on coal, and NOT for
+   * contrast — --brass measures acceptably here too. The reason is
+   * chromatic: --brass's value sits close enough to the ground that it
+   * reads muddy rather than as metal. */
+  --brass-lit: #c0a271;
+
+  /*
+   * THE ONE WARNING COLOUR.
+   *
+   * Brick rather than a signal red: everything it marks is a measurement
+   * being out by 40 mm, not a failure, and a saturated red on a cold
+   * grey reads as a browser error dialog. 4.9:1 on --stone-1.
+   */
+  --brick: #a8402c;
+  --brick-lit: #e0755c;
+}
+
+/* ---------------------------------------------------------------------
+ * 2. SEMANTIC — LIGHT (the default, and what the system resolves to
+ *    when the visitor has never chosen).
+ * ------------------------------------------------------------------ */
+:root {
+  --surface: var(--stone-1);
+  /* Raised: chips, cards, anything that should read as sitting on top. */
+  --surface-raised: var(--stone-0);
+  /* Sunk: alternating bands. */
+  --surface-sunk: var(--stone-3);
+  /* The drawing chapter — a deeper paper, so the section still reads as
+   * a change of material without leaving the theme. */
+  --surface-deep: var(--stone-2);
+  --surface-deep-lift: var(--stone-1);
+  /* The one inverted band: footer, contact, the kinetic poster. Dark in
+   * BOTH themes, which is why it has its own pair. */
+  --invert: var(--coal-0);
+  --invert-fg: var(--bone);
+
+  --fg: var(--espresso);
+  --accent: var(--brass);
+  --accent-deep: var(--brass-deep);
+  --alert: var(--brick);
+
+  /* Linework on the sheet, and the pen that lays it down. */
+  --sheet-line: var(--espresso);
+  --sheet-tip: var(--brass-deep);
+  --sheet-halo-alpha: 8%;
+  --sheet-noise: 0.035;
+  /* Faded linework needs a HIGHER mix on paper than on charcoal: a
+   * 58% espresso label measures 3.8:1 on stone and the same 58% bone
+   * measures 5.7:1 on coal. Same token, two values, both AA. */
+  --sheet-soft-mix: 74%;
+  --sheet-dim-mix: 70%;
+
+  color-scheme: light;
+}
+
+/* ---------------------------------------------------------------------
+ * 2b. SEMANTIC — DARK
+ *
+ * Two selectors, one block. `[data-theme="dark"]` is the visitor's
+ * choice, stamped on <html> before first paint by the boot script in
+ * layout.tsx. `[data-surface="dark"]` is a subtree that is dark
+ * REGARDLESS of the theme — the planner's stage, which is a drawing
+ * board and is charcoal the way a drawing board is.
+ * ------------------------------------------------------------------ */
+:root[data-theme="dark"],
+[data-surface="dark"] {
+  --surface: var(--coal-0);
+  --surface-raised: var(--coal-1);
+  --surface-sunk: var(--coal-2);
+  --surface-deep: var(--coal-2);
+  /* Barely a lift. The visitor asked for plain black behind the sheet
+   * and they are right: a vignette under a technical drawing reads as
+   * a photograph of one. */
+  --surface-deep-lift: var(--coal-0);
+  --invert: var(--coal-1);
+  --invert-fg: var(--bone);
+
+  --fg: var(--bone);
+  --accent: var(--brass-lit);
+  --accent-deep: var(--brass-lit);
+  --alert: var(--brick-lit);
+
+  --sheet-line: var(--bone);
+  --sheet-tip: #fffaf0;
+  --sheet-halo-alpha: 10%;
+  --sheet-noise: 0.03;
+  --sheet-soft-mix: 68%;
+  --sheet-dim-mix: 58%;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------------
+ * 3. COMPATIBILITY + DERIVED
+ *
+ * Everything below is computed from the two blocks above, so it is
+ * written once and correct in both themes.
+ * ------------------------------------------------------------------ */
+:root,
+[data-surface="dark"] {
+  /* The names the site was built on. */
+  --sand: var(--surface);
+  --sand-deep: var(--surface-sunk);
+  --shell: var(--surface-raised);
+  --ink: var(--fg);
+  --charcoal: var(--invert);
+  --clay: var(--accent);
+  --clay-deep: var(--accent-deep);
+
+  --ink-70: color-mix(in srgb, var(--fg) 70%, transparent);
+  --ink-55: color-mix(in srgb, var(--fg) 55%, transparent);
+  --ink-40: color-mix(in srgb, var(--fg) 40%, transparent);
   /* The portfolio filter chip border — was an inline rgba with no rung. */
-  --ink-35: color-mix(in srgb, var(--ink) 35%, transparent);
+  --ink-35: color-mix(in srgb, var(--fg) 35%, transparent);
 
-  /* The single accent — muted brass, used sparingly */
-  --clay: #b08d57;
-  --clay-deep: #8f7143;
+  /* Hairlines. The whole line system reads from these two. */
+  --line: color-mix(in srgb, var(--fg) 14%, transparent);
+  --line-strong: color-mix(in srgb, var(--fg) 26%, transparent);
+  /* A rule that has to stay visible over imagery or an inverted band. */
+  --line-invert: color-mix(in srgb, var(--invert-fg) 18%, transparent);
 
-  /* Deep charcoal — footer, wordmark, small brand moments */
-  --charcoal: #1c1b19;
-
-  /* Hairlines */
-  --line: color-mix(in srgb, var(--ink) 14%, transparent);
-  --line-strong: color-mix(in srgb, var(--ink) 26%, transparent);
+  --alert-line: color-mix(in srgb, var(--alert) 45%, transparent);
+  --alert-wash: color-mix(in srgb, var(--alert) 10%, transparent);
 
   /* -------------------------------------------------------------------
    * LIQUID GLASS — the single place to tune the material.
-   * Every value derives from --sand so retinting the surface retints
-   * the glass with it; before this they were re-typed rgb(239,231,221).
+   * Derived from --surface, so the glass retints with the theme instead
+   * of needing a second recipe per surface.
    * ---------------------------------------------------------------- */
-  --glass-tint: color-mix(in srgb, var(--sand) 28%, transparent);
-  --glass-tint-strong: color-mix(in srgb, var(--sand) 55%, transparent);
+  --glass-tint: color-mix(in srgb, var(--surface) 28%, transparent);
+  --glass-tint-strong: color-mix(in srgb, var(--surface) 62%, transparent);
   --glass-blur: 14px;
   --glass-saturate: 160%;
-  --glass-border: color-mix(in srgb, white 25%, transparent);
-  --glass-border-bright: color-mix(in srgb, white 42%, transparent);
-  --glass-highlight: color-mix(in srgb, white 30%, transparent);
+  --glass-border: color-mix(in srgb, var(--fg) 14%, transparent);
+  --glass-border-bright: color-mix(in srgb, var(--fg) 26%, transparent);
+  --glass-highlight: color-mix(in srgb, var(--surface-raised) 55%, transparent);
   --glass-shadow: 0 24px 60px -24px
-    color-mix(in srgb, var(--ink) 38%, transparent);
+    color-mix(in srgb, var(--coal-0) 38%, transparent);
 
-  /* Text selection. Was rgba(176,118,90,.22) — a terracotta measuring
-   * ΔE00 13.5 from --clay, i.e. a hue the palette does not contain.
-   * Merged onto --clay; the difference is invisible at 22% alpha. */
-  --selection: color-mix(in srgb, var(--clay) 24%, transparent);
+  /* Text selection and the focus ring. */
+  --selection: color-mix(in srgb, var(--accent) 26%, transparent);
+  --focus-ring: var(--accent);
+}
 
-  /* -------------------------------------------------------------------
-   * 2. SPACING — the page's vertical rhythm and its gutters.
-   *
-   * Five steps. `section` is the standard band, `section-lg` the two
-   * sections that deliberately breathe more (Manifesto, Contact), and
-   * `block`/`flow` are the two intra-section steps. The gutter is ONE
-   * value: the fixed header used a different progression from the
-   * sections it floats over, so its left edge misaligned with the copy
-   * beneath it by 1rem at base and 4rem at lg.
-   * ---------------------------------------------------------------- */
+/* Glass on charcoal: the light recipe reads as a grey smear, so the
+ * material swaps rather than its alpha. */
+:root[data-theme="dark"],
+[data-surface="dark"] {
+  --glass-tint: color-mix(in srgb, var(--surface-raised) 55%, transparent);
+  --glass-tint-strong: color-mix(in srgb, var(--surface-raised) 78%, transparent);
+  --glass-border: color-mix(in srgb, var(--fg) 16%, transparent);
+  --glass-highlight: color-mix(in srgb, var(--fg) 8%, transparent);
+  --glass-shadow: 0 24px 60px -24px color-mix(in srgb, black 60%, transparent);
+}
+
+/* =====================================================================
+ * THE SHEET — the drawing's own tokens.
+ * ---------------------------------------------------------------------
+ * The `--dwg-` prefix is an established API: scripts/verify-dark.mjs
+ * asserts AA by reading these exact names, Drawing.tsx and the planner
+ * consume them, and ElevationScene's classes resolve them.
+ *
+ * What changed with the theme system is only their VALUES. The drawing
+ * used to be bone-on-charcoal always, which is why the section had to
+ * force a dark surface onto a light page and why it read as a different
+ * website for four screens. Now it is ink-on-paper in light and
+ * bone-on-charcoal in dark — the same sheet, drawn in whatever the page
+ * is made of.
+ * ================================================================== */
+:root,
+[data-surface="dark"] {
+  --dwg-bg: var(--surface-deep);
+  --dwg-bg-lift: var(--surface-deep-lift);
+
+  --dwg-bone: var(--sheet-line);
+  --dwg-bone-soft: color-mix(
+    in srgb,
+    var(--sheet-line) var(--sheet-soft-mix),
+    transparent
+  );
+  --dwg-bone-dim: color-mix(
+    in srgb,
+    var(--sheet-line) var(--sheet-dim-mix),
+    transparent
+  );
+
+  --dwg-gold: var(--accent-deep);
+  --dwg-gold-line: color-mix(in srgb, var(--accent-deep) 62%, transparent);
+
+  --dwg-grid: color-mix(in srgb, var(--sheet-line) 5%, transparent);
+  --dwg-grid-major: color-mix(in srgb, var(--sheet-line) 8%, transparent);
+  --dwg-tint: color-mix(in srgb, var(--sheet-line) 5.5%, transparent);
+  /* The glow underlay — a wider, dimmer copy of the linework rather
+   * than a filter. See #glow in ElevationScene for why. */
+  --dwg-halo: color-mix(
+    in srgb,
+    var(--sheet-line) var(--sheet-halo-alpha),
+    transparent
+  );
+  --dwg-halo-width: 3.2;
+  /* The pen tip. Reads as the nib rather than as a highlight, so on
+   * paper it is darker than the line and on charcoal it is brighter. */
+  --dwg-tip: var(--sheet-tip);
+  --dwg-noise-opacity: var(--sheet-noise);
+
+  --dwg-glass-bg: var(--glass-tint);
+  --dwg-glass-border: var(--glass-border);
+  --dwg-glass-highlight: var(--glass-highlight);
+  --dwg-header-bg: color-mix(in srgb, var(--surface) 78%, transparent);
+  --dwg-shadow: var(--glass-shadow);
+}
+
+/* On charcoal the gold is the lit one — see --brass-lit for why this is
+ * a chromatic decision rather than a contrast one. */
+:root[data-theme="dark"],
+[data-surface="dark"] {
+  --dwg-gold: var(--brass-lit);
+  --dwg-gold-line: color-mix(in srgb, var(--brass-lit) 60%, transparent);
+}
+
+/* ---------------------------------------------------------------------
+ * 4. SPACING — the page's vertical rhythm and its gutters.
+ *
+ * Five steps. `section` is the standard band, `section-lg` the two
+ * sections that deliberately breathe more (Manifesto, Contact), and
+ * `block`/`flow` are the two intra-section steps. The gutter is ONE
+ * value: the fixed header used a different progression from the
+ * sections it floats over, so its left edge misaligned with the copy
+ * beneath it by 1rem at base and 4rem at lg.
+ * ------------------------------------------------------------------ */
+:root {
   --space-section: 6rem;
   --space-section-lg: 7rem;
   --space-block: 3.5rem;
@@ -83,7 +321,7 @@
   --space-gutter: 1.25rem;
 
   /* -------------------------------------------------------------------
-   * 3. TYPE — four display steps, three utility sizes.
+   * 5. TYPE — four display steps, three utility sizes.
    *
    * Seventeen distinct clamp() values collapsed to four. Every step
    * ramps over the same 390px→1440px window, which is the actual point
@@ -101,7 +339,7 @@
   --type-micro: 0.5rem;
 
   /* -------------------------------------------------------------------
-   * 4. RADIUS
+   * 6. RADIUS
    *
    * `.glass` is unlayered CSS, so it beat Tailwind's layered
    * `rounded-full` and eleven components each worked around that with an
@@ -113,7 +351,7 @@
   --radius-panel: 20px;
 
   /* -------------------------------------------------------------------
-   * 5. EASING — the CSS side of the motion vocabulary.
+   * 7. EASING — the CSS side of the motion vocabulary.
    *
    * lib/motion.ts owns the GSAP eases; these are for transitions CSS
    * runs on its own. `--ease-out` is the site's actual house curve: it
@@ -122,6 +360,18 @@
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* -------------------------------------------------------------------
+   * 8. THE LINE SYSTEM
+   *
+   * The site's decorative language is drawn, not filled — the same
+   * argument THE DRAWING makes, applied to the page around it. These
+   * are the constants every rule, tick and guide reads.
+   * ---------------------------------------------------------------- */
+  --rule-weight: 1px;
+  --tick-size: 10px;
+  --grid-cell: 88px;
+  --grid-alpha: 4.5%;
 }
 
 @media (min-width: 640px) {
@@ -145,88 +395,11 @@
 }
 
 /* ---------------------------------------------------------------------
- * 6. DARK SURFACE — the drawing interlude.
- *
- * Scoped to the attribute rather than to the component, so the same
- * surface can be reused and the fixed UI can read the same values when
- * `data-surface="dark"` lands on <html>.
- *
- * The `--dwg-` prefix is kept deliberately. It is an established API:
- * scripts/verify-dark.mjs asserts AA contrast by reading these exact
- * names, and Drawing.tsx consumes them. Renaming for tidiness while a
- * harness depends on them would be churn with a regression attached.
- *
- * On the greys: the background is warm, never neutral and never #000.
- * A pure black behind bone-white linework reads as a void with drawing
- * floating in it; a warm near-black reads as a material the drawing is
- * ON. The 8-point lift between the vignette's centre and its edge is
- * what supplies that reading.
- * ------------------------------------------------------------------ */
-[data-surface="dark"] {
-  /* Surface */
-  --dwg-bg: #131110;
-  --dwg-bg-lift: #1b1815;
-
-  /* Linework and type */
-  --dwg-bone: #ede6da;
-  /* 15.3:1 on --dwg-bg. */
-  --dwg-bone-soft: color-mix(in srgb, var(--dwg-bone) 62%, transparent);
-  /*
-   * The brief asked for 40–45% on the index label, title block and
-   * readout. Measured, 0.40 lands at 2.9:1 and 0.45 at 3.3:1 — both
-   * below AA at the sizes these are set. 0.58 measures 5.7:1 and is
-   * within a hair of the intended weight, so that is what ships.
-   */
-  --dwg-bone-dim: color-mix(in srgb, var(--dwg-bone) 58%, transparent);
-
-  /*
-   * Annotation gold. Brighter than --clay on this surface — NOT for
-   * contrast: --clay measures 6.1:1 on --dwg-bg and passes AA
-   * comfortably. (An earlier note here claimed 4.1:1; that number was
-   * wrong in both directions and is corrected.) The reason is chromatic
-   * — --clay's value sits close enough to the vignette that it reads
-   * muddy rather than as brass.
-   */
-  --dwg-gold: #c9a36b;
-  /* 8.0:1 on --dwg-bg. */
-  --dwg-gold-line: color-mix(in srgb, var(--dwg-gold) 60%, transparent);
-
-  /* Atmosphere */
-  --dwg-grid: color-mix(in srgb, var(--dwg-bone) 4.5%, transparent);
-  --dwg-grid-major: color-mix(in srgb, var(--dwg-bone) 7.5%, transparent);
-  --dwg-tint: color-mix(in srgb, var(--dwg-bone) 5.5%, transparent);
-  /* The glow underlay — a wider, dimmer copy of the linework rather
-   * than a filter. See #glow in Drawing.tsx for why. */
-  --dwg-halo: color-mix(in srgb, var(--dwg-bone) 10%, transparent);
-  --dwg-halo-width: 3.2;
-  /* The pen tip. Brighter than the line it leads, and warm. */
-  --dwg-tip: #fffaf0;
-  --dwg-noise-opacity: 0.03;
-
-  /* Glass, re-tinted for charcoal. The light recipe reads as a grey
-   * smear here, so the whole material swaps rather than its alpha. */
-  --dwg-glass-bg: color-mix(in srgb, var(--dwg-bg-lift) 55%, transparent);
-  --dwg-glass-border: color-mix(in srgb, var(--dwg-bone) 16%, transparent);
-  --dwg-glass-highlight: color-mix(in srgb, var(--dwg-bone) 8%, transparent);
-  --dwg-header-bg: color-mix(in srgb, var(--dwg-bg) 72%, transparent);
-  --dwg-shadow: 0 24px 60px -24px color-mix(in srgb, black 60%, transparent);
-
-  /* The interlude's own selection and focus ring. Clay on charcoal is
-   * the light surface's accent on the wrong material. */
-  --selection: color-mix(in srgb, var(--dwg-gold) 30%, transparent);
-  --focus-ring: var(--dwg-gold);
-}
-
-:root {
-  --focus-ring: var(--clay);
-}
-
-/* ---------------------------------------------------------------------
- * 7. TAILWIND REGISTRATION
+ * 9. TAILWIND REGISTRATION
  *
  * `inline` throughout, so a utility resolves the var() chain at use
  * time — which is what lets the per-locale font fallback and the
- * surface-scoped dark tokens work through ordinary classes.
+ * theme-scoped tokens work through ordinary classes.
  *
  * `--color-*: initial` drops Tailwind's default palette. Without it
  * `text-emerald-500` compiles silently and an off-palette colour can
@@ -248,6 +421,16 @@
   --color-charcoal: var(--charcoal);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
+  --color-alert: var(--alert);
+
+  /*
+   * The inverted band's foreground. Bone in BOTH themes, because the
+   * band is dark in both — this is the token that makes `bg-charcoal
+   * text-bone` survive a theme flip, where the `text-sand` it replaced
+   * would have gone near-black on near-black.
+   */
+  --color-bone: var(--invert-fg);
+  --color-line-invert: var(--line-invert);
 
   /* Kept because a handful of places genuinely need a pure inversion
    * source: mix-blend-difference on the journey rail and the showcase
@@ -256,7 +439,7 @@
   --color-transparent: transparent;
   --color-current: currentColor;
 
-  /* Dark surface, so Drawing.tsx can use text-dwg-bone instead of
+  /* The sheet, so Drawing.tsx can use text-dwg-bone instead of
    * hand-writing text-[var(--dwg-bone)] five times. */
   --color-dwg-bone: var(--dwg-bone);
   --color-dwg-bone-soft: var(--dwg-bone-soft);

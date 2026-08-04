@@ -48,7 +48,10 @@ const ALLOWED = [
   },
 ];
 
-const COLOUR = /#[0-9a-fA-F]{3,8}\b|\brgba?\(\s*\d/g;
+/* The lookbehind excuses HTML numeric entities: `&#8594;` is an arrow,
+ * not a five-digit hex, and the first version of this check reported
+ * four of them as stray colours. */
+const COLOUR = /(?<!&)#[0-9a-fA-F]{3,8}\b|\brgba?\(\s*\d/g;
 const SKIP_DIRS = new Set(["node_modules", ".next", ".git", "shots"]);
 const EXTS = /\.(tsx?|css|mjs)$/;
 
@@ -101,11 +104,18 @@ const tokenOf = (name) => {
   return m ? m[1].trim() : null;
 };
 
+/*
+ * Points at the RAW palette rather than at the semantic layer. Since the
+ * theme split, `--sand` and `--dwg-bg` are `var()` chains that resolve
+ * differently in light and dark — there is no literal there to compare,
+ * and the renderers these values exist for (Satori, the themeColor meta
+ * tag) need one specific side of that fork anyway.
+ */
 const parity = [
-  ["sand", "sand"],
-  ["ink", "ink"],
-  ["clay", "clay"],
-  ["charcoalDeep", "dwg-bg"],
+  ["sand", "stone-1"],
+  ["ink", "espresso"],
+  ["clay", "brass"],
+  ["charcoalDeep", "coal-0"],
 ];
 for (const [key, token] of parity) {
   const want = tokenOf(token);

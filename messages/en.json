@@ -4,6 +4,11 @@
     "description": "Kencho Group — made-to-measure furniture and turnkey interior fit-outs in Tbilisi, Georgia. Custom kitchens, wardrobes, wall paneling, and commercial spaces. Free measurement and 3D design.",
     "ogAlt": "Kencho Group — custom furniture in Tbilisi"
   },
+  "metaPlanner": {
+    "title": "Kitchen planner — design your kitchen online | Kencho Group",
+    "description": "Free online kitchen planner from Kencho Group, Tbilisi. Set your wall width, arrange base and wall units, and watch a real workshop elevation draw itself with every dimension in millimetres. Free measurement across Tbilisi.",
+    "ogAlt": "Kencho Group kitchen planner — a workshop elevation being drawn"
+  },
   "nav": {
     "services": "Services",
     "projects": "Projects",
@@ -13,7 +18,15 @@
     "book": "Free measurement",
     "home": "Back to top",
     "langLabel": "Language",
-    "journeyLabel": "Page sections"
+    "journeyLabel": "Page sections",
+    "planner": "Planner"
+  },
+  "theme": {
+    "label": "Theme",
+    "system": "Match my system",
+    "light": "Light",
+    "dark": "Dark",
+    "cycle": "switch to {next}"
   },
   "common": {
     "whatsappPrefill": "Hello, I'm interested in custom furniture",
@@ -109,7 +122,8 @@
       "doors": "Door unit",
       "sink": "Sink unit",
       "door": "Wall unit",
-      "shelf": "Open shelves"
+      "shelf": "Open shelves",
+      "tall": "Tall unit"
     },
     "inspectHint": "Tap any unit",
     "materials": {
@@ -117,6 +131,94 @@
       "lacquer": "Matt lacquered MDF",
       "stone": "Stone worktop, oak carcass",
       "veneer": "Oak veneer, open back"
+    },
+    "plannerCta": "Plan your own kitchen",
+    "notes": {
+      "tallBay": "Tall unit — no wall cabinet"
+    }
+  },
+  "planner": {
+    "eyebrow": "Plan it yourself",
+    "title": "Kitchen planner",
+    "lede": "Set your wall, drop the modules along it, and watch the workshop drawing build itself. Every number on the sheet is measured off the geometry, not typed beside it.",
+    "mm": "mm",
+    "reset": "Start again",
+    "disclaimer": "Preliminary drawing — final sizes are confirmed at the free measurement.",
+    "stage": {
+      "sheet": "PLAN",
+      "aria": "Front elevation of a {wall} mm kitchen run with {modules} base modules, dimensioned in millimetres."
+    },
+    "wall": {
+      "title": "The wall",
+      "hint": "How much wall the kitchen has to fit into.",
+      "label": "Wall width",
+      "presets": "Common widths",
+      "advanced": "Heights",
+      "worktop": "Worktop height",
+      "upper": "Wall unit top"
+    },
+    "modules": {
+      "title": "Base modules",
+      "hint": "Tap a module to resize it, move it along the run, or take it out.",
+      "stripLabel": "The base run, left to right",
+      "free": "{mm} mm free",
+      "over": "{mm} mm over the wall",
+      "add": "Add a module",
+      "cancelAdd": "Close",
+      "fullWall": "The wall is full",
+      "width": "Width",
+      "position": "{n} of {of}",
+      "reorder": "Move along the run",
+      "remove": "Remove",
+      "blocked": {
+        "space": "Needs {mm} mm",
+        "limit": "Only one"
+      },
+      "confirm": {
+        "hood": "The extractor would move off the bay you put it on.",
+        "openShelf": "The open shelf at the end would be lost — a tall unit takes that bay all the way up.",
+        "yes": "Add anyway",
+        "no": "Leave it as it is"
+      }
+    },
+    "upper": {
+      "title": "Wall units",
+      "hint": "The wall run mirrors the rhythm of the base run below it.",
+      "toggle": "Wall units",
+      "toggleHint": "A row of cabinets above the worktop.",
+      "stripLabel": "The wall run, left to right",
+      "hoodAt": "Extractor over bay {position}.",
+      "noHood": "No extractor.",
+      "openShelf": "Open shelves at the end",
+      "openShelfHint": "The last bay becomes shelving instead of a door.",
+      "openShelfBlocked": "The last bay is a tall unit, so there is no cabinet up there to open."
+    },
+    "types": {
+      "doors": "Doors",
+      "drawers": "Drawers",
+      "oven": "Oven",
+      "sink": "Sink",
+      "tall": "Tall unit"
+    },
+    "issues": {
+      "empty": "Add a module to start the run.",
+      "overfull": "The run is {mm} mm longer than the wall.",
+      "wallRange": "The wall has to be between {min} and {max} mm.",
+      "unitBelowMin": "A {type} module needs at least {min} mm.",
+      "unitAboveMax": "A single module cannot be wider than {max} mm.",
+      "tooMany": "One {type} module per kitchen — you have {count}.",
+      "worktopRange": "Worktop height has to be between {min} and {max} mm.",
+      "upperRange": "The wall units have to top out between {min} and {max} mm.",
+      "upperTooLow": "No room left for a wall cabinet — it needs at least {min} mm above the splashback."
+    },
+    "a11y": {
+      "decrease": "Decrease {field}",
+      "increase": "Increase {field}",
+      "moveLeft": "Move left",
+      "moveRight": "Move right",
+      "module": "Module {position}: {type}, {mm} mm",
+      "hoodHere": "Extractor is on bay {position}. Select again to remove it.",
+      "hoodMove": "Put the extractor on bay {position}"
     }
   },
   "intro": {

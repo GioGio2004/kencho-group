@@ -1,25 +1,34 @@
 #!/usr/bin/env node
 /**
- * The dark interlude: contrast, and the surface flip.
+ * The drawing chapter: contrast in BOTH themes, and the chapter flip.
  *
  *   node --import ./scripts/alias-hook.mjs scripts/verify-dark.mjs [baseUrl]
  *
  * Two things the eye is bad at judging from a screenshot:
  *
- *   1. WCAG contrast. Every colour on the dark surface is computed from
- *      the tokens as they actually resolve in the browser and checked
+ *   1. WCAG contrast. Every colour on the sheet is computed from the
+ *      tokens as they actually resolve in the browser and checked
  *      against AA, so "bone on charcoal looks fine" becomes a number.
- *   2. Flicker at the boundary. The `data-surface` flip is what swaps the
- *      header and the glass pills, and a naive threshold strobes when the
- *      visitor scrubs across it. This scrolls the boundary back and forth
- *      forty times and counts the flips — with hysteresis it should be
- *      one per crossing and never more.
+ *
+ *      Run TWICE now, once per theme. The sheet used to be charcoal
+ *      whatever the page was, so one measurement covered it; since the
+ *      theme split it is ink-on-paper in light and bone-on-charcoal in
+ *      dark, and a token set that passes on one surface tells you
+ *      nothing about the other. Both are the shipped product.
+ *
+ *   2. Flicker at the boundary. The `data-chapter` flip is what retints
+ *      the header's frosted backdrop, and a naive threshold strobes when
+ *      the visitor scrubs across it. This scrolls the boundary back and
+ *      forth forty times and counts the flips — with hysteresis it
+ *      should be one per crossing and never more.
  */
 
 import { chromium } from "playwright";
 import { STAGE, TIMELINE } from "../lib/drawing.ts";
 
 const BASE_URL = process.argv[2] ?? "http://localhost:3000";
+/** Which theme this run measures. Both ship, so both are checked. */
+const THEME = process.argv[3] === "dark" ? "dark" : "light";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 let failures = 0;
@@ -30,7 +39,7 @@ const check = (name, ok, detail = "") => {
 
 /** Resolves the section's tokens and computes AA contrast for each pair. */
 const CONTRAST = `(() => {
-  const el = document.querySelector('[data-surface="dark"]');
+  const el = document.documentElement;
   const cs = getComputedStyle(el);
   const v = (n) => cs.getPropertyValue(n).trim();
 
@@ -85,14 +94,33 @@ const CONTRAST = `(() => {
   return out;
 })()`;
 
+console.log(`\n=== ${THEME} theme ===`);
+
 const browser = await chromium.launch();
-const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+const ctx = await browser.newContext({
+  viewport: { width: 1440, height: 900 },
+  colorScheme: THEME,
+});
 const page = await ctx.newPage();
 const errors = [];
 page.on("pageerror", (e) => errors.push(String(e)));
 page.on("console", (m) => {
   if (m.type() === "error") errors.push(m.text());
 });
+
+/*
+ * Seeded before the document runs, so the boot script in layout.tsx
+ * reads it and stamps `data-theme` on the very first frame. Setting it
+ * afterwards would measure whatever the OS said and call it a pass.
+ */
+await page.addInitScript(
+  ([key, theme]) => {
+    try {
+      localStorage.setItem(key, theme);
+    } catch {}
+  },
+  ["alma:theme", THEME],
+);
 
 await page.goto(`${BASE_URL}/en`, { waitUntil: "networkidle" });
 await page
@@ -133,9 +161,9 @@ for (const [name, centre] of [
 ]) {
   await page.evaluate(() => {
     window.__flips = 0;
-    window.__last = document.documentElement.getAttribute("data-surface");
+    window.__last = document.documentElement.getAttribute("data-chapter");
     window.__obs = new MutationObserver(() => {
-      const now = document.documentElement.getAttribute("data-surface");
+      const now = document.documentElement.getAttribute("data-chapter");
       if (now !== window.__last) {
         window.__last = now;
         window.__flips++;
@@ -143,7 +171,7 @@ for (const [name, centre] of [
     });
     window.__obs.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["data-surface"],
+      attributeFilter: ["data-chapter"],
     });
   });
 
@@ -168,14 +196,14 @@ for (const [name, centre] of [
 const probe = async (label, y, expected) => {
   await go(y, 2400);
   const got = await page.evaluate(() =>
-    document.documentElement.getAttribute("data-surface"),
+    document.documentElement.getAttribute("data-chapter"),
   );
   check(`surface is ${expected ?? "off"} at ${label}`, got === expected, String(got));
 };
 
 const range = box.h - box.vh;
 await probe("the approach", box.top - box.vh * 0.7, null);
-await probe("the sheet", box.top + range * 0.45, "dark");
+await probe("the sheet", box.top + range * 0.45, "drawing");
 await probe(
   "the finale",
   box.top + range * ((STAGE.built.at + STAGE.built.dur * 0.6) / TIMELINE),

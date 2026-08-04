@@ -66,12 +66,46 @@ html[lang="ka"] .u-display {
   }
 }
 
-/* Small tracked label used for section eyebrows. */
+/*
+ * Small tracked label used for section eyebrows — and the site's most
+ * repeated line.
+ *
+ * THE RULE IS PART OF THE LABEL. Every section on the page opens with
+ * one of these, so putting the hairline here rather than in each section
+ * is what makes the line system structural instead of decorative: one
+ * declaration, thirteen sections, and no way for a new section to be
+ * added without it.
+ *
+ * `currentColor` rather than --line: an eyebrow appears on stone and on
+ * charcoal, and the rule that belongs beside it is always a faded
+ * version of the label itself. That is one value that is correct on
+ * every surface instead of two that have to be chosen between.
+ *
+ * `--rule-open` defaults to 1, so the server's markup — and a visitor
+ * with no JS or reduced motion — gets the line already ruled. ScrollFX
+ * winds it back to 0 and draws it.
+ */
 .u-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
   font-size: 0.6875rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--ink-55);
+}
+
+.u-eyebrow::after {
+  content: "";
+  flex: 1 1 auto;
+  /* A tick, not a divider. A rule that runs to the far gutter turns
+   * every section heading into a table header. */
+  max-width: 7rem;
+  height: var(--rule-weight);
+  background: currentColor;
+  opacity: 0.32;
+  transform: scaleX(var(--rule-open, 1));
+  transform-origin: var(--rule-origin, left center);
 }
 
 /* ---------------------------------------------------------------------
@@ -450,44 +484,37 @@ html[lang="ka"] .u-display {
 
 
 /*
- * THE FIXED UI, while the visitor is inside the dark interlude.
+ * THE FIXED UI OVER THE DRAWING CHAPTER.
  *
- * One attribute on <html>, set by a single ScrollTrigger, and every
- * pinned control follows. The transitions are what stop a fast scroll
- * across the boundary from strobing — the attribute flips instantly, the
- * colours take 400ms to agree with it.
+ * Almost nothing left to do here, and that is the point. The header and
+ * the glass pills used to need a whole second colour scheme because the
+ * drawing forced charcoal onto a light page; now the sheet is drawn in
+ * whatever material the theme is made of, so the only thing that
+ * actually changes under the header is the DEPTH of the surface behind
+ * it. One frosted background, retinted.
+ *
+ * The transition is what stops a fast scroll across the boundary from
+ * strobing: the attribute flips instantly, the colour takes 400ms to
+ * agree with it.
  */
-html[data-surface="dark"] [data-site-header]:not([data-scrolled]) {
-  --header-fg: var(--dwg-bone);
-  --header-fg-dim: var(--dwg-bone-soft);
-  --header-accent: var(--dwg-gold);
+html[data-chapter="drawing"] [data-site-header][data-scrolled] {
+  background: color-mix(in srgb, var(--surface-deep) 82%, transparent);
 }
 
+/*
+ * A subtree that is charcoal REGARDLESS of the theme — the planner's
+ * drawing board. The tokens themselves are swapped in theme.css; these
+ * two rules are the pieces that are painted rather than tokenised.
+ */
 html[data-surface="dark"] [data-site-header][data-scrolled] {
   background: var(--dwg-header-bg);
-  --header-fg: var(--dwg-bone);
-  --header-fg-dim: var(--dwg-bone-soft);
-  --header-accent: var(--dwg-gold);
 }
 
-/* The two glass pills. The material is tuned for sand; on charcoal the
- * same tint reads as a grey smear, so the whole recipe swaps. */
-html[data-surface="dark"] .glass {
-  background: var(--dwg-glass-bg);
-  border-color: var(--dwg-glass-border);
-  box-shadow:
-    inset 0 1px 0 var(--dwg-glass-highlight),
-    var(--dwg-shadow);
-  color: var(--dwg-bone);
+.glass {
   transition:
     background-color 0.4s ease,
     border-color 0.4s ease,
     color 0.4s ease;
-}
-
-html[data-surface="dark"] .glass .text-ink,
-html[data-surface="dark"] .glass.text-ink {
-  color: var(--dwg-bone);
 }
 
 /*
@@ -560,13 +587,20 @@ html[data-surface="dark"] .glass.text-ink {
     );
 }
 
-/* Copy sits directly on the surface — no card. Where the grid would
- * fight it, this darkens behind the text instead, with no edge to see. */
+/* Copy sits directly on the surface — no card. Where the linework would
+ * fight it, this washes the paper back behind the text instead, with no
+ * edge to see.
+ *
+ * Opaque at the origin rather than 92%: on charcoal an 8% leak was
+ * invisible, and on paper — where the linework is dark and the wash is
+ * light — the same leak printed cabinet edges straight through the
+ * sentence. The gradient has to actually reach the paper colour before
+ * it starts falling off. */
 .dwg-copy-wash {
   background: radial-gradient(
-    120% 100% at 0% 0%,
-    color-mix(in srgb, var(--dwg-bg) 92%, transparent) 0%,
-    color-mix(in srgb, var(--dwg-bg) 55%, transparent) 46%,
+    130% 105% at 0% 0%,
+    var(--dwg-bg) 0%,
+    color-mix(in srgb, var(--dwg-bg) 82%, transparent) 44%,
     transparent 78%
   );
 }
@@ -795,6 +829,914 @@ html[data-surface="dark"] .glass.text-ink {
 
 [data-drawing][data-static] .dwg-readout {
   display: none;
+}
+
+/* =====================================================================
+ * THE LINE SYSTEM
+ * ---------------------------------------------------------------------
+ * The page's own furniture, drawn in the elevation's hand. Every one of
+ * these is a hairline or a tick — nothing filled, nothing blurred — and
+ * every one of them arrives by being RULED rather than by fading in.
+ * See app/_components/LineWork.tsx for the components and ScrollFX's
+ * `rule` / `ticks` effects for the motion.
+ * ================================================================== */
+
+.u-rule {
+  position: relative;
+  display: block;
+  height: var(--rule-weight);
+  width: 100%;
+  background: var(--line);
+  /* The start state is GSAP's, never CSS's — so the server's markup is
+   * a page whose lines are already ruled. */
+}
+
+.u-rule--v {
+  height: 100%;
+  width: var(--rule-weight);
+}
+
+/*
+ * THE NIB. A short brass segment riding the head of the stroke.
+ *
+ * Hidden by default rather than by the effect: the effect only runs for
+ * a visitor with JS and full motion, and a stray brass dash sitting on
+ * every hairline is exactly the kind of thing a dead bundle leaves
+ * behind. ScrollFX turns it on for the two cadence entries that use it.
+ */
+.u-rule-tip {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 14%;
+  visibility: hidden;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--accent) 65%,
+    var(--accent)
+  );
+}
+
+.u-rule--v .u-rule-tip {
+  inset-block: auto;
+  inset-inline: 0;
+  top: 0;
+  width: auto;
+  height: 14%;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--accent) 65%,
+    var(--accent)
+  );
+}
+
+.u-rule--invert {
+  background: var(--line-invert);
+}
+
+.u-rule--accent {
+  background: color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+/* Registration ticks. Same 2px corner mark the sheet carries, at the
+ * scale of the page rather than of the drawing. */
+.u-tick {
+  position: absolute;
+  width: var(--tick-size);
+  height: var(--tick-size);
+  border-width: 1px;
+  border-color: var(--line-strong);
+}
+
+.u-sheet--invert .u-tick {
+  border-color: var(--line-invert);
+}
+
+/* ---------------------------------------------------------------------
+ * SEAM — the annotated join between two sections.
+ * ------------------------------------------------------------------ */
+.u-seam {
+  position: relative;
+  margin-inline: var(--space-gutter);
+}
+
+.u-seam-label {
+  position: absolute;
+  top: 0.75rem;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
+  font-size: var(--type-micro);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-40);
+}
+
+.u-seam-label--invert {
+  color: color-mix(in srgb, var(--invert-fg) 45%, transparent);
+}
+
+.u-seam-index {
+  color: var(--accent);
+}
+
+/* ---------------------------------------------------------------------
+ * THE SECTION'S HAND-OFF TO THE PLANNER
+ * ------------------------------------------------------------------ */
+.dwg-cta {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dwg-gold);
+  border-color: var(--dwg-gold-line);
+}
+
+@media (hover: hover) {
+  .dwg-cta:hover {
+    background: var(--dwg-gold);
+    border-color: var(--dwg-gold);
+    color: var(--dwg-bg);
+  }
+}
+
+/* =====================================================================
+ * THE PLANNER
+ * ---------------------------------------------------------------------
+ * One dark surface, the drawing's own material, because the drawing is
+ * the subject of the page and the controls are the margin notes. Every
+ * colour resolves through the --dwg-* tokens the interlude established,
+ * so the planner and the section are demonstrably the same room.
+ *
+ * No cards. A configurator drifts towards a stack of bordered panels and
+ * ends up looking like a settings screen; the rail here is separated by
+ * hairlines and whitespace, the way a drawing's title block is.
+ * ================================================================== */
+
+.plan-root {
+  position: relative;
+  min-height: 100svh;
+  background: var(--dwg-bg);
+  color: var(--dwg-bone);
+  padding-inline: var(--space-gutter);
+  padding-bottom: 5rem;
+}
+
+/* The page's dark surface has to reach past the planner's own box, or
+ * an overscroll shows sand under a charcoal page. */
+html:has([data-planner]) body {
+  background: var(--dwg-bg);
+}
+
+.plan-masthead {
+  padding-top: 6.5rem;
+  padding-bottom: 2rem;
+  max-width: 46rem;
+}
+
+.plan-title {
+  margin-top: 0.75rem;
+  font-size: var(--type-2);
+  color: var(--dwg-bone);
+}
+
+.plan-lede {
+  margin-top: 1rem;
+  max-width: 44ch;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--dwg-bone-soft);
+}
+
+.plan-grid {
+  display: block;
+}
+
+/*
+ * MOBILE: the drawing sticks to the top and the controls run under it,
+ * so the sheet is never off screen while it is being changed. That is
+ * the whole proposition of the page — an edit you cannot see the result
+ * of is a form field.
+ */
+.plan-stage-col {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  margin-inline: calc(var(--space-gutter) * -1);
+  padding-top: 3.5rem;
+  background: var(--dwg-bg);
+}
+
+.plan-stage {
+  position: relative;
+  height: 42svh;
+  min-height: 15rem;
+  overflow: hidden;
+}
+
+.plan-sheet {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .plan-root {
+    padding-inline: var(--space-gutter);
+  }
+
+  .plan-grid {
+    display: grid;
+    grid-template-columns: 380px minmax(0, 1fr);
+    gap: 3.5rem;
+    align-items: start;
+  }
+
+  .plan-rail-col {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .plan-stage-col {
+    grid-column: 2;
+    grid-row: 1;
+    top: 5.5rem;
+    margin-inline: 0;
+    padding-top: 0;
+  }
+
+  .plan-stage {
+    height: min(76svh, 46rem);
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * THE RAIL
+ * ------------------------------------------------------------------ */
+.plan-rail {
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-step {
+  padding-block: 2rem;
+  border-top: 1px solid var(--dwg-glass-border);
+}
+
+.plan-step:first-child {
+  border-top: 0;
+  padding-top: 1.5rem;
+}
+
+.plan-step-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.plan-step-index,
+.plan-label,
+.plan-unit,
+.plan-free,
+.plan-chip-w,
+.plan-stepper-value,
+.plan-editor-pos,
+.plan-palette-w,
+.plan-gap-label,
+.plan-chip-sm {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-step-index {
+  font-size: 0.625rem;
+  letter-spacing: 0.22em;
+  color: var(--dwg-gold);
+}
+
+.plan-step-title {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.375rem;
+  letter-spacing: -0.01em;
+  color: var(--dwg-bone);
+}
+
+.plan-hint {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--dwg-bone-dim);
+}
+
+.plan-step-body {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+}
+
+.plan-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.plan-label {
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dwg-bone-dim);
+}
+
+.plan-unit {
+  margin-left: 0.35em;
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  color: var(--dwg-bone-dim);
+}
+
+/* ---------------------------------------------------------------------
+ * THE WALL SLIDER
+ * ------------------------------------------------------------------ */
+.plan-wall-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.plan-range {
+  flex: 1 1 auto;
+  min-width: 0;
+  appearance: none;
+  height: 1.5rem;
+  background: transparent;
+  cursor: ew-resize;
+}
+
+.plan-range::-webkit-slider-runnable-track {
+  height: 1px;
+  background: var(--dwg-glass-border);
+}
+
+.plan-range::-moz-range-track {
+  height: 1px;
+  background: var(--dwg-glass-border);
+}
+
+.plan-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: -0.4375rem;
+  border-radius: var(--radius-pill);
+  background: var(--dwg-gold);
+}
+
+.plan-range::-moz-range-thumb {
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--dwg-gold);
+}
+
+.plan-number {
+  display: inline-flex;
+  align-items: baseline;
+  flex: 0 0 auto;
+}
+
+.plan-number-input {
+  width: 4.5ch;
+  border: 0;
+  border-bottom: 1px solid var(--dwg-glass-border);
+  background: transparent;
+  padding-bottom: 0.2rem;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.125rem;
+  color: var(--dwg-bone);
+  text-align: right;
+}
+
+/* The spinner duplicates the slider beside it and steals four characters
+ * of a field that is exactly wide enough for its number. */
+.plan-number-input::-webkit-outer-spin-button,
+.plan-number-input::-webkit-inner-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.plan-number-input {
+  appearance: textfield;
+}
+
+.plan-presets {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.plan-chip-sm {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--dwg-glass-border);
+  border-radius: var(--radius-pill);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  color: var(--dwg-bone-soft);
+}
+
+.plan-chip-sm[aria-pressed="true"] {
+  border-color: var(--dwg-gold);
+  color: var(--dwg-gold);
+}
+
+/* ---------------------------------------------------------------------
+ * ADVANCED
+ * ------------------------------------------------------------------ */
+.plan-summary {
+  cursor: pointer;
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dwg-bone-dim);
+  list-style: none;
+}
+
+.plan-summary::-webkit-details-marker {
+  display: none;
+}
+
+.plan-summary::before {
+  content: "+ ";
+  color: var(--dwg-gold);
+}
+
+.plan-advanced[open] .plan-summary::before {
+  content: "− ";
+}
+
+.plan-advanced-body {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ---------------------------------------------------------------------
+ * STEPPER
+ * ------------------------------------------------------------------ */
+.plan-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid var(--dwg-glass-border);
+  border-radius: var(--radius-pill);
+  padding: 0.25rem;
+  width: fit-content;
+}
+
+.plan-stepper-value {
+  min-width: 6.5ch;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--dwg-bone);
+}
+
+.plan-nudge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--dwg-glass-border);
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--dwg-bone);
+}
+
+.plan-nudge:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  .plan-nudge:not(:disabled):hover {
+    border-color: var(--dwg-gold);
+    color: var(--dwg-gold);
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * TOGGLE
+ * ------------------------------------------------------------------ */
+.plan-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+  text-align: left;
+}
+
+.plan-toggle:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.plan-toggle-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.plan-toggle-label {
+  font-size: 0.875rem;
+  color: var(--dwg-bone);
+}
+
+.plan-toggle-hint {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--dwg-bone-dim);
+}
+
+.plan-switch {
+  flex: 0 0 auto;
+  display: block;
+  width: 2.75rem;
+  height: 1.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--dwg-glass-border);
+  padding: 0.1875rem;
+  transition: border-color 0.35s var(--ease-out);
+}
+
+.plan-switch-knob {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: var(--radius-pill);
+  background: var(--dwg-bone-dim);
+  transition:
+    transform 0.35s var(--ease-out),
+    background-color 0.35s var(--ease-out);
+}
+
+.plan-toggle[aria-checked="true"] .plan-switch {
+  border-color: var(--dwg-gold);
+}
+
+.plan-toggle[aria-checked="true"] .plan-switch-knob {
+  background: var(--dwg-gold);
+  transform: translateX(1.25rem);
+}
+
+/* ---------------------------------------------------------------------
+ * THE MODULE STRIP — a plan of the run, drawn to scale.
+ * ------------------------------------------------------------------ */
+.plan-strip-wrap {
+  position: relative;
+}
+
+.plan-strip {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  height: 4.25rem;
+}
+
+.plan-strip-cell {
+  display: flex;
+  min-width: 2.25rem;
+}
+
+.plan-strip-free {
+  border: 1px dashed var(--dwg-glass-border);
+  border-radius: 4px;
+  min-width: 0.5rem;
+}
+
+.plan-chip {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  border: 1px solid var(--dwg-glass-border);
+  border-radius: 4px;
+  background: var(--dwg-glass-bg);
+  color: var(--dwg-bone-soft);
+  overflow: hidden;
+}
+
+.plan-chip-icon {
+  width: 1.375rem;
+  height: 1.375rem;
+  flex: 0 0 auto;
+}
+
+.plan-chip-w {
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+}
+
+.plan-chip[aria-pressed="true"] {
+  border-color: var(--dwg-gold);
+  color: var(--dwg-gold);
+}
+
+.plan-chip[data-invalid] {
+  border-color: var(--alert);
+  color: var(--alert);
+}
+
+@media (hover: hover) {
+  .plan-chip:hover {
+    border-color: var(--dwg-bone-soft);
+    color: var(--dwg-bone);
+  }
+}
+
+/* Where the wall ends, once the run has gone past it. */
+.plan-wallmark {
+  position: absolute;
+  top: -0.4rem;
+  bottom: -0.4rem;
+  width: 1px;
+  background: var(--alert);
+}
+
+.plan-free {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--dwg-gold);
+}
+
+.plan-free[data-over] {
+  color: var(--alert);
+}
+
+/* ---------------------------------------------------------------------
+ * THE SELECTED MODULE
+ * ------------------------------------------------------------------ */
+.plan-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--dwg-glass-border);
+}
+
+.plan-editor-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.plan-editor-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--dwg-gold);
+}
+
+.plan-editor-name {
+  font-size: 0.875rem;
+  color: var(--dwg-bone);
+}
+
+.plan-editor-pos {
+  margin-left: auto;
+  font-size: 0.625rem;
+  letter-spacing: 0.14em;
+  color: var(--dwg-bone-dim);
+}
+
+.plan-editor-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.plan-move {
+  display: flex;
+  gap: 0.4rem;
+}
+
+/* ---------------------------------------------------------------------
+ * ADD, AND THE PALETTE BEHIND IT
+ * ------------------------------------------------------------------ */
+.plan-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  border: 1px dashed var(--dwg-glass-border);
+  border-radius: var(--radius-pill);
+  font-size: 0.8125rem;
+  color: var(--dwg-bone-soft);
+}
+
+.plan-add:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  .plan-add:not(:disabled):hover {
+    border-color: var(--dwg-gold);
+    color: var(--dwg-gold);
+  }
+}
+
+.plan-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.plan-palette-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--dwg-glass-border);
+  border-radius: 8px;
+  text-align: left;
+  color: var(--dwg-bone-soft);
+}
+
+.plan-palette-item:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.plan-palette-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 auto;
+}
+
+.plan-palette-name {
+  font-size: 0.875rem;
+  color: var(--dwg-bone);
+}
+
+.plan-palette-w {
+  margin-left: auto;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: var(--dwg-bone-dim);
+}
+
+@media (hover: hover) {
+  .plan-palette-item:not(:disabled):hover {
+    border-color: var(--dwg-gold);
+  }
+
+  .plan-palette-item:not(:disabled):hover .plan-palette-name,
+  .plan-palette-item:not(:disabled):hover .plan-palette-icon {
+    color: var(--dwg-gold);
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * BUTTONS
+ * ------------------------------------------------------------------ */
+.plan-ghost,
+.plan-solid {
+  padding: 0.55rem 1rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
+
+.plan-ghost {
+  border: 1px solid var(--dwg-glass-border);
+  color: var(--dwg-bone-soft);
+}
+
+.plan-solid {
+  background: var(--dwg-gold);
+  color: var(--dwg-bg);
+}
+
+@media (hover: hover) {
+  .plan-ghost:hover {
+    border-color: var(--dwg-bone-soft);
+    color: var(--dwg-bone);
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * THE INLINE CONFIRM — a consequence, not a dialog.
+ * ------------------------------------------------------------------ */
+.plan-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--alert-line);
+  border-radius: 8px;
+  background: var(--alert-wash);
+}
+
+.plan-confirm-copy {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--dwg-bone);
+}
+
+.plan-confirm-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ---------------------------------------------------------------------
+ * ISSUES
+ * ------------------------------------------------------------------ */
+.plan-issues {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.plan-issue {
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--alert);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--alert);
+}
+
+.plan-issue[data-severity="notice"] {
+  border-left-color: var(--dwg-gold-line);
+  color: var(--dwg-bone-dim);
+}
+
+/* ---------------------------------------------------------------------
+ * THE UPPER STRIP, AND THE GAP A TALL UNIT LEAVES IN IT
+ *
+ * The gap is a CELL, not a missing one. A wall run that simply stops
+ * over the tall unit looks like a rendering fault; a bay drawn as empty
+ * and labelled with the reason is the drawing telling the truth about
+ * itself. The label is the SceneNote the elevation prints, so the two
+ * cannot disagree.
+ * ------------------------------------------------------------------ */
+.plan-chip-upper {
+  min-height: 3rem;
+}
+
+.plan-upper-glyph {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.plan-gap {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border: 1px dashed var(--dwg-gold-line);
+  border-radius: 4px;
+}
+
+.plan-gap-label {
+  font-size: 0.5rem;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: var(--dwg-gold);
+  overflow-wrap: anywhere;
+}
+
+/* ---------------------------------------------------------------------
+ * THE FOOTNOTE
+ * ------------------------------------------------------------------ */
+.plan-footnote {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--dwg-glass-border);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--dwg-bone-dim);
 }
 
 /* ---------------------------------------------------------------------
