@@ -832,6 +832,44 @@ html[data-surface="dark"] [data-site-header][data-scrolled] {
 }
 
 /* =====================================================================
+ * THE WALL — the portfolio's tiles.
+ * ---------------------------------------------------------------------
+ * A pinboard rather than a grid: rounded stock, tight gutters, and each
+ * tile lifting off the surface under the pointer. The lift is what makes
+ * a wall of photographs browsable — without it the eye has nothing to
+ * land on and the whole thing reads as one texture.
+ *
+ * `translateY` and `box-shadow` only, and the shadow is pre-declared at
+ * zero spread rather than added on hover, so the browser has already
+ * built the layer and the first hover does not cost a paint.
+ * ================================================================== */
+.tile {
+  transition:
+    transform 0.5s var(--ease-out),
+    box-shadow 0.5s var(--ease-out);
+  box-shadow: 0 0 0 0 transparent;
+}
+
+@media (hover: hover) {
+  .tile:hover,
+  .tile:focus-visible {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 44px -18px
+      color-mix(in srgb, var(--coal-0) 42%, transparent);
+  }
+}
+
+/*
+ * The caption sits ON the tile, so it has to be inset from the rounded
+ * corner rather than running into it. Pinterest's own trick: the scrim
+ * is the full width, the type is not.
+ */
+.tile .tile-caption {
+  border-bottom-left-radius: var(--radius-media);
+  border-bottom-right-radius: var(--radius-media);
+}
+
+/* =====================================================================
  * THE LINE SYSTEM
  * ---------------------------------------------------------------------
  * The page's own furniture, drawn in the elevation's hand. Every one of

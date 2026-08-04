@@ -594,12 +594,16 @@ export default function Projects() {
                       type="button"
                       aria-pressed={active}
                       onClick={() => handleFilter(f)}
-                      className={`u-press cursor-pointer border px-4 py-2 text-xs tracking-[0.16em] whitespace-nowrap ${
+                      /* A pill inside a pill. The active chip used to
+                         carry a square border, which put a rectangle
+                         through the middle of a rounded glass bar. */
+                      className={`u-press cursor-pointer rounded-full border px-4 py-2 text-xs tracking-[0.16em] whitespace-nowrap ${
                         active ? "text-ink" : "text-ink-55"
                       }`}
                       style={{
-                        borderColor: active
-                          ? "var(--ink-35)"
+                        borderColor: active ? "var(--ink-35)" : "transparent",
+                        background: active
+                          ? "color-mix(in srgb, var(--surface-raised) 70%, transparent)"
                           : "transparent",
                       }}
                     >
@@ -615,13 +619,13 @@ export default function Projects() {
               ratios are reserved inline, so the wall never shifts. */}
           <div
             ref={gridRef}
-            className="mt-12 flex items-start gap-3 sm:mt-16 sm:gap-4"
+            className="mt-12 flex items-start gap-2.5 sm:mt-16 sm:gap-3.5"
           >
             {columns.map((column, c) => (
               <div
                 key={c}
                 data-col={c}
-                className="flex min-w-0 flex-1 flex-col gap-3 sm:gap-4"
+                className="flex min-w-0 flex-1 flex-col gap-2.5 sm:gap-3.5"
               >
                 {column.map((item) => (
                   <figure
@@ -639,11 +643,11 @@ export default function Projects() {
                       onClick={(event) =>
                         openLightbox(item, event.currentTarget)
                       }
-                      className="u-press relative block w-full cursor-pointer bg-shell"
+                      className="tile u-press relative block w-full cursor-pointer rounded-media bg-shell"
                     >
                       <span
                         data-flip-id={`lb-${item.key}`}
-                        className="relative block w-full overflow-hidden"
+                        className="relative block w-full overflow-hidden rounded-media"
                         style={{ aspectRatio: item.aspect }}
                       >
                         <Image
@@ -659,7 +663,7 @@ export default function Projects() {
                             up on hover/focus where a fine pointer exists.
                             Transform-only, on an ink scrim. */}
                         <span
-                          className="pointer-events-none absolute inset-x-0 bottom-0 block px-3 pt-10 pb-2.5 text-left text-[0.6875rem] leading-snug tracking-[0.14em] text-bone transition-transform duration-500 ease-out pointer-fine:translate-y-full pointer-fine:group-hover:translate-y-0 pointer-fine:group-focus-within:translate-y-0"
+                          className="tile-caption pointer-events-none absolute inset-x-0 bottom-0 block px-4 pt-10 pb-3 text-left text-[0.6875rem] leading-snug tracking-[0.14em] text-bone transition-transform duration-500 ease-out pointer-fine:translate-y-full pointer-fine:group-hover:translate-y-0 pointer-fine:group-focus-within:translate-y-0"
                           style={{
                             background:
                               "linear-gradient(to top, color-mix(in srgb, var(--ink) 65%, transparent), transparent)",
@@ -781,7 +785,7 @@ export default function Projects() {
               <div
                 ref={stageRef}
                 data-flip-id={`lb-${lbCurrent.key}`}
-                className="absolute inset-0 overflow-hidden bg-charcoal"
+                className="absolute inset-0 overflow-hidden rounded-media bg-charcoal"
                 style={{ touchAction: "pan-y" }}
               >
                 {lbPrev && (

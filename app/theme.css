@@ -349,6 +349,18 @@
   --radius-pill: 9999px;
   --radius-card: 22px;
   --radius-panel: 20px;
+  /*
+   * Media. Every photograph on the site takes this one radius — the
+   * portfolio wall, the lightbox it flips into, the before/after frame.
+   * It has to be a single value or the Flip between a grid tile and its
+   * lightbox animates a corner as well as a position, which reads as
+   * the image changing shape mid-flight.
+   *
+   * 14px rather than the card's 22: at four columns a tile is ~300px
+   * wide, and a radius that reads as generous on a card reads as a
+   * rounded-off snapshot on a wall of them.
+   */
+  --radius-media: 14px;
 
   /* -------------------------------------------------------------------
    * 7. EASING — the CSS side of the motion vocabulary.
@@ -449,6 +461,7 @@
 
   --radius-pill: var(--radius-pill);
   --radius-card: var(--radius-card);
+  --radius-media: var(--radius-media);
 
   --ease-out: var(--ease-out);
   --ease-expo: var(--ease-expo);
