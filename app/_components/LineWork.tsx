@@ -98,10 +98,28 @@ export function Sheet({
           data-fx="rule"
           data-fx-axis="y"
           data-fx-delay={i * 0.06}
-          className={`u-rule u-rule--${tone} u-rule--v absolute inset-y-0`}
-          // Evenly divided across the frame, ends excluded — a guide on
-          // the frame's own edge is the frame, not a guide.
-          style={{ left: `${((i + 1) / (guides + 1)) * 100}%` }}
+          className={`u-rule u-rule--${tone} u-rule--v`}
+          /*
+           * POSITION IS INLINE, NOT A UTILITY, and that is load-bearing.
+           *
+           * `.u-rule` is unlayered CSS and sets `position: relative` so
+           * the nib inside it has something to be absolute against —
+           * which beats Tailwind's layered `absolute`. The first cut of
+           * this used the utility, so every guide stayed in normal flow
+           * at `height: 100%` and STACKED: four guides in an 11 850 px
+           * section added four more section-heights to the document, and
+           * the page ended in twelve thousand pixels of blank space
+           * below the footer. An inline style outranks both.
+           *
+           * Evenly divided across the frame, ends excluded — a guide on
+           * the frame's own edge is the frame, not a guide.
+           */
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: `${((i + 1) / (guides + 1)) * 100}%`,
+          }}
         />
       ))}
 

@@ -879,6 +879,15 @@ html[data-surface="dark"] [data-site-header][data-scrolled] {
  * `rule` / `ticks` effects for the motion.
  * ================================================================== */
 
+/*
+ * `position: relative` here is for the nib, which is absolute inside it.
+ *
+ * CAUTION: this file is unlayered, so this declaration BEATS a Tailwind
+ * `absolute` utility on the same element. Anything that needs a rule out
+ * of flow must say so with an inline style — see <Sheet>, where using
+ * the utility left four full-height guides stacked in normal flow and
+ * put twelve thousand pixels of blank page under the footer.
+ */
 .u-rule {
   position: relative;
   display: block;
