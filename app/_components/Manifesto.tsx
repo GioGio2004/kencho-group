@@ -116,7 +116,7 @@ export default function Manifesto() {
       className="relative bg-sand px-6 py-28 sm:px-10 sm:py-40 lg:py-56"
     >
       {/* The page, set out the way the drawing is. */}
-      <Sheet guides={3} inset="inset-x-6 inset-y-16 sm:inset-x-10" />
+      <Sheet guides={2} inset="inset-x-6 inset-y-16 sm:inset-x-10" />
 
       <div className="mx-auto max-w-4xl">
         <p ref={eyebrowRef} className="u-eyebrow flex items-center gap-4">

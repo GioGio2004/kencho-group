@@ -543,7 +543,7 @@ export default function ScrollFX() {
          * each other about direction and speed exactly as much as the
          * hairlines do.
          * ------------------------------------------------------ */
-        const eyebrows = qsa(".u-eyebrow");
+        const eyebrows = qsa(".u-eyebrow:not(.u-eyebrow--plain)");
         if (eyebrows.length) {
           eyebrows.forEach((el, i) => {
             const step = RULE_CADENCE[i % RULE_CADENCE.length]!;

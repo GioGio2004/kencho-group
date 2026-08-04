@@ -165,7 +165,7 @@ export default function SocialProof() {
                 </span>
                 <span className="text-clay">{t("statFollowersSuffix")}</span>
               </p>
-              <p className="u-eyebrow mt-6 border-t border-line pt-4">
+              <p className="u-eyebrow u-eyebrow--plain mt-6 border-t border-line pt-4">
                 {t("statFollowersLabel")}
               </p>
             </li>
@@ -176,7 +176,7 @@ export default function SocialProof() {
                 </span>
                 <span className="text-clay">{t("statRecommendSuffix")}</span>
               </p>
-              <p className="u-eyebrow mt-6 border-t border-line pt-4">
+              <p className="u-eyebrow u-eyebrow--plain mt-6 border-t border-line pt-4">
                 {t("statRecommendLabel")}
               </p>
             </li>
@@ -206,7 +206,7 @@ export default function SocialProof() {
                     {t(`quotes.${key}.text`)}
                   </p>
                 </blockquote>
-                <figcaption className="u-eyebrow mt-5">
+                <figcaption className="u-eyebrow u-eyebrow--plain mt-5">
                   {t(`quotes.${key}.author`)}
                 </figcaption>
               </figure>

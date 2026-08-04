@@ -108,6 +108,20 @@ html[lang="ka"] .u-display {
   transform-origin: var(--rule-origin, left center);
 }
 
+/*
+ * OPT-OUT, not opt-in. The class is also borrowed by things that are
+ * tracked labels rather than section openings — a stat's caption, a
+ * testimonial's attribution — and a hairline after "N. K. — Vake" reads
+ * as a missing sentence. Those four say so.
+ *
+ * Deliberately this way round: a NEW section written tomorrow gets the
+ * rule without anyone remembering to ask for it, which is the only
+ * reason the line system is structural rather than decorative.
+ */
+.u-eyebrow--plain::after {
+  display: none;
+}
+
 /* ---------------------------------------------------------------------
  * MICRO-INTERACTIONS
  * ------------------------------------------------------------------ */
@@ -829,6 +843,17 @@ html[data-surface="dark"] [data-site-header][data-scrolled] {
 
 [data-drawing][data-static] .dwg-readout {
   display: none;
+}
+
+/*
+ * A horizontally scrolling strip, fading at the edge it continues past.
+ * Only below `sm`, where the overflow actually happens — above it the
+ * row fits and a fade would be a gradient over nothing.
+ */
+@media (max-width: 639px) {
+  .u-scroll-fade {
+    mask-image: linear-gradient(to right, #000 82%, transparent 100%);
+  }
 }
 
 /* =====================================================================

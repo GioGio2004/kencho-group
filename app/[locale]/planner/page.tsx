@@ -8,6 +8,7 @@ import SmoothScroll from "@/app/_components/SmoothScroll";
 import { routing, type Locale } from "@/i18n/routing";
 import { IMAGES, src } from "@/lib/images";
 import { SITE } from "@/lib/site";
+import { breadcrumbLd, plannerLd } from "@/lib/structured-data";
 
 /*
  * THE PLANNER ROUTE.
@@ -91,8 +92,32 @@ export default async function PlannerPage({
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
+  /*
+   * This page's OWN schema. The layout supplies the business; the two
+   * things that are true about THIS route — that it sits one level below
+   * home, and that it is a free tool rather than a brochure page — are
+   * stated here. Without the second, "kitchen planner" searches have
+   * nothing to match but a title tag.
+   */
+  const t = await getTranslations({ locale, namespace: "nav" });
+  const [breadcrumb, tool] = await Promise.all([
+    breadcrumbLd(locale as Locale, {
+      name: t("planner"),
+      path: "/planner",
+    }),
+    plannerLd(locale as Locale),
+  ]);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: breadcrumb }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: tool }}
+      />
       <SmoothScroll />
       <SiteHeader />
       <main>

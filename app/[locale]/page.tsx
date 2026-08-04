@@ -21,7 +21,8 @@ import SiteHeader from "@/app/_components/SiteHeader";
 import SmoothScroll from "@/app/_components/SmoothScroll";
 import SocialProof from "@/app/_components/SocialProof";
 import StickyWhatsApp from "@/app/_components/StickyWhatsApp";
-import { routing } from "@/i18n/routing";
+import { routing, type Locale } from "@/i18n/routing";
+import { faqLd } from "@/lib/structured-data";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -32,8 +33,15 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
+  /* The FAQ lives on this page, so its schema does too. */
+  const faq = await faqLd(locale as Locale);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: faq }}
+      />
       <SmoothScroll />
       {/* Scans the document for [data-fx] and wires the scroll effects. */}
       <ScrollFX />

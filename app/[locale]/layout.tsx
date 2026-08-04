@@ -7,6 +7,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import { fontClassesFor } from "@/lib/fonts";
 import { IMAGES, src } from "@/lib/images";
 import { PALETTE, SITE } from "@/lib/site";
+import { businessLd } from "@/lib/structured-data";
 import { THEME_BOOT } from "@/lib/theme";
 import "../globals.css";
 
@@ -92,43 +93,6 @@ export const viewport: Viewport = {
   colorScheme: "light dark",
 };
 
-/** LocalBusiness (FurnitureStore) + per-locale FAQPage structured data. */
-async function jsonLdFor(locale: Locale): Promise<string[]> {
-  const t = await getTranslations({ locale, namespace: "faq" });
-  const faqIds = ["pricing", "timeline", "materials", "commercial"] as const;
-
-  const business = {
-    "@context": "https://schema.org",
-    "@type": "FurnitureStore",
-    name: SITE.name,
-    url: `${SITE.url}/${locale}`,
-    image: src(IMAGES.heroMain, 1200),
-    telephone: SITE.phone,
-    email: SITE.email,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: SITE.address.street,
-      addressLocality: SITE.address.city,
-      addressCountry: SITE.address.country,
-    },
-    // TODO: geo coordinates once confirmed with the client.
-    // TODO: openingHoursSpecification once confirmed with the client.
-    sameAs: [SITE.socials.facebook, SITE.socials.tiktok],
-  };
-
-  const faq = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqIds.map((id) => ({
-      "@type": "Question",
-      name: t(`items.${id}.q`),
-      acceptedAnswer: { "@type": "Answer", text: t(`items.${id}.a`) },
-    })),
-  };
-
-  return [JSON.stringify(business), JSON.stringify(faq)];
-}
-
 export default async function LocaleLayout({
   children,
   params,
@@ -137,7 +101,13 @@ export default async function LocaleLayout({
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
-  const [businessLd, faqLd] = await jsonLdFor(locale as Locale);
+  /*
+   * The BUSINESS only. The FAQPage used to be emitted here too, which
+   * put it on every route under this layout — including a planner with
+   * no questions on it anywhere. Structured data has to describe the
+   * page carrying it, so the FAQ moved to the page that has the FAQ.
+   */
+  const business = await businessLd(locale as Locale);
 
   return (
     <html
@@ -157,11 +127,7 @@ export default async function LocaleLayout({
          */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: businessLd }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: faqLd }}
+          dangerouslySetInnerHTML={{ __html: business }}
         />
         {/*
          * Theme first, and before everything else in this head that

@@ -198,7 +198,7 @@ export default function Process() {
               <p className="u-display text-[clamp(2.75rem,10vw,5rem)] text-clay">
                 {t("weeksValue")}
               </p>
-              <p className="u-eyebrow mt-4">{t("weeksLabel")}</p>
+              <p className="u-eyebrow u-eyebrow--plain mt-4">{t("weeksLabel")}</p>
             </div>
             <p className="mt-8 max-w-md text-sm leading-relaxed text-ink-55 lg:col-span-6 lg:col-start-4 lg:mt-0">
               {t("note")}

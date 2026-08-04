@@ -578,9 +578,16 @@ export default function Projects() {
             {/* Filter chips — FOUR buttons share ONE glass container, so
                 the whole row costs a single backdrop-filter (the only
                 live one in this section). */}
+            {/*
+              The strip scrolls on a phone — four Georgian filter names do
+              not fit 390px — and a strip that scrolls with a hard edge
+              looks like a strip that is broken. The mask fades the last
+              chip out instead, which is the only affordance that says
+              "there is more" without adding a control.
+            */}
             <div
               data-head=""
-              className="-mx-6 mt-10 overflow-x-auto px-6 sm:mx-0 sm:px-0"
+              className="u-scroll-fade -mx-6 mt-10 overflow-x-auto px-6 sm:mx-0 sm:px-0"
               style={{ scrollbarWidth: "none" }}
             >
               <div
