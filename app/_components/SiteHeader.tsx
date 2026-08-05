@@ -26,12 +26,19 @@ import { DUR, EASE } from "@/lib/motion";
  * instead of jumping.
  */
 
+/*
+ * FOUR, down from five plus a planner link.
+ *
+ * "Contact" was a nav item sitting next to a CTA pointing at the same
+ * section — one destination wearing two controls. FAQ is a section a
+ * visitor reaches by reading rather than by aiming, and it is in the
+ * footer. What is left is the three things someone is actually looking
+ * for and the one tool they might come back for.
+ */
 const NAV_ITEMS = [
-  { key: "services", href: "#services" },
   { key: "projects", href: "#projects" },
+  { key: "services", href: "#services" },
   { key: "process", href: "#process" },
-  { key: "faq", href: "#faq" },
-  { key: "contact", href: "#contact" },
 ] as const;
 
 /* Endonyms: a language switcher names each language in itself, so these
@@ -192,49 +199,54 @@ export default function SiteHeader() {
           aria-current={pathname === "/planner" ? "page" : undefined}
           className="u-link header-accent text-sm"
         >
-          <span
-            aria-hidden="true"
-            className="mr-2 inline-block size-1 rounded-full bg-current align-middle"
-          />
           {t("planner")}
         </Link>
       </nav>
 
-      <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-        <ThemeToggle />
+      <div className="flex shrink-0 items-center gap-3">
+        {/*
+          ONE PREFERENCE CLUSTER, not two pills competing beside each
+          other. Theme and language are the same kind of decision — how
+          the site should be, rather than where to go in it — so they
+          share a container and a hairline divides them. That takes the
+          header from four control groups to three, and from thirteen
+          targets to eight.
+        */}
+        <div className="glass flex items-center gap-1 p-0.5">
+          <ThemeToggle />
 
-        {/* Language switcher — tiny glass pill, present on mobile too.
-            Inline radius: .glass is unlayered and would win over a
-            rounded-full utility. */}
-        <div
-          role="group"
-          aria-label={t("langLabel")}
-          className="glass flex items-center p-0.5"
-        >
-          {LOCALE_OPTIONS.map((option) => {
-            const active = option.code === locale;
-            return (
-              <button
-                key={option.code}
-                type="button"
-                aria-label={option.name}
-                aria-current={active ? "true" : undefined}
-                onClick={() => {
-                  if (!active) {
-                    router.replace(pathname, {
-                      locale: option.code,
-                      scroll: false,
-                    });
-                  }
-                }}
-                className={`u-press rounded-full px-2 py-1.5 text-[0.625rem] leading-none tracking-[0.08em] ${
-                  active ? "header-fg" : "header-fg-dim"
-                }`}
-              >
-                {option.short}
-              </button>
-            );
-          })}
+          <span aria-hidden="true" className="header-rule" />
+
+          <div
+            role="group"
+            aria-label={t("langLabel")}
+            className="flex items-center"
+          >
+            {LOCALE_OPTIONS.map((option) => {
+              const active = option.code === locale;
+              return (
+                <button
+                  key={option.code}
+                  type="button"
+                  aria-label={option.name}
+                  aria-current={active ? "true" : undefined}
+                  onClick={() => {
+                    if (!active) {
+                      router.replace(pathname, {
+                        locale: option.code,
+                        scroll: false,
+                      });
+                    }
+                  }}
+                  className={`u-press rounded-full px-2 py-1.5 text-[0.625rem] leading-none tracking-[0.08em] ${
+                    active ? "header-fg" : "header-fg-dim"
+                  }`}
+                >
+                  {option.short}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <Anchor

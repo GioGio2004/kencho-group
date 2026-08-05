@@ -104,51 +104,30 @@ export default function ThemeToggle() {
   }, [choice]);
 
   /*
-   * TWO RENDERINGS, ONE STATE.
+   * ONE BUTTON, NOT THREE.
    *
-   * At 390px the header already carries a wordmark, a three-way language
-   * pill and the booking CTA; a second three-way pill puts it over the
-   * gutter. So the phone gets a single button that cycles, showing the
-   * state it is IN rather than the states available — and everything
-   * from `sm` up gets the segmented control, where jumping straight to
-   * "dark" is one press instead of two.
+   * This was a three-way segmented control, and it spent three of the
+   * header's targets expressing a setting almost nobody changes twice.
+   * It shows the state it is IN and cycles on press — the shape of a
+   * light switch, which is the mental model anyway.
+   *
+   * Nothing is lost to a screen reader: the label carries the whole
+   * story ("Theme: Dark - switch to Match my system"), which is more
+   * than the segmented control ever said out loud.
+   *
+   * Renders no glass of its own. It lives inside the header's single
+   * preference cluster now, beside the language pill.
    */
   const next = THEME_CHOICES[(THEME_CHOICES.indexOf(choice) + 1) % 3]!;
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => setChoice(next)}
-        aria-label={`${t("label")}: ${t(choice)} — ${t("cycle", { next: t(next) })}`}
-        className="glass header-fg u-press flex items-center p-2 sm:hidden"
-      >
-        <Icon choice={choice} />
-      </button>
-
-      <div
-        role="group"
-        aria-label={t("label")}
-        className="glass hidden items-center p-0.5 sm:flex"
-      >
-        {THEME_CHOICES.map((option) => {
-          const active = option === choice;
-          return (
-            <button
-              key={option}
-              type="button"
-              aria-label={t(option)}
-              aria-current={active ? "true" : undefined}
-              onClick={() => setChoice(option)}
-              className={`u-press flex items-center rounded-full px-2 py-1.5 ${
-                active ? "header-fg" : "header-fg-dim"
-              }`}
-            >
-              <Icon choice={option} />
-            </button>
-          );
-        })}
-      </div>
-    </>
+    <button
+      type="button"
+      onClick={() => setChoice(next)}
+      aria-label={`${t("label")}: ${t(choice)} — ${t("cycle", { next: t(next) })}`}
+      className="header-fg u-press flex items-center rounded-full px-2 py-1.5"
+    >
+      <Icon choice={choice} />
+    </button>
   );
 }

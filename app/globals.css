@@ -917,18 +917,25 @@ html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-acce
   }
 
   .hero-ed-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
     gap: 4rem;
-    /* The photograph runs off the right edge of the page. The gutter is
-     * removed on that side only, which is what makes it read as a plate
-     * bleeding off a spread rather than as a card in a column. */
-    padding-right: 0;
   }
 }
 
+/*
+ * DELIBERATELY SMALLER THAN `--type-1`.
+ *
+ * The hero step is sized for a headline that owns a whole screen. Here
+ * the type shares the screen with a photograph, and at the display step
+ * three lines of Georgian filled the column edge to edge with no air
+ * above or below — which is the opposite of what makes a spread read as
+ * a spread. The reference this is modelled on gives its name about a
+ * quarter of the canvas and lets the rest breathe.
+ */
 .hero-ed-title {
-  font-size: var(--type-1);
+  font-size: clamp(2.1rem, 5.2vw, 4.5rem);
   color: var(--fg);
+  max-width: 15ch;
 }
 
 /* One mask per line. `clip` rather than `hidden`: a hidden ancestor
@@ -954,11 +961,24 @@ html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-acce
   max-width: 22rem;
 }
 
+/*
+ * The audio pill is fixed to the bottom-left corner of every screen, so
+ * the last thing in this column has to clear it or the two overlap on
+ * the very first thing a visitor sees. Measured against the pill's own
+ * height plus its inset.
+ */
 .hero-ed-caps {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 2.25rem;
+  padding-bottom: 4.5rem;
+}
+
+@media (min-width: 1024px) {
+  .hero-ed-caps {
+    padding-bottom: 0;
+  }
 }
 
 /*
@@ -996,11 +1016,7 @@ html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-acce
 @media (min-width: 1024px) {
   .hero-ed-frame {
     aspect-ratio: auto;
-    height: min(78svh, 46rem);
-    /* Square on the bleeding edge — a radius there would leave a sliver
-     * of page between the plate and the edge of the screen. */
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+    height: min(72svh, 42rem);
   }
 }
 
@@ -2097,4 +2113,14 @@ html:has([data-planner]) body {
   .is-loading body {
     animation: none !important;
   }
+}
+
+/* The hairline between the two halves of the header's preference
+ * cluster. One container, two decisions, and a rule saying so. */
+.header-rule {
+  display: block;
+  width: 1px;
+  height: 1rem;
+  background: var(--header-fg-dim);
+  opacity: 0.4;
 }
