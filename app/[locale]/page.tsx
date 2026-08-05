@@ -1,7 +1,6 @@
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import AudioGuide from "@/app/_components/AudioGuide";
 import BeforeAfter from "@/app/_components/BeforeAfter";
 import Contact, { Footer } from "@/app/_components/Contact";
 import CustomCursor from "@/app/_components/CustomCursor";
@@ -51,7 +50,6 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       {/* Where you are in the page, and how much of it is left. */}
       <JourneyRail />
       <StickyWhatsApp />
-      <AudioGuide />
 
       <main>
         {/*
@@ -70,14 +68,16 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         <Manifesto />
         {/* The poster band — no photo, no price. It sits here so the
             visitor slows down before the first hard evidence. */}
-        <Kinetic />
-        <BeforeAfter />
+        {/* <Kinetic /> */}
+        <div className="mb-10px">
+          <BeforeAfter />
+        </div>
         <Projects />
         {/* The sheet the workshop builds from, drawing itself. Sits on
             the seam between the portfolio and the services list — the
             only Services/portfolio boundary the page has. */}
         <Drawing />
-        <Services />
+        {/* <Services /> */}
         <Showcase />
         {/* A seam between two dark sections, moving at scroll speed. */}
         <MarqueeBand />

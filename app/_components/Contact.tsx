@@ -9,6 +9,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import HeroSwitch from "@/app/_components/HeroSwitch";
+import LocaleSwitch from "@/app/_components/LocaleSwitch";
+import ThemeToggle from "@/app/_components/ThemeToggle";
 import MagneticType from "@/app/_components/MagneticType";
 import { submitLead } from "@/app/actions";
 import { track } from "@/lib/analytics";
@@ -445,6 +447,23 @@ export function Footer() {
           </nav>
 
           <div>
+            {/*
+              THE PREFERENCES, all three of them.
+
+              They were in the header until it became an island carrying
+              only a wordmark and one button. A footer is where a visitor
+              already goes looking for settings, and putting them here is
+              what let the header stop asking questions nobody had yet.
+            */}
+            <div className="footer-prefs">
+              <p className={LABEL_CLASS}>{tNav("langLabel")}</p>
+              <div className="footer-prefs-row">
+                <LocaleSwitch />
+                <span aria-hidden="true" className="footer-prefs-rule" />
+                <ThemeToggle />
+              </div>
+            </div>
+
             {/* The opening scene, chosen after you have seen one. */}
             <HeroSwitch />
 

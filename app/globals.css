@@ -263,9 +263,6 @@ html[lang="ka"] .u-display {
 
 /* Frosted header once the page has scrolled (attribute set from JS). */
 [data-site-header][data-scrolled] {
-  background: var(--glass-tint-strong);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   --header-fg: var(--ink);
   --header-fg-dim: var(--ink-70);
   --header-accent: var(--clay-deep);
@@ -846,6 +843,80 @@ html[data-surface="dark"] [data-site-header][data-scrolled] {
 }
 
 /* =====================================================================
+ * THE HEADER ISLAND
+ * ---------------------------------------------------------------------
+ * A floating bar inset from every edge rather than a strip welded to the
+ * top. Half its job is what it holds — a wordmark and one button — and
+ * half is what it lets past: the hero photograph now runs the full
+ * height of the screen and to its right edge, and an island is what
+ * turns the header into something FLOATING ON that image instead of
+ * something cutting it off.
+ *
+ * Roughly half again as tall as the strip it replaced, because an island
+ * with two objects on it needs the air to read as deliberate.
+ * ================================================================== */
+.header-island {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 5rem;
+  padding: 0.75rem 0.75rem 0.75rem 1.5rem;
+  border-radius: var(--radius-pill);
+  background: var(--glass-tint);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--glass-border);
+  box-shadow:
+    inset 0 1px 0 var(--glass-highlight),
+    var(--glass-shadow);
+  transition: background-color 0.4s ease;
+}
+
+@media (min-width: 640px) {
+  .header-island {
+    min-height: 6.5rem;
+    padding: 0.85rem 0.85rem 0.85rem 2rem;
+  }
+}
+
+/* Denser once the page has moved and there is content behind it. */
+[data-site-header][data-scrolled] .header-island {
+  background: var(--glass-tint-strong);
+}
+
+/* The one action, solid. */
+.header-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-pill);
+  background: var(--invert);
+  color: var(--invert-fg);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+@media (min-width: 640px) {
+  .header-cta {
+    padding: 0.95rem 1.6rem;
+    font-size: 0.8125rem;
+  }
+}
+
+.header-cta-arrow {
+  transition: transform 0.4s var(--ease-out);
+}
+
+@media (hover: hover) {
+  .header-cta:hover .header-cta-arrow {
+    transform: translateX(0.25rem);
+  }
+}
+
+/* =====================================================================
  * THE TWO OPENINGS
  * ---------------------------------------------------------------------
  * Both are in the served HTML and CSS shows one. That is what lets the
@@ -913,7 +984,10 @@ html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-acce
      * Georgian, where the same sentence sets two lines longer. A minimum
      * holds the composition without ever clipping the type. */
     min-height: 100svh;
-    padding-block: 8.5rem 4rem;
+    /* The plate is the full height of the screen, so the section
+     * cannot add padding around it. The copy column carries its own
+     * headroom for the island instead. */
+    padding-block: 0;
   }
 
   .hero-ed-grid {
@@ -932,6 +1006,17 @@ html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-acce
  * a spread. The reference this is modelled on gives its name about a
  * quarter of the canvas and lets the rest breathe.
  */
+.hero-ed-copy {
+  /* Clears the floating island above it. */
+  padding-top: 3rem;
+}
+
+@media (min-width: 1024px) {
+  .hero-ed-copy {
+    padding-top: 0;
+  }
+}
+
 .hero-ed-title {
   font-size: clamp(2.1rem, 5.2vw, 4.5rem);
   color: var(--fg);
@@ -961,49 +1046,6 @@ html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-acce
   max-width: 22rem;
 }
 
-/*
- * The audio pill is fixed to the bottom-left corner of every screen, so
- * the last thing in this column has to clear it or the two overlap on
- * the very first thing a visitor sees. Measured against the pill's own
- * height plus its inset.
- */
-.hero-ed-caps {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 2.25rem;
-  padding-bottom: 4.5rem;
-}
-
-@media (min-width: 1024px) {
-  .hero-ed-caps {
-    padding-bottom: 0;
-  }
-}
-
-/*
- * The pill-with-a-dot, in the one accent this palette has. The shape is
- * what says "tag"; using five colours for five tags would say "we have
- * five colours", which this site deliberately does not.
- */
-.hero-ed-cap {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.85rem;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  background: var(--surface-raised);
-  font-size: 0.75rem;
-  color: var(--ink-70);
-}
-
-.hero-ed-dot {
-  width: 0.3125rem;
-  height: 0.3125rem;
-  border-radius: var(--radius-pill);
-  background: var(--accent);
-}
 
 .hero-ed-frame {
   position: relative;
@@ -1015,8 +1057,23 @@ html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-acce
 
 @media (min-width: 1024px) {
   .hero-ed-frame {
+    /*
+     * FULL HEIGHT, AND OFF THE RIGHT EDGE.
+     *
+     * The plate now runs the whole screen and touches the right side of
+     * the viewport, so the header island floats ON it rather than above
+     * it. Only the left corners are rounded — a radius on an edge that
+     * is flush with the screen would leave a sliver of page showing
+     * through the corner.
+     *
+     * The grid gutter is cancelled on this side with a negative margin
+     * rather than by removing the padding, so the copy column keeps its
+     * own gutter and only the photograph escapes.
+     */
     aspect-ratio: auto;
-    height: min(72svh, 42rem);
+    height: 100svh;
+    margin-right: calc(var(--space-gutter) * -1);
+    border-radius: var(--radius-shell) 0 0 var(--radius-shell);
   }
 }
 
@@ -1200,6 +1257,11 @@ html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-acce
  */
 .u-rule {
   position: relative;
+  /* The nib rides along the rule and must stay inside it. Without
+   * this it travelled past the end and widened the document by
+   * 64px at 390. `clip` rather than `hidden`: it never creates a
+   * scroll container, so nothing sticky above it is affected. */
+  overflow: clip;
   display: block;
   height: var(--rule-weight);
   width: 100%;
@@ -2123,4 +2185,30 @@ html:has([data-planner]) body {
   height: 1rem;
   background: var(--header-fg-dim);
   opacity: 0.4;
+}
+
+/* ---------------------------------------------------------------------
+ * THE FOOTER'S PREFERENCE ROW — language, theme, opening scene.
+ * All three moved here when the header became an island.
+ * ------------------------------------------------------------------ */
+.footer-prefs {
+  margin-bottom: 2.5rem;
+}
+
+.footer-prefs-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--line-invert);
+  border-radius: var(--radius-pill);
+  color: var(--invert-fg);
+}
+
+.footer-prefs-rule {
+  display: block;
+  width: 1px;
+  height: 1rem;
+  background: var(--line-invert);
 }

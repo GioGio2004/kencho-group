@@ -29,18 +29,9 @@ import { DUR, EASE, STAGGER } from "@/lib/motion";
  * spread, already set.
  */
 
-/** The four things the workshop makes, as capability marks. */
-const CAPABILITIES = [
-  "kitchens",
-  "wardrobes",
-  "paneling",
-  "commercial",
-] as const;
-
 export default function HeroEditorial() {
   const rootRef = useRef<HTMLElement>(null);
   const t = useTranslations("hero");
-  const tServices = useTranslations("services");
 
   useGSAP(
     () => {
@@ -115,27 +106,12 @@ export default function HeroEditorial() {
           </p>
 
           <Rule delay={0.1} className="hero-ed-rule" />
-
-          {/*
-            Capability marks. The pill-with-a-dot pattern, in the one
-            accent this palette has rather than in five — the point of
-            the shape is that it reads as a tag, and the point of the
-            colour is that there is only ever one.
-          */}
-          <ul data-meta className="hero-ed-caps">
-            {CAPABILITIES.map((id) => (
-              <li key={id} className="hero-ed-cap">
-                <span aria-hidden="true" className="hero-ed-dot" />
-                {tServices(`items.${id}.name`)}
-              </li>
-            ))}
-          </ul>
         </div>
 
         {/* ---- the work ---- */}
         <figure data-frame className="hero-ed-frame">
           <Image
-            src={src(IMAGES.drawingReality, 1800)}
+            src={src(IMAGES.serviceKitchens, 1800)}
             alt={t("imageAlt")}
             fill
             priority
