@@ -551,7 +551,7 @@ export default function Projects() {
         ref={sectionRef}
         id="projects"
         aria-labelledby="projects-title"
-        className="bg-sand py-24 sm:py-32"
+        className="u-band py-24 sm:py-32"
       >
         <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-8 lg:px-12">
           <div ref={headerRef}>
@@ -670,11 +670,7 @@ export default function Projects() {
                             up on hover/focus where a fine pointer exists.
                             Transform-only, on an ink scrim. */}
                         <span
-                          className="tile-caption pointer-events-none absolute inset-x-0 bottom-0 block px-4 pt-10 pb-3 text-left text-[0.6875rem] leading-snug tracking-[0.14em] text-bone transition-transform duration-500 ease-out pointer-fine:translate-y-full pointer-fine:group-hover:translate-y-0 pointer-fine:group-focus-within:translate-y-0"
-                          style={{
-                            background:
-                              "linear-gradient(to top, color-mix(in srgb, var(--ink) 65%, transparent), transparent)",
-                          }}
+                          className="glass--media pointer-events-none absolute inset-x-2.5 bottom-2.5 block px-3 py-2 text-left text-[0.6875rem] leading-snug tracking-[0.14em] transition duration-500 ease-out pointer-fine:translate-y-[calc(100%+0.75rem)] pointer-fine:opacity-0 pointer-fine:group-hover:translate-y-0 pointer-fine:group-hover:opacity-100 pointer-fine:group-focus-within:translate-y-0 pointer-fine:group-focus-within:opacity-100"
                         >
                           {t(`items.${item.key}.caption`)}
                         </span>

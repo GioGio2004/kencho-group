@@ -306,7 +306,7 @@ export default function BeforeAfter() {
       ref={sectionRef}
       id="transformation"
       aria-labelledby="transformation-title"
-      className="relative bg-sand-deep py-24 sm:py-32 lg:py-40"
+      className="u-band relative py-24 sm:py-32 lg:py-40"
     >
       {/* The page, set out the way the drawing is. */}
       <Sheet guides={3} inset="inset-x-5 inset-y-10 sm:inset-x-8 lg:inset-x-12" />
@@ -359,10 +359,10 @@ export default function BeforeAfter() {
           </div>
 
           <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between p-4 sm:p-6">
-            <span className="bg-sand px-2.5 py-1 text-[0.625rem] uppercase tracking-[0.24em] text-ink">
+            <span className="glass glass--media px-2.5 py-1 text-[0.625rem] uppercase tracking-[0.24em]">
               {t("before")}
             </span>
-            <span className="bg-sand px-2.5 py-1 text-[0.625rem] uppercase tracking-[0.24em] text-ink">
+            <span className="glass glass--media px-2.5 py-1 text-[0.625rem] uppercase tracking-[0.24em]">
               {t("after")}
             </span>
           </div>
@@ -373,7 +373,7 @@ export default function BeforeAfter() {
           >
             <span
               aria-hidden="true"
-              className="absolute left-0 top-0 h-full w-px -translate-x-1/2 bg-sand"
+              className="absolute left-0 top-0 h-full w-px -translate-x-1/2 bg-bone"
             />
             <button
               ref={knobRef}

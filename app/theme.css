@@ -225,6 +225,25 @@
   /* Text selection and the focus ring. */
   --selection: color-mix(in srgb, var(--accent) 26%, transparent);
   --focus-ring: var(--accent);
+
+  /* -------------------------------------------------------------------
+   * GLASS ON MEDIA — the only place glass belongs.
+   *
+   * The recipe above is tuned to the page surface and retints with the
+   * theme. This one does NOT, in either theme, because what it sits on
+   * is a photograph: a label over a kitchen has no idea whether the
+   * page around it is stone or coal, only that the pixels underneath it
+   * could be anything from a white worktop to a dark oak front.
+   *
+   * So it is always a dark tint carrying bone type — the one
+   * combination that is legible over every photograph the portfolio
+   * contains — and the blur is what keeps it from reading as a flat
+   * scrim laid on top.
+   * ---------------------------------------------------------------- */
+  --glass-media-bg: color-mix(in srgb, var(--coal-0) 44%, transparent);
+  --glass-media-border: color-mix(in srgb, var(--bone) 20%, transparent);
+  --glass-media-highlight: color-mix(in srgb, var(--bone) 14%, transparent);
+  --glass-media-fg: var(--bone);
 }
 
 /* Glass on charcoal: the light recipe reads as a grey smear, so the
@@ -346,21 +365,28 @@
    * inline `borderRadius: 9999px`. The fallback in the `.glass` rule now
    * makes pill the default and this token the opt-out.
    * ---------------------------------------------------------------- */
-  --radius-pill: 9999px;
-  --radius-card: 22px;
-  --radius-panel: 20px;
   /*
-   * Media. Every photograph on the site takes this one radius — the
-   * portfolio wall, the lightbox it flips into, the before/after frame.
-   * It has to be a single value or the Flip between a grid tile and its
-   * lightbox animates a corner as well as a position, which reads as
-   * the image changing shape mid-flight.
+   * THE RADIUS LADDER.
    *
-   * 14px rather than the card's 22: at four columns a tile is ~300px
-   * wide, and a radius that reads as generous on a card reads as a
-   * rounded-off snapshot on a wall of them.
+   * Five rungs, each nested inside the one above it and each visibly
+   * smaller. That descent is the whole trick: a rounded card holding a
+   * rounded photograph holding a rounded label reads as depth, where
+   * three elements sharing one radius reads as a template. The rule is
+   * that a child's radius is roughly two thirds of its parent's, so an
+   * inner corner never looks slacker than the corner containing it.
+   *
+   *   shell   a content band, floating on the page
+   *   card    a panel inside a band
+   *   media   a photograph
+   *   chip    a label sitting ON a photograph
+   *   pill    anything fully round
    */
+  --radius-shell: 32px;
+  --radius-card: 22px;
   --radius-media: 14px;
+  --radius-chip: 10px;
+  --radius-pill: 9999px;
+  --radius-panel: 20px;
 
   /* -------------------------------------------------------------------
    * 7. EASING — the CSS side of the motion vocabulary.
@@ -459,9 +485,11 @@
   --color-dwg-gold: var(--dwg-gold);
   --color-dwg-bg: var(--dwg-bg);
 
-  --radius-pill: var(--radius-pill);
+  --radius-shell: var(--radius-shell);
   --radius-card: var(--radius-card);
   --radius-media: var(--radius-media);
+  --radius-chip: var(--radius-chip);
+  --radius-pill: var(--radius-pill);
 
   --ease-out: var(--ease-out);
   --ease-expo: var(--ease-expo);

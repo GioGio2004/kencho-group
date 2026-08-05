@@ -215,7 +215,7 @@ export default function Services() {
       ref={rootRef}
       id="services"
       aria-labelledby="services-title"
-      className="relative bg-sand"
+      className="u-band relative"
     >
       {/* The page, set out the way the drawing is. */}
       <Sheet guides={4} inset="inset-x-5 inset-y-12 sm:inset-x-8 lg:inset-x-12" />

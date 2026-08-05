@@ -845,6 +845,77 @@ html[data-surface="dark"] [data-site-header][data-scrolled] {
   display: none;
 }
 
+/* =====================================================================
+ * THE BAND — a content section, floating on the page.
+ * ---------------------------------------------------------------------
+ * Inset from the gutter, raised half a step off the page surface, and
+ * carrying the top rung of the radius ladder. Everything the visitor is
+ * meant to READ sits in one of these; everything they are meant to WATCH
+ * — the hero, the drawing, the showcase, the poster band — stays
+ * full-bleed.
+ *
+ * That contrast is the point and it is why the whole page is NOT put in
+ * a single shell the way the reference site does. Four of this site's
+ * sections are pinned or sticky, and an ancestor that clips is exactly
+ * how sticky positioning breaks. Cards for the reading, full bleed for
+ * the cinema — better rhythm, a fraction of the risk.
+ *
+ * No `overflow: clip` here for the same reason. Nothing inside a band
+ * paints into its corner; the media has its own, smaller radius.
+ * ================================================================== */
+.u-band {
+  position: relative;
+  margin-inline: var(--space-gutter);
+  border-radius: var(--radius-shell);
+  background: var(--surface-raised);
+}
+
+/* On a phone the gutter is most of the screen, so a band inset by it
+ * would be a column rather than a page. Half the inset, and a radius
+ * that stays proportional to the width it is cornering. */
+@media (max-width: 639px) {
+  .u-band {
+    margin-inline: calc(var(--space-gutter) * 0.6);
+    border-radius: calc(var(--radius-shell) * 0.62);
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * GLASS ON MEDIA — a label sitting on a photograph.
+ *
+ * The one place glass earns its cost. Over a flat surface it reads as a
+ * grey box; over an image it reads as a pane, because there is something
+ * behind it worth blurring.
+ * ------------------------------------------------------------------ */
+/*
+ * SELF-SUFFICIENT, and deliberately WITHOUT the blur.
+ *
+ * `.glass` carries the backdrop-filter, and this file's own budget is at
+ * most two live glass surfaces per frame — a portfolio wall is twelve
+ * tiles, so twelve blurred captions is twelve full-tile re-rasterisations
+ * on a wall that is already drifting under a scrub. The tint alone at 44%
+ * coal is legible over every photograph in the set.
+ *
+ * Pair it WITH `.glass` only where the count is small and the surface is
+ * still: the two before/after chips, the lightbox chrome.
+ */
+.glass--media {
+  border: 1px solid var(--glass-media-border);
+  border-radius: var(--radius-chip);
+  background: var(--glass-media-bg);
+  box-shadow: inset 0 1px 0 var(--glass-media-highlight);
+  color: var(--glass-media-fg);
+}
+
+/* Backdrop blur is unsupported on a handful of Android browsers, and the
+ * fallback has to stay legible over a photograph rather than merely
+ * on-palette — so it deepens instead of thinning out. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass--media {
+    background: color-mix(in srgb, var(--coal-0) 72%, transparent);
+  }
+}
+
 /*
  * A horizontally scrolling strip, fading at the edge it continues past.
  * Only below `sm`, where the overflow actually happens — above it the
@@ -885,14 +956,11 @@ html[data-surface="dark"] [data-site-header][data-scrolled] {
 }
 
 /*
- * The caption sits ON the tile, so it has to be inset from the rounded
- * corner rather than running into it. Pinterest's own trick: the scrim
- * is the full width, the type is not.
+ * The caption is now an inset glass chip rather than a full-width scrim,
+ * so it no longer has to match the tile's own corner — it sits inside it
+ * at the next rung down the radius ladder. `.tile-caption` and the
+ * gradient it carried are gone with it.
  */
-.tile .tile-caption {
-  border-bottom-left-radius: var(--radius-media);
-  border-bottom-right-radius: var(--radius-media);
-}
 
 /* =====================================================================
  * THE LINE SYSTEM

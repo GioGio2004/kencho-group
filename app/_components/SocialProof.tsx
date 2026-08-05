@@ -135,7 +135,7 @@ export default function SocialProof() {
       ref={rootRef}
       id="trust"
       aria-labelledby="trust-title"
-      className="relative bg-sand-deep py-24 sm:py-32 lg:py-40"
+      className="u-band relative py-24 sm:py-32 lg:py-40"
     >
       {/* The page, set out the way the drawing is. */}
       <Sheet guides={3} inset="inset-x-5 inset-y-10 sm:inset-x-8 lg:inset-x-12" />

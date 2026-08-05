@@ -132,7 +132,7 @@ export default function FAQ() {
       id="faq"
       ref={rootRef}
       aria-labelledby="faq-title"
-      className="relative bg-sand px-5 py-24 sm:px-8 sm:py-32 lg:px-12 lg:py-40"
+      className="u-band relative px-5 py-24 sm:px-8 sm:py-32 lg:px-12 lg:py-40"
     >
       {/* The page, set out the way the drawing is. */}
       <Sheet guides={2} inset="inset-x-5 inset-y-12 sm:inset-x-8 lg:inset-x-12" />
