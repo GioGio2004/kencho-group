@@ -44,7 +44,12 @@
     "walkthroughAlt": "გასეირნება Kencho Group-ის დასრულებულ ინტერიერში",
     "beatWelcome": "შემობრძანდით",
     "beatCraft": "ყოველი დეტალი ამ ოთახისთვისაა გაზომილი, დახატული და დამზადებული.",
-    "beatContinue": "გააგრძელეთ"
+    "beatContinue": "გააგრძელეთ",
+    "switch": {
+      "label": "გახსნის სცენა",
+      "cinematic": "ვიდეო-ტური",
+      "editorial": "ჟურნალური"
+    }
   },
   "manifesto": {
     "eyebrow": "ჩვენ შესახებ",

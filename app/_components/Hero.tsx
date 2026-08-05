@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useTranslations } from "next-intl";
+import { HERO_EVENT } from "@/lib/hero";
 import { SITE } from "@/lib/site";
 import { DUR, EASE, lingerStops, smoothstep } from "@/lib/motion";
 import { FrameSequence } from "@/lib/frame-sequence";
@@ -43,11 +44,37 @@ export default function Hero() {
 
   const headlineLines = t("lines").split("\n");
 
+  /*
+   * Ticks whenever the footer swaps the opening scene. The GSAP effect
+   * below depends on it, so being switched back on rebuilds the
+   * walkthrough that the visibility guard skipped while it was hidden.
+   */
+  const [heroSwap, setHeroSwap] = useState(0);
+  useEffect(() => {
+    const onSwap = () => setHeroSwap((n) => n + 1);
+    window.addEventListener(HERO_EVENT, onSwap);
+    return () => window.removeEventListener(HERO_EVENT, onSwap);
+  }, []);
+
   useGSAP(
     () => {
       gsap.registerPlugin(ScrollTrigger, SplitText);
       const root = rootRef.current;
       if (!root) return;
+
+      /*
+       * BOTH openings are in the document and CSS hides one, so this
+       * component can be mounted while display:none. Bail out if it is:
+       * a hidden hero measures zero, which would give every ScrollTrigger
+       * below it a start of 0 — and, far more expensively, it would
+       * decode a two-hundred-frame walkthrough sequence for a visitor who
+       * chose the editorial opening and will never see a frame of it.
+       *
+       * `offsetParent` is null for a display:none subtree, and this
+       * re-runs on a swap because the footer's switch fires
+       * `alma:hero-change`, which the effect below listens for.
+       */
+      if (!root.offsetParent) return;
 
       const q = gsap.utils.selector(root);
       const canvas = q("canvas")[0] as HTMLCanvasElement | undefined;
@@ -461,7 +488,10 @@ export default function Hero() {
 
       return () => mm.revert();
     },
-    { scope: rootRef },
+    // Re-runs when the footer swaps the opening. Without this the
+    // walkthrough stays inert after being switched back on, because the
+    // guard above bailed out while it was hidden.
+    { scope: rootRef, dependencies: [heroSwap] },
   );
 
   return (
@@ -470,9 +500,15 @@ export default function Hero() {
           visit; this hero is what its curtain reveals. */}
       <IntroSequence />
 
+      {/*
+        `id="hero"` lives on the wrapper in page.tsx that holds BOTH
+        openings, not here. Two sections carrying it made the wordmark's
+        `#hero` anchor resolve to whichever came first in the document —
+        which, for a visitor on the editorial opening, was a display:none
+        element the browser will not scroll to.
+      */}
       <section
         ref={rootRef}
-        id="hero"
         aria-labelledby="hero-title"
         /* No `isolate`: it would trap the intro overlay's stacking order. */
         className="relative h-svh overflow-hidden bg-charcoal"

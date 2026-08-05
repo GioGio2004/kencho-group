@@ -44,7 +44,12 @@
     "walkthroughAlt": "Walking through a finished Kencho Group interior",
     "beatWelcome": "Welcome in",
     "beatCraft": "Every piece measured, drawn, and built for this room.",
-    "beatContinue": "Keep scrolling"
+    "beatContinue": "Keep scrolling",
+    "switch": {
+      "label": "Opening scene",
+      "cinematic": "Walkthrough",
+      "editorial": "Editorial"
+    }
   },
   "manifesto": {
     "eyebrow": "About us",

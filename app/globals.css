@@ -846,6 +846,207 @@ html[data-surface="dark"] [data-site-header][data-scrolled] {
 }
 
 /* =====================================================================
+ * THE TWO OPENINGS
+ * ---------------------------------------------------------------------
+ * Both are in the served HTML and CSS shows one. That is what lets the
+ * boot script in layout.tsx decide before the first paint, and what lets
+ * the footer toggle swap them with an attribute instead of a re-render —
+ * no flash, no hydration branch, and both openings in the markup a
+ * crawler reads.
+ *
+ * The cost is that the hidden one is still mounted, so the walkthrough
+ * guards its own frame decoding — see Hero.tsx.
+ * ================================================================== */
+html[data-hero="editorial"] [data-hero-variant="cinematic"],
+html[data-hero="cinematic"] [data-hero-variant="editorial"] {
+  display: none;
+}
+
+/* Nothing stamped yet — a crawler, or JS that never ran. Show the
+ * default and hide the other, so the page is never both at once. */
+html:not([data-hero]) [data-hero-variant="editorial"] {
+  display: none;
+}
+
+/*
+ * THE HEADER OVER THE EDITORIAL OPENING.
+ *
+ * `[data-site-header]` defaults to sand-coloured type because it was
+ * written to float over a charcoal walkthrough. The editorial opening is
+ * the PAGE surface, so those same defaults put light type on light paper
+ * and the nav all but disappeared. Ink from the start here, and the
+ * scrolled state is unchanged — it was already correct.
+ */
+html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) {
+  --header-fg: var(--ink);
+  --header-fg-dim: var(--ink-70);
+  --header-accent: var(--clay-deep);
+}
+
+/* The shadow exists to hold type legible over moving video. On paper it
+ * is a smudge. */
+html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-fg,
+html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-fg-dim,
+html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-accent {
+  text-shadow: none;
+}
+
+/* ---------------------------------------------------------------------
+ * THE EDITORIAL OPENING — a spread, not a shot.
+ * ------------------------------------------------------------------ */
+.hero-ed {
+  position: relative;
+  background: var(--surface);
+  padding-block: 7rem 3rem;
+}
+
+.hero-ed-grid {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+  padding-inline: var(--space-gutter);
+}
+
+@media (min-width: 1024px) {
+  .hero-ed {
+    /* Not `100svh`: the masthead has to be able to grow past the fold in
+     * Georgian, where the same sentence sets two lines longer. A minimum
+     * holds the composition without ever clipping the type. */
+    min-height: 100svh;
+    padding-block: 8.5rem 4rem;
+  }
+
+  .hero-ed-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 4rem;
+    /* The photograph runs off the right edge of the page. The gutter is
+     * removed on that side only, which is what makes it read as a plate
+     * bleeding off a spread rather than as a card in a column. */
+    padding-right: 0;
+  }
+}
+
+.hero-ed-title {
+  font-size: var(--type-1);
+  color: var(--fg);
+}
+
+/* One mask per line. `clip` rather than `hidden`: a hidden ancestor
+ * would establish a scroll container and Lenis would inherit the
+ * problem four sections later. */
+.hero-ed-mask {
+  display: block;
+  overflow: clip;
+  /* Descender headroom — the display line-height is tight enough that a
+   * "g" sits outside its line box and the mask would guillotine it. */
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.hero-ed-sub {
+  margin-top: 1.75rem;
+  font-size: 1rem;
+  color: var(--ink-70);
+}
+
+.hero-ed-rule {
+  margin-top: 2.25rem;
+  max-width: 22rem;
+}
+
+.hero-ed-caps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 2.25rem;
+}
+
+/*
+ * The pill-with-a-dot, in the one accent this palette has. The shape is
+ * what says "tag"; using five colours for five tags would say "we have
+ * five colours", which this site deliberately does not.
+ */
+.hero-ed-cap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--surface-raised);
+  font-size: 0.75rem;
+  color: var(--ink-70);
+}
+
+.hero-ed-dot {
+  width: 0.3125rem;
+  height: 0.3125rem;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+.hero-ed-frame {
+  position: relative;
+  overflow: clip;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-shell);
+  background: var(--surface-raised);
+}
+
+@media (min-width: 1024px) {
+  .hero-ed-frame {
+    aspect-ratio: auto;
+    height: min(78svh, 46rem);
+    /* Square on the bleeding edge — a radius there would leave a sliver
+     * of page between the plate and the edge of the screen. */
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * THE OPENING SWITCH — in the footer, on the inverted band.
+ * ------------------------------------------------------------------ */
+.hero-switch {
+  margin-bottom: 2.5rem;
+}
+
+.hero-switch-label {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--invert-fg) 55%, transparent);
+}
+
+.hero-switch-group {
+  display: inline-flex;
+  margin-top: 1.25rem;
+  padding: 0.25rem;
+  border: 1px solid var(--line-invert);
+  border-radius: var(--radius-pill);
+}
+
+.hero-switch-option {
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--invert-fg) 60%, transparent);
+}
+
+.hero-switch-option[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--invert-fg) 12%, transparent);
+  color: var(--invert-fg);
+}
+
+@media (hover: hover) {
+  .hero-switch-option:not([aria-pressed="true"]):hover {
+    color: var(--invert-fg);
+  }
+}
+
+/* =====================================================================
  * THE BAND — a content section, floating on the page.
  * ---------------------------------------------------------------------
  * Inset from the gutter, raised half a step off the page surface, and

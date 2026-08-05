@@ -8,6 +8,7 @@ import { fontClassesFor } from "@/lib/fonts";
 import { IMAGES, src } from "@/lib/images";
 import { PALETTE, SITE } from "@/lib/site";
 import { businessLd } from "@/lib/structured-data";
+import { HERO_BOOT } from "@/lib/hero";
 import { THEME_BOOT } from "@/lib/theme";
 import "../globals.css";
 
@@ -137,6 +138,9 @@ export default async function LocaleLayout({
          * visible defect a theme system can ship.
          */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
+        {/* Which opening scene, for the same reason and at the same
+            moment: both are in the markup and CSS hides one. */}
+        <script dangerouslySetInnerHTML={{ __html: HERO_BOOT }} />
         <script dangerouslySetInnerHTML={{ __html: loaderGuard }} />
       </head>
       <body>

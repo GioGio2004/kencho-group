@@ -8,6 +8,7 @@ import CustomCursor from "@/app/_components/CustomCursor";
 import Drawing from "@/app/_components/Drawing";
 import FAQ from "@/app/_components/FAQ";
 import Hero from "@/app/_components/Hero";
+import HeroEditorial from "@/app/_components/HeroEditorial";
 import JourneyRail from "@/app/_components/JourneyRail";
 import Kinetic from "@/app/_components/Kinetic";
 import Manifesto from "@/app/_components/Manifesto";
@@ -53,7 +54,19 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
       <AudioGuide />
 
       <main>
-        <Hero />
+        {/*
+          BOTH openings ship. CSS shows one, chosen by the attribute the
+          boot script stamps before first paint — so the swap is an
+          attribute rather than a re-render, and a crawler reads both.
+        */}
+        <div id="hero">
+          <div data-hero-variant="cinematic">
+            <Hero />
+          </div>
+          <div data-hero-variant="editorial">
+            <HeroEditorial />
+          </div>
+        </div>
         <Manifesto />
         {/* The poster band — no photo, no price. It sits here so the
             visitor slows down before the first hard evidence. */}

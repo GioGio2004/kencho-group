@@ -44,7 +44,12 @@
     "walkthroughAlt": "Прогулка по готовому интерьеру Kencho Group",
     "beatWelcome": "Заходите",
     "beatCraft": "Каждая деталь измерена, отрисована и сделана для этой комнаты.",
-    "beatContinue": "Листайте дальше"
+    "beatContinue": "Листайте дальше",
+    "switch": {
+      "label": "Первый экран",
+      "cinematic": "Видеотур",
+      "editorial": "Журнальный"
+    }
   },
   "manifesto": {
     "eyebrow": "О нас",

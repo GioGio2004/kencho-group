@@ -8,6 +8,7 @@ import { SplitText } from "gsap/SplitText";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import HeroSwitch from "@/app/_components/HeroSwitch";
 import MagneticType from "@/app/_components/MagneticType";
 import { submitLead } from "@/app/actions";
 import { track } from "@/lib/analytics";
@@ -444,7 +445,10 @@ export function Footer() {
           </nav>
 
           <div>
-            <p className={LABEL_CLASS}>{t("socials")}</p>
+            {/* The opening scene, chosen after you have seen one. */}
+            <HeroSwitch />
+
+            <p className={`${LABEL_CLASS} mt-10`}>{t("socials")}</p>
             <ul className="mt-5 flex flex-col gap-3 text-sm">
               {SOCIAL_LINKS.map((social) => (
                 <li key={social.label}>
