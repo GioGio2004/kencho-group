@@ -52,18 +52,17 @@ import { DUR, EASE } from "@/lib/motion";
  * eyebrow that section already prints, so the rail never invents a name
  * for a section or needs a translation of its own.
  *
- * SocialProof is deliberately absent — it carries no id, and it reads as
- * evidence attached to the process rather than as a stop of its own.
+ * Kinetic, Showcase and SocialProof came off this list when the page
+ * cut them — a rail stop pointing at a section that is not in the
+ * document is a button that scrolls nowhere.
  */
 const STOPS = [
   { id: "hero", label: "nav.home" },
   { id: "manifesto", label: "manifesto.eyebrow" },
-  { id: "kinetic", label: "kinetic.eyebrow" },
   { id: "transformation", label: "transformation.eyebrow" },
   { id: "projects", label: "projects.eyebrow" },
   { id: "drawing", label: "drawing.title" },
   { id: "services", label: "services.eyebrow" },
-  { id: "showcase", label: "showcase.eyebrow" },
   { id: "process", label: "process.eyebrow" },
   { id: "faq", label: "faq.eyebrow" },
   { id: "contact", label: "contact.eyebrow" },

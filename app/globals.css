@@ -843,30 +843,31 @@ html[data-surface="dark"] [data-site-header][data-scrolled] {
 }
 
 /* =====================================================================
- * THE HEADER ISLAND
+ * THE HEADER — a bar hung from the ceiling.
  * ---------------------------------------------------------------------
- * A floating bar inset from every edge rather than a strip welded to the
- * top. Half its job is what it holds — a wordmark and one button — and
- * half is what it lets past: the hero photograph now runs the full
- * height of the screen and to its right edge, and an island is what
- * turns the header into something FLOATING ON that image instead of
- * something cutting it off.
+ * Flush to the top of the screen, inset from the sides, rounded only on
+ * its bottom corners: it HANGS rather than floats, which is what lets
+ * the hero plate run to the very top of the viewport and slide in
+ * underneath it. Tall — half again the island it replaces — because a
+ * bar carrying three things needs the air to read as deliberate.
  *
- * Roughly half again as tall as the strip it replaced, because an island
- * with two objects on it needs the air to read as deliberate.
+ * No top border: that edge is the edge of the screen, and a hairline
+ * there reads as a rendering artefact.
  * ================================================================== */
 .header-island {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.5rem;
-  min-height: 5rem;
-  padding: 0.75rem 0.75rem 0.75rem 1.5rem;
-  border-radius: var(--radius-pill);
+  min-height: 4.75rem;
+  padding: 0.85rem 0.85rem 0.85rem 1.5rem;
+  border-radius: 0 0 var(--radius-shell) var(--radius-shell);
   background: var(--glass-tint);
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
   border: 1px solid var(--glass-border);
+  border-top: 0;
   box-shadow:
     inset 0 1px 0 var(--glass-highlight),
     var(--glass-shadow);
@@ -875,8 +876,45 @@ html[data-surface="dark"] [data-site-header][data-scrolled] {
 
 @media (min-width: 640px) {
   .header-island {
-    min-height: 6.5rem;
-    padding: 0.85rem 0.85rem 0.85rem 2rem;
+    min-height: 7rem;
+    padding: 1rem 1rem 1rem 2.25rem;
+  }
+}
+
+/*
+ * WHERE YOU ARE — the live section label, dead centre. Absolute, so the
+ * wordmark and the button keep their edge positions regardless of how
+ * long a Georgian section name runs. Hidden on phones, where the bar
+ * has no middle to spare.
+ */
+.header-section-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 34%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--header-fg-dim);
+  opacity: 1;
+  transition: opacity 0.4s ease;
+  display: none;
+}
+
+.header-section-label[data-empty] {
+  opacity: 0;
+}
+
+@media (min-width: 640px) {
+  .header-section-label {
+    display: block;
   }
 }
 
@@ -934,8 +972,9 @@ html[data-hero="cinematic"] [data-hero-variant="editorial"] {
 }
 
 /* Nothing stamped yet — a crawler, or JS that never ran. Show the
- * default and hide the other, so the page is never both at once. */
-html:not([data-hero]) [data-hero-variant="editorial"] {
+ * default (editorial) and hide the other, so the page is never both at
+ * once. Must agree with HERO_DEFAULT in lib/hero.ts. */
+html:not([data-hero]) [data-hero-variant="cinematic"] {
   display: none;
 }
 
@@ -1007,13 +1046,37 @@ html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-acce
  * quarter of the canvas and lets the rest breathe.
  */
 .hero-ed-copy {
-  /* Clears the floating island above it. */
-  padding-top: 3rem;
+  /* Clears the hanging bar above it. */
+  padding-top: 3.5rem;
+}
+
+/*
+ * The annotated brief: the title holds the upper-middle of the column
+ * and the one line of copy moves DOWN into the empty space at the
+ * bottom, where it reads as a signature rather than a subtitle. Flex
+ * with an auto margin on the title centres it in whatever is left.
+ */
+@media (min-width: 1024px) {
+  .hero-ed-copy {
+    display: flex;
+    flex-direction: column;
+    height: 100svh;
+    padding-top: 11rem;
+    padding-bottom: 3.5rem;
+  }
+
+  .hero-ed-title {
+    margin-block: auto;
+  }
+}
+
+.hero-ed-foot {
+  margin-top: 2.5rem;
 }
 
 @media (min-width: 1024px) {
-  .hero-ed-copy {
-    padding-top: 0;
+  .hero-ed-foot {
+    margin-top: 0;
   }
 }
 
@@ -1042,7 +1105,6 @@ html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-acce
 }
 
 .hero-ed-rule {
-  margin-top: 2.25rem;
   max-width: 22rem;
 }
 
@@ -1147,6 +1209,13 @@ html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-acce
 /* On a phone the gutter is most of the screen, so a band inset by it
  * would be a column rather than a page. Half the inset, and a radius
  * that stays proportional to the width it is cornering. */
+/* Two bands in a row used to touch, corner to corner — which welds two
+ * floating cards into one broken shape. The page surface shows through
+ * the seam now. */
+.u-band + .u-band {
+  margin-top: var(--space-flow);
+}
+
 @media (max-width: 639px) {
   .u-band {
     margin-inline: calc(var(--space-gutter) * 0.6);
@@ -2177,15 +2246,6 @@ html:has([data-planner]) body {
   }
 }
 
-/* The hairline between the two halves of the header's preference
- * cluster. One container, two decisions, and a rule saying so. */
-.header-rule {
-  display: block;
-  width: 1px;
-  height: 1rem;
-  background: var(--header-fg-dim);
-  opacity: 0.4;
-}
 
 /* ---------------------------------------------------------------------
  * THE FOOTER'S PREFERENCE ROW — language, theme, opening scene.

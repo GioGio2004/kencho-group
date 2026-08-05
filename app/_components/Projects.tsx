@@ -128,12 +128,33 @@ export default function Projects() {
       ? PORTFOLIO
       : PORTFOLIO.filter((p) => p.category === category);
 
+  /*
+   * SHORTEST COLUMN WINS, not round-robin.
+   *
+   * Round-robin deals by index and is blind to shape: a run of portrait
+   * tiles landing in one column left it a full screen taller than its
+   * neighbour, and the wall ended in ragged voids. Since every column is
+   * the same width, each tile's height contribution is just h/w from its
+   * authored aspect — so the wall can be balanced exactly, before
+   * render, with no measurement. The constant added per tile is the
+   * row gap's share, which keeps a column of many small tiles honest
+   * against a column of few tall ones. Ties go left, so document order
+   * still reads left to right.
+   */
   const columns: PortfolioItem[][] = Array.from(
     { length: colCount },
     () => [],
   );
-  filtered.forEach((item, i) => {
-    columns[i % colCount]?.push(item);
+  const colHeights = new Array<number>(colCount).fill(0);
+  filtered.forEach((item) => {
+    const [w, h] = item.aspect.split("/").map(Number);
+    const rel = w && h && Number.isFinite(w / h) ? h / w : 1;
+    let target = 0;
+    for (let c = 1; c < colCount; c++) {
+      if (colHeights[c]! < colHeights[target]! - 1e-6) target = c;
+    }
+    columns[target]?.push(item);
+    colHeights[target]! += rel + 0.06;
   });
 
   const lbCurrent = lightbox

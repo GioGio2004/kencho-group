@@ -48,7 +48,9 @@ export async function businessLd(locale: Locale): Promise<string> {
     "@id": `${SITE.url}/#business`,
     name: SITE.name,
     url: `${SITE.url}/${locale}`,
-    image: src(IMAGES.heroMain, 1200),
+    // Absolute, not the site-relative path src() now returns — JSON-LD
+    // is read outside the page, where a relative URL points nowhere.
+    image: `${SITE.url}${src(IMAGES.heroMain, 1200)}`,
     telephone: SITE.phone,
     email: SITE.email,
     address: {

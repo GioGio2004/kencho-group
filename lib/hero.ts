@@ -19,8 +19,12 @@ export type HeroVariant = "cinematic" | "editorial";
 
 export const HERO_VARIANTS: readonly HeroVariant[] = ["cinematic", "editorial"];
 
-/** The one the site opens with when nobody has said otherwise. */
-export const HERO_DEFAULT: HeroVariant = "cinematic";
+/**
+ * The one the site opens with when nobody has said otherwise. The
+ * editorial spread, by the client's call — the walkthrough still ships,
+ * but only behind the footer switch.
+ */
+export const HERO_DEFAULT: HeroVariant = "editorial";
 
 export const HERO_KEY = "alma:hero";
 

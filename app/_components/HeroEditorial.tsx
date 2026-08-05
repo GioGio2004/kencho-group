@@ -101,17 +101,22 @@ export default function HeroEditorial() {
             ))}
           </h1>
 
-          <p data-meta className="hero-ed-sub">
-            {t("sub")}
-          </p>
-
-          <Rule delay={0.1} className="hero-ed-rule" />
+          {/*
+            The signature. One rule and one line, at the BOTTOM of the
+            column — the annotated brief moved it down into the empty
+            space, where it closes the composition instead of trailing
+            the headline.
+          */}
+          <div data-meta className="hero-ed-foot">
+            <Rule delay={0.1} className="hero-ed-rule" />
+            <p className="hero-ed-sub">{t("sub")}</p>
+          </div>
         </div>
 
         {/* ---- the work ---- */}
         <figure data-frame className="hero-ed-frame">
           <Image
-            src={src(IMAGES.serviceKitchens, 1800)}
+            src={src(IMAGES.heroMain, 1800)}
             alt={t("imageAlt")}
             fill
             priority

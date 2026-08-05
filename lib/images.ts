@@ -1,126 +1,157 @@
 /*
- * EVERY image on the site is registered here — swap the `id` to change a
- * photo, nothing else. `id` is the Unsplash photo slug from a
- * https://images.unsplash.com/photo-<id> URL. All IDs verified live.
+ * EVERY image on the site is registered here — swap the `file` to change
+ * a photo, nothing else.
+ *
+ * These are the client's own photographs, served from /public/furniture.
+ * The filenames are part of the SEO surface — what the photo shows, in
+ * search vocabulary, plus the geography and the brand — so a Google
+ * Images result for "kitchen tbilisi" carries the company name before
+ * the page is even visited. Keep that shape when adding files:
+ *
+ *   <what-it-shows>-tbilisi-kencho-group.webp
  *
  * `alt` here is the English fallback; sections render localized alt text
  * from messages/*.json where available.
  */
 
 export type ImageAsset = {
-  /** Unsplash photo slug (the part after `photo-`). */
-  id: string;
+  /** Filename under /public/furniture. */
+  file: string;
   /** English fallback alt — localized alts live in messages/*.json. */
   alt: string;
 };
 
-const BASE = "https://images.unsplash.com/photo-";
+const BASE = "/furniture/";
 
-/** Build a full source URL for an asset. */
-export function src(asset: ImageAsset, width = 2000): string {
-  return `${BASE}${asset.id}?auto=format&fit=crop&w=${width}&q=80`;
+/**
+ * Build the source path for an asset. The width parameter is kept so
+ * call sites read the same as they did against the CDN, but sizing is
+ * next/image's job now — it optimises local files at request time.
+ */
+export function src(asset: ImageAsset, _width = 2000): string {
+  return BASE + asset.file;
 }
 
 export const IMAGES = {
-  /** Hero — the opening image: card, then full-bleed. LCP element. */
+  /** Hero — the opening plate. LCP element. */
   heroMain: {
-    id: "1600585154340-be6161a56a0c",
-    alt: "A kitchen built by Kencho Group in natural light",
-  },
-
-  /** Before/after slider. */
-  shellBefore: {
-    id: "1503174971373-b1f69850bded",
-    alt: "An unfinished space in shell condition before fit-out",
-  },
-  shellAfter: {
-    id: "1600607687939-ce8a6c25118c",
-    alt: "The same space with a finished interior and built-in furniture",
-  },
-
-  /** Services — one image per glass card. */
-  serviceKitchens: {
-    id: "1556911220-bff31c812dba",
-    alt: "A custom kitchen with dark wood cabinet fronts",
-  },
-  serviceWardrobes: {
-    id: "1595526114035-0d45ed16cfbf",
-    alt: "A built-in wardrobe room with wooden detailing",
-  },
-  servicePaneling: {
-    id: "1615874959474-d609969a20ed",
-    alt: "Wooden wall paneling in soft light",
-  },
-  serviceCommercial: {
-    id: "1524758631624-e2822e304c36",
-    alt: "A commercial interior with custom furniture",
-  },
-
-  /** Projects gallery. */
-  project01: {
-    id: "1600566752229-250ed79470f8",
-    alt: "A dark wood kitchen in Vake",
-  },
-  project02: {
-    id: "1586023492125-27b2c045efd7",
-    alt: "A living room with built-in furniture in Saburtalo",
-  },
-  project03: {
-    id: "1502005229762-cf1b2da7c5d6",
-    alt: "A bedroom with wooden accents in Dighomi",
-  },
-  project04: {
-    id: "1600607687920-4e2a09cf159d",
-    alt: "A light-toned kitchen in Vera",
-  },
-  project05: {
-    id: "1618221195710-dd6b41faaea6",
-    alt: "A microcement bathroom in Vake",
-  },
-  project06: {
-    id: "1560185007-cde436f6a4d0",
-    alt: "A furnished terrace in Mtatsminda",
+    file: "walnut-island-kitchen-tbilisi-kencho-group.webp",
+    alt: "A walnut and white kitchen with a large island, built by Kencho Group in Tbilisi",
   },
 
   /**
-   * The Drawing — the photograph the elevation resolves into.
+   * Before/after slider.
    *
-   * Same asset as portfolio08, and deliberately so: it is a dead-on
-   * front view with the hood centred and the oven housing to one side,
-   * which is the arrangement the elevation is drawn in. The crossfade
-   * only works if the two compositions land on each other, and matching
-   * the drawing to a photo already in the library beat introducing a
-   * second kitchen that sits at a different angle.
+   * HONEST TO A FAULT: the library has no true before-photo of a
+   * finished space, so the pair shows one commercial project mid-fit-out
+   * — bare concrete ceiling, a lone carcass — against the same project's
+   * finished boardroom. A real same-viewpoint pair should replace this
+   * the day the client shoots one.
    */
-  drawingReality: {
-    id: "1600566752229-250ed79470f8",
-    alt: "The finished kitchen, seen straight on",
+  shellBefore: {
+    file: "office-fit-out-in-progress-tbilisi-kencho-group.webp",
+    alt: "An office space mid fit-out, bare concrete ceiling and a single carcass",
+  },
+  shellAfter: {
+    file: "office-boardroom-furniture-tbilisi-kencho-group.webp",
+    alt: "The finished office boardroom with walnut wall units and a conference table",
   },
 
-  /** Contact — quiet supporting detail shot. */
-  contactDetail: {
-    id: "1522771739844-6a9f6d5f14af",
-    alt: "An interior detail — a wooden surface in soft light",
+  /** Services — one image per card. */
+  serviceKitchens: {
+    file: "white-oak-island-kitchen-tbilisi-kencho-group.webp",
+    alt: "A white and oak kitchen with an island and pendant lights",
+  },
+  serviceWardrobes: {
+    file: "oak-framed-wardrobe-tbilisi-kencho-group.webp",
+    alt: "A run of built-in wardrobes with oak frames",
+  },
+  servicePaneling: {
+    file: "fluted-oak-panel-detail-tbilisi-kencho-group.webp",
+    alt: "A fluted oak island panel, curved at the corner",
+  },
+  serviceCommercial: {
+    file: "commercial-reception-desk-tbilisi-kencho-group.webp",
+    alt: "A slatted-wood reception desk in a commercial lobby",
+  },
+
+  /**
+   * The Drawing — the photograph the elevation resolves into. A dead-on
+   * single-wall kitchen, which is the arrangement the elevation is drawn
+   * in; the crossfade only works if the two compositions land on each
+   * other.
+   */
+  drawingReality: {
+    file: "white-oak-kitchen-wall-tbilisi-kencho-group.webp",
+    alt: "A white and oak kitchen wall, seen straight on",
   },
 
   /* Masonry portfolio (aspect ratios + categories in lib/portfolio.ts;
    * localized captions/alt in messages projects.items). */
-  portfolio01: { id: "1556911220-bff31c812dba", alt: "Dark wood kitchen, Vake" },
-  portfolio02: { id: "1600585154340-be6161a56a0c", alt: "Sunlit kitchen, Saburtalo" },
-  portfolio03: { id: "1595526114035-0d45ed16cfbf", alt: "Walk-in wardrobe, Vera" },
-  portfolio04: { id: "1524758631624-e2822e304c36", alt: "Office boardroom, Saburtalo" },
-  portfolio05: { id: "1600607687939-ce8a6c25118c", alt: "Kitchen with oak joinery, Dighomi" },
-  portfolio06: { id: "1586023492125-27b2c045efd7", alt: "Living room storage wall, Vake" },
-  portfolio07: { id: "1517248135467-4c7edcad34c4", alt: "Café interior, Vera" },
-  portfolio08: { id: "1600566752229-250ed79470f8", alt: "Stone and oak kitchen, Ortachala" },
-  portfolio09: { id: "1618221195710-dd6b41faaea6", alt: "Bathroom vanity, Vake" },
-  portfolio10: { id: "1497366216548-37526070297c", alt: "Office lounge, Didube" },
-  portfolio11: { id: "1615874959474-d609969a20ed", alt: "Bedroom built-ins, Dighomi" },
-  portfolio12: { id: "1600607687920-4e2a09cf159d", alt: "Light kitchen, Mtatsminda" },
-  portfolio13: { id: "1552566626-52f8b828add9", alt: "Restaurant fit-out, Mtatsminda" },
-  portfolio14: { id: "1502005229762-cf1b2da7c5d6", alt: "Bedroom in soft tones, Tskneti" },
-  portfolio15: { id: "1600047509807-ba8f99d2cdde", alt: "Loft kitchen, Isani" },
-  portfolio16: { id: "1571003123894-1f0594d2b5d9", alt: "Hotel lobby, Vera" },
+  portfolio01: {
+    file: "walnut-and-concrete-kitchen-tbilisi-kencho-group.webp",
+    alt: "A walnut and concrete-grey kitchen with a black extractor",
+  },
+  portfolio02: {
+    file: "dark-walnut-kitchen-tbilisi-kencho-group.webp",
+    alt: "A dark kitchen with a walnut feature wall and island",
+  },
+  portfolio03: {
+    file: "oak-framed-wardrobe-hall-tbilisi-kencho-group.webp",
+    alt: "Oak-framed wardrobes along a parquet hallway",
+  },
+  portfolio04: {
+    file: "office-boardroom-furniture-tbilisi-kencho-group.webp",
+    alt: "An office boardroom with walnut shelving and a long table",
+  },
+  portfolio05: {
+    file: "green-marble-kitchen-tbilisi-kencho-group.webp",
+    alt: "A green kitchen with a marble splashback and island seating",
+  },
+  portfolio06: {
+    file: "bronze-mirror-wardrobe-tbilisi-kencho-group.webp",
+    alt: "A wardrobe with bronze mirror fronts in warm light",
+  },
+  portfolio07: {
+    file: "commercial-lobby-lounge-tbilisi-kencho-group.webp",
+    alt: "A commercial lobby lounge with slatted wood and glass",
+  },
+  portfolio08: {
+    file: "grey-marble-kitchen-tbilisi-kencho-group.webp",
+    alt: "A grey kitchen with a marble splashback",
+  },
+  portfolio09: {
+    file: "cane-entryway-wardrobe-tbilisi-kencho-group.webp",
+    alt: "An entryway wardrobe with cane door panels and a shoe bench",
+  },
+  portfolio10: {
+    file: "office-walnut-wall-unit-tbilisi-kencho-group.webp",
+    alt: "An office storage wall in walnut with display shelving",
+  },
+  portfolio11: {
+    file: "white-built-in-wardrobe-tbilisi-kencho-group.webp",
+    alt: "A white built-in wardrobe with brass pulls",
+  },
+  portfolio12: {
+    file: "green-island-kitchen-tbilisi-kencho-group.webp",
+    alt: "A green kitchen with an island and black breakfast bar",
+  },
+  portfolio13: {
+    file: "commercial-lobby-mirror-wall-tbilisi-kencho-group.webp",
+    alt: "A curved mirror wall with wood slats in a commercial lobby",
+  },
+  portfolio14: {
+    file: "built-in-wine-rack-tbilisi-kencho-group.webp",
+    alt: "A diamond wine rack built into white cabinetry",
+  },
+  portfolio15: {
+    file: "kitchen-island-staircase-tbilisi-kencho-group.webp",
+    alt: "An open-plan kitchen with island beside a staircase",
+  },
+  portfolio16: {
+    file: "classic-white-kitchen-tbilisi-kencho-group.webp",
+    alt: "A classic white kitchen with ornate cabinetry",
+  },
 } as const satisfies Record<string, ImageAsset>;
 
 export type ImageKey = keyof typeof IMAGES;

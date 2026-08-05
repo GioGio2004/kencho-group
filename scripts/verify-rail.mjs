@@ -136,7 +136,7 @@ const browser = await chromium.launch();
   check("rail arrives once the hero is walked", shown.opacity > 0.9, `opacity ${shown.opacity}`);
 
   // aria-current tracks the section under the middle of the viewport.
-  for (const id of ["manifesto", "kinetic", "projects", "showcase", "process", "contact"]) {
+  for (const id of ["manifesto", "transformation", "projects", "services", "process", "contact"]) {
     if ((await parkOn(page, id)) == null) continue;
     const a = await page.evaluate(ACTIVE);
     check(`aria-current follows #${id}`, a.href === `#${id}`, `got ${a.href}`);

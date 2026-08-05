@@ -117,7 +117,6 @@ export default async function LocaleLayout({
       className={`${fontClassesFor(locale as Locale)} antialiased`}
     >
       <head>
-        <link rel="preconnect" href="https://images.unsplash.com" />
         {/*
          * Raw inline scripts, NOT next/script. <Script> defaults to the
          * afterInteractive strategy, which appends the tag from a passive
