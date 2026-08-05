@@ -1305,6 +1305,22 @@ html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-acce
  * gradient it carried are gone with it.
  */
 
+/*
+ * THE FEED, ON A PHONE.
+ *
+ * The portfolio keeps its floating band on desktop, where the inset is
+ * what makes it read as a card on the page. At phone width the same
+ * inset leaves a two-column feed squeezed between two margins — so the
+ * band goes full-bleed and square there, and the wall runs edge to edge
+ * the way a feed is expected to.
+ */
+@media (max-width: 639px) {
+  #projects.u-band {
+    margin-inline: 0;
+    border-radius: 0;
+  }
+}
+
 /* =====================================================================
  * THE LINE SYSTEM
  * ---------------------------------------------------------------------

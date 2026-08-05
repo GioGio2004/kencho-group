@@ -169,6 +169,30 @@ export default function Projects() {
   const lbOpen = lightbox !== null;
 
   /*
+   * THE NEIGHBOURS, FETCHED BEFORE THEY ARE ASKED FOR.
+   *
+   * The grid loads each tile at a quarter of the viewport; the lightbox
+   * wants the same photograph at 92vw — a different derivative, which
+   * the browser has never seen. Fetching it at the moment the arrow is
+   * pressed is a visible second of nothing.
+   *
+   * So while the lightbox is open, the previous and next items in the
+   * CURRENT FILTER order are mounted as hidden images with the same
+   * `sizes` the stage uses. Same sizes + same srcset → the browser
+   * resolves the exact URL the stage will request, so by the time the
+   * arrow is pressed the bytes are already in cache. Two images, only
+   * while the lightbox is open — not a warm-up of the whole gallery.
+   */
+  const lbNeighbours = (() => {
+    if (!lbCurrent) return [];
+    const idx = filtered.findIndex((p) => p.key === lbCurrent.key);
+    if (idx < 0) return [];
+    const prev = filtered[(idx - 1 + filtered.length) % filtered.length];
+    const next = filtered[(idx + 1) % filtered.length];
+    return [...new Set([prev, next])].filter((p) => p.key !== lbCurrent.key);
+  })();
+
+  /*
    * Scroll lock while the lightbox is open — released on close AND on
    * unmount, so navigating away mid-close can never strand the page.
    * Both scroll paths must be frozen: `overflow: hidden` stops native
@@ -647,7 +671,7 @@ export default function Projects() {
               ratios are reserved inline, so the wall never shifts. */}
           <div
             ref={gridRef}
-            className="mt-12 flex items-start gap-2.5 sm:mt-16 sm:gap-3.5"
+            className="-mx-3.5 mt-12 flex items-start gap-2.5 sm:mx-0 sm:mt-16 sm:gap-3.5"
           >
             {columns.map((column, c) => (
               <div
@@ -715,6 +739,32 @@ export default function Projects() {
           aria-label={t(`items.${lbCurrent.key}.alt`)}
           className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
         >
+          {/* The neighbours' full-size derivatives, fetching while the
+              current image is being looked at. Hidden, eager, and gone
+              the moment the lightbox closes. */}
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              width: 1,
+              height: 1,
+              overflow: "clip",
+              opacity: 0,
+              pointerEvents: "none",
+            }}
+          >
+            {lbNeighbours.map((item) => (
+              <Image
+                key={item.key}
+                src={src(IMAGES[item.image], 1600)}
+                alt=""
+                width={1600}
+                height={900}
+                sizes="92vw"
+                loading="eager"
+              />
+            ))}
+          </div>
           <div
             ref={backdropRef}
             aria-hidden="true"
