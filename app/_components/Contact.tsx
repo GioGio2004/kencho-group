@@ -202,7 +202,7 @@ export default function Contact() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track("Contact", { method: "whatsapp" })}
-                className="u-press inline-flex w-full items-center justify-center bg-clay px-10 py-5 text-sm uppercase tracking-[0.16em] text-charcoal hover:bg-clay-deep sm:w-auto sm:px-12"
+                className="u-press inline-flex w-full items-center justify-center rounded-full bg-clay px-10 py-5 text-sm uppercase tracking-[0.16em] text-charcoal hover:bg-clay-deep sm:w-auto sm:px-12"
               >
                 {tCommon("whatsappCta")}
               </a>
@@ -232,7 +232,7 @@ export default function Contact() {
             {/* Address card — text only, the map stays a link away. */}
             <div
               data-lead
-              className="mt-12 max-w-md border border-bone/15 p-6 sm:p-8"
+              className="mt-12 max-w-md rounded-[var(--radius-card)] border border-bone/15 p-6 sm:p-8"
             >
               <p className={LABEL_CLASS}>{t("addressLabel")}</p>
               <p className="mt-3 text-base sm:text-lg">{t("address")}</p>
@@ -332,7 +332,7 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={pending}
-                    className="u-press inline-flex w-full items-center justify-center border border-bone/30 px-12 py-5 text-sm uppercase tracking-[0.18em] text-bone hover:border-bone/60 disabled:opacity-60 sm:w-auto"
+                    className="u-press inline-flex w-full items-center justify-center rounded-full border border-bone/30 px-12 py-5 text-sm uppercase tracking-[0.18em] text-bone hover:border-bone/60 disabled:opacity-60 sm:w-auto"
                   >
                     {t("submit")}
                   </button>

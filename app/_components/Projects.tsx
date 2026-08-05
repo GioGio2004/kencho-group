@@ -558,7 +558,7 @@ export default function Projects() {
             <p data-head="" className="u-eyebrow flex items-center gap-3">
               <span
                 aria-hidden="true"
-                className="inline-block h-1.5 w-1.5 bg-clay"
+                className="inline-block h-1.5 w-1.5 rounded-full bg-clay"
               />
               {t("eyebrow")}
             </p>
@@ -708,7 +708,7 @@ export default function Projects() {
             type="button"
             aria-label={tCommon("close")}
             onClick={() => actionsRef.current?.close()}
-            className="u-press absolute top-4 right-4 z-20 flex h-11 w-11 cursor-pointer items-center justify-center border text-bone sm:top-6 sm:right-6"
+            className="u-press absolute top-4 right-4 z-20 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border text-bone sm:top-6 sm:right-6"
             style={{
               borderColor: "color-mix(in srgb, var(--invert-fg) 30%, transparent)",
             }}
@@ -731,7 +731,7 @@ export default function Projects() {
             type="button"
             aria-label={t("lightboxPrev")}
             onClick={() => actionsRef.current?.navigate(-1)}
-            className="u-press absolute top-1/2 left-2 z-20 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center border text-bone sm:left-5"
+            className="u-press absolute top-1/2 left-2 z-20 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border text-bone sm:left-5"
             style={{
               borderColor: "color-mix(in srgb, var(--invert-fg) 30%, transparent)",
               background: "color-mix(in srgb, var(--charcoal) 45%, transparent)",
@@ -755,7 +755,7 @@ export default function Projects() {
             type="button"
             aria-label={t("lightboxNext")}
             onClick={() => actionsRef.current?.navigate(1)}
-            className="u-press absolute top-1/2 right-2 z-20 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center border text-bone sm:right-5"
+            className="u-press absolute top-1/2 right-2 z-20 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border text-bone sm:right-5"
             style={{
               borderColor: "color-mix(in srgb, var(--invert-fg) 30%, transparent)",
               background: "color-mix(in srgb, var(--charcoal) 45%, transparent)",
@@ -843,7 +843,7 @@ export default function Projects() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track("Contact", { method: "whatsapp" })}
-                className="u-press inline-flex cursor-pointer items-center gap-2 bg-clay px-6 py-3 text-xs tracking-[0.16em] text-charcoal"
+                className="u-press inline-flex cursor-pointer items-center gap-2 rounded-full bg-clay px-6 py-3 text-xs tracking-[0.16em] text-charcoal"
               >
                 {t("lightboxCta")}
               </a>

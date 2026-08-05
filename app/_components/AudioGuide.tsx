@@ -471,7 +471,7 @@ export default function AudioGuide() {
         >
           <div
             data-lenis-prevent
-            className="max-h-[80svh] w-full max-w-xl overflow-y-auto border border-line bg-shell p-8"
+            className="max-h-[80svh] w-full max-w-xl overflow-y-auto rounded-[var(--radius-card)] border border-line bg-shell p-8"
           >
             <div className="flex items-start justify-between gap-4">
               <h2
