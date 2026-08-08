@@ -53,6 +53,27 @@ export const SITE = {
   },
   mapsUrl:
     "https://www.google.com/maps/search/?api=1&query=Guram+Panjikidze+St+1%2C+Tbilisi%2C+Georgia",
+  /**
+   * TODO: confirm exact workshop coordinates with the client (these are
+   * for Guram Panjikidze St, Tbilisi — replace with the pin from Google
+   * Maps: right-click the building → copy coordinates).
+   */
+  geo: {
+    latitude: 41.7225,
+    longitude: 44.7754,
+  },
+  /**
+   * Schema.org openingHoursSpecification, serialised in businessLd.
+   * TODO: confirm real hours with the client.
+   */
+  openingHours: [
+    {
+      days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "10:00",
+      closes: "19:00",
+    },
+    { days: ["Saturday"], opens: "11:00", closes: "17:00" },
+  ],
   socials: {
     facebook: "https://www.facebook.com/kenchogroup",
     tiktok: "https://www.tiktok.com/@kencho.group",

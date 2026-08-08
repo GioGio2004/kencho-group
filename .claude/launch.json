@@ -7,6 +7,18 @@
       "runtimeArgs": ["run", "dev"],
       "port": 3000,
       "autoPort": true
+    },
+    {
+      "name": "admin",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "C:\\Users\\khvic\\Desktop\\kenchogroup-admin",
+        "run",
+        "dev"
+      ],
+      "port": 3000,
+      "autoPort": true
     }
   ]
 }

@@ -18,7 +18,9 @@
     "home": "Back to top",
     "langLabel": "Language",
     "journeyLabel": "Page sections",
-    "planner": "Planner"
+    "planner": "Planner",
+    "crumbHome": "Home",
+    "gallery": "Gallery"
   },
   "theme": {
     "label": "Theme",
@@ -118,6 +120,7 @@
       "details": "Details",
       "dims": "Dimensions",
       "approved": "Approved",
+      "output": "Printing",
       "built": "Built"
     },
     "units": {
@@ -408,6 +411,18 @@
       "commercial": {
         "q": "Do you take commercial projects?",
         "a": "Yes — offices, cafés, and shops, from single pieces to complete turnkey fit-outs."
+      },
+      "process": {
+        "q": "How does the process work from start to finish?",
+        "a": "First a site visit and measurement, then a 3D design you approve, then production in our workshop and installation by our own team. One contact person keeps you informed at every stage — most projects need [FILL: number] visits in total."
+      },
+      "warranty": {
+        "q": "What warranty do you give on finished furniture?",
+        "a": "Every piece we install carries a [FILL: number]-year warranty covering the construction and the installation. Hardware is covered by the manufacturers' own warranties, and we keep servicing what we build after the warranty ends."
+      },
+      "area": {
+        "q": "Where do you work — Tbilisi only?",
+        "a": "Our workshop is in Tbilisi and most projects are within the city. We also take on projects in [FILL: other cities/regions, e.g. Batumi, Rustavi] — travel and delivery for out-of-town work are agreed in the quote."
       }
     }
   },
@@ -431,7 +446,8 @@
     "mapCta": "View on the map",
     "phoneLabel2": "Phone",
     "emailLabel": "Email",
-    "detailAlt": "An interior detail — a wooden surface in soft light"
+    "detailAlt": "An interior detail — a wooden surface in soft light",
+    "errorDelivery": "We could not send that just now — please message us instead:"
   },
   "audio": {
     "label": "Listen",
@@ -452,5 +468,124 @@
     "tagline": "Custom furniture — Tbilisi",
     "rights": "© {year} Kencho Group. All rights reserved.",
     "socials": "Social media"
+  },
+  "metaProjects": {
+    "title": "Furniture projects in Tbilisi — portfolio | Kencho Group",
+    "description": "Real projects by Kencho Group: custom kitchens, wardrobes and commercial fit-outs made in our Tbilisi workshop — with before-and-after transformations.",
+    "ogAlt": "Kencho Group portfolio — custom furniture projects in Tbilisi"
+  },
+  "metaServices": {
+    "title": "Services — kitchens, wardrobes, fit-outs | Kencho Group",
+    "description": "What we make: custom kitchens, built-in wardrobes, wall paneling and commercial interiors. From technical drawing to installation, one team in Tbilisi.",
+    "ogAlt": "Kencho Group services — custom furniture made in Tbilisi"
+  },
+  "metaProcess": {
+    "title": "How we work — measurement to installation | Kencho Group",
+    "description": "The Kencho Group process step by step: site measurement, 3D design, production in our Tbilisi workshop, delivery and installation by one team.",
+    "ogAlt": "Kencho Group process — from technical drawing to installation"
+  },
+  "metaFaq": {
+    "title": "FAQ — custom furniture questions | Kencho Group",
+    "description": "Answers about ordering custom furniture in Tbilisi: prices and payment, timelines, materials and hardware, warranty and service area.",
+    "ogAlt": "Kencho Group — frequently asked questions"
+  },
+  "metaContact": {
+    "title": "Contact us — free consultation | Kencho Group",
+    "description": "Get in touch with Kencho Group: call, WhatsApp or send the form. Visit the workshop at Guram Panjikidze St 1, Tbilisi. We reply within one working day.",
+    "ogAlt": "Contact Kencho Group — custom furniture in Tbilisi"
+  },
+  "metaGallery": {
+    "title": "Gallery — our latest work | Kencho Group",
+    "description": "Browse photo galleries of finished Kencho Group projects: kitchens, wardrobes, paneling and commercial interiors made to measure in Tbilisi.",
+    "ogAlt": "Kencho Group gallery — photographs of finished projects"
+  },
+  "pageIntro": {
+    "projects": {
+      "eyebrow": "Portfolio",
+      "title": "Projects that left the workshop",
+      "lede": "Kitchens, wardrobes and commercial spaces — measured, drawn, built and installed by one team."
+    },
+    "services": {
+      "eyebrow": "Services",
+      "title": "What we build to measure",
+      "lede": "Four things we do well — and everything between the first drawing and the final fitting."
+    },
+    "process": {
+      "eyebrow": "Process",
+      "title": "From site measurement to installation",
+      "lede": "A clear sequence with no surprises: you always know what happens next and when."
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Questions we hear before every project",
+      "lede": "Prices, timelines, materials and what happens after installation — answered plainly."
+    },
+    "contact": {
+      "eyebrow": "Contact",
+      "title": "Start with a conversation",
+      "lede": "Tell us what you are planning — we measure, advise and quote before you commit to anything."
+    },
+    "gallery": {
+      "eyebrow": "Gallery",
+      "title": "Work in photographs",
+      "lede": "Finished projects from the workshop, gallery by gallery."
+    }
+  },
+  "gallery": {
+    "empty": "Galleries are being prepared — check back soon.",
+    "back": "All galleries",
+    "count": "{count, plural, one {# photograph} other {# photographs}}",
+    "galleriesCount": "{count, plural, one {# gallery} other {# galleries}}",
+    "view": "View gallery",
+    "next": "Next gallery",
+    "close": "Close",
+    "prevPhoto": "Previous photograph",
+    "nextPhoto": "Next photograph",
+    "openPhoto": "View photograph {index} full screen",
+    "scroll": "Scroll",
+    "fig": "Fig."
+  },
+  "prologue": {
+    "line": "Made by hand, for the most personal place on earth.",
+    "place": "Tbilisi, Georgia",
+    "skip": "Skip intro"
+  },
+  "rooms": {
+    "eyebrow": "The collection",
+    "title": "Four rooms of work",
+    "items": {
+      "kitchens": {
+        "name": "Kitchens",
+        "line": "The heart of the flat, built to the millimetre."
+      },
+      "wardrobes": {
+        "name": "Wardrobes & storage",
+        "line": "Every corner measured and put to work."
+      },
+      "commercial": {
+        "name": "Commercial spaces",
+        "line": "Offices and lobbies, from drawing to opening day."
+      },
+      "interiors": {
+        "name": "Home interiors",
+        "line": "The details that finish a home."
+      }
+    }
+  },
+  "featured": {
+    "eyebrow": "Featured work",
+    "title": "Four projects, up close",
+    "view": "View project",
+    "prev": "Previous project",
+    "next": "Next project",
+    "show": "Show: {name}",
+    "railLabel": "Featured projects"
+  },
+  "panorama": {
+    "eyebrow": "The panorama",
+    "title": "Where the work lives",
+    "intro": "Kitchens, storage and commercial spaces — three collections from one Tbilisi workshop, each measured, drawn, built and installed by the same hands.",
+    "quote": "We never repeat a piece. Every home asks a different question, and the workshop answers it in wood.",
+    "attribution": "[FILL: NAME] — FOUNDER, KENCHO GROUP"
   }
 }

@@ -192,9 +192,23 @@
   --clay: var(--accent);
   --clay-deep: var(--accent-deep);
 
-  --ink-70: color-mix(in srgb, var(--fg) 70%, transparent);
-  --ink-55: color-mix(in srgb, var(--fg) 55%, transparent);
-  --ink-40: color-mix(in srgb, var(--fg) 40%, transparent);
+  /*
+   * THE ALPHA RUNGS, RAISED — and raised because they were measured, not
+   * because they looked thin.
+   *
+   * These were one set of numbers for both themes, which is exactly the
+   * asymmetry the --sheet-soft-mix comment above documents and solves
+   * for the drawing tokens. Espresso on stone and bone on coal do not
+   * fade at the same rate: at the old values the section eyebrows fell
+   * to 3.6:1 in light and the Process step numerals to 2.54:1 — a plain
+   * WCAG 1.4.3 failure at 56px, where even large text needs 3:1.
+   *
+   * Light needs more ink than dark needs bone, so the two now differ.
+   * Measured after: eyebrows 4.9:1, numerals 3.4:1, both themes.
+   */
+  --ink-70: color-mix(in srgb, var(--fg) 78%, transparent);
+  --ink-55: color-mix(in srgb, var(--fg) 66%, transparent);
+  --ink-40: color-mix(in srgb, var(--fg) 52%, transparent);
   /* The portfolio filter chip border — was an inline rgba with no rung. */
   --ink-35: color-mix(in srgb, var(--fg) 35%, transparent);
 
@@ -250,6 +264,12 @@
  * material swaps rather than its alpha. */
 :root[data-theme="dark"],
 [data-surface="dark"] {
+  /* Bone on coal carries further than espresso on stone, so the
+   * rungs come back down here rather than staying at the light
+   * theme's values and reading as flat white. */
+  --ink-70: color-mix(in srgb, var(--fg) 72%, transparent);
+  --ink-55: color-mix(in srgb, var(--fg) 58%, transparent);
+  --ink-40: color-mix(in srgb, var(--fg) 46%, transparent);
   --glass-tint: color-mix(in srgb, var(--surface-raised) 55%, transparent);
   --glass-tint-strong: color-mix(in srgb, var(--surface-raised) 78%, transparent);
   --glass-border: color-mix(in srgb, var(--fg) 16%, transparent);

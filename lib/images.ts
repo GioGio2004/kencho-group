@@ -86,6 +86,18 @@ export const IMAGES = {
     alt: "A white and oak kitchen wall, seen straight on",
   },
 
+  /**
+   * GENERATED from drawingReality — a difference-of-Gaussians graphite
+   * trace (sigma 6, gain 3.5), the pencil rendering the print head
+   * works ahead of. Regenerate whenever the photograph is swapped, or
+   * the machine will be printing a different kitchen than it drew.
+   * Decorative: rendered aria-hidden, never crawled for.
+   */
+  drawingTrace: {
+    file: "white-oak-kitchen-wall-tbilisi-kencho-group-trace.webp",
+    alt: "",
+  },
+
   /* Masonry portfolio (aspect ratios + categories in lib/portfolio.ts;
    * localized captions/alt in messages projects.items). */
   portfolio01: {
@@ -151,6 +163,19 @@ export const IMAGES = {
   portfolio16: {
     file: "classic-white-kitchen-tbilisi-kencho-group.webp",
     alt: "A classic white kitchen with ornate cabinetry",
+  },
+
+  /* The rooms section on the home page (card for the gallery that has
+   * no portfolio entry of its own). */
+  roomInteriors: {
+    file: "living-room-media-wall-tbilisi-kencho-group.webp",
+    alt: "A living room media wall in warm walnut",
+  },
+
+  /* The panorama's macro-texture scene — fluted oak up close. */
+  textureFluted: {
+    file: "fluted-oak-panel-detail-tbilisi-kencho-group.webp",
+    alt: "Fluted oak panelling in close detail",
   },
 } as const satisfies Record<string, ImageAsset>;
 

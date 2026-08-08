@@ -453,14 +453,14 @@ export default function IntroSequence() {
         });
 
         /*
-         * The tracked image is the walkthrough POSTER — the hero's LCP
-         * element, a sibling section rather than a child of this overlay.
-         * If it is ever absent (markup changed, fallback path), the image
-         * weight counts as already satisfied so the counter can never
-         * stall on something that will never load.
+         * The tracked image is the PROLOGUE's front print — the page's
+         * LCP element, a sibling section rather than a child of this
+         * overlay. If it is ever absent (markup changed, fallback path),
+         * the image weight counts as already satisfied so the counter can
+         * never stall on something that will never load.
          */
         const posterImg = document.querySelector<HTMLImageElement>(
-          "[data-hero-poster] img",
+          "[data-pro-shot] img",
         );
         if (!posterImg || posterImg.complete) {
           imageReady = true;

@@ -8,7 +8,6 @@ import { fontClassesFor } from "@/lib/fonts";
 import { IMAGES, src } from "@/lib/images";
 import { PALETTE, SITE } from "@/lib/site";
 import { businessLd } from "@/lib/structured-data";
-import { HERO_BOOT } from "@/lib/hero";
 import { THEME_BOOT } from "@/lib/theme";
 import "../globals.css";
 
@@ -16,8 +15,20 @@ import "../globals.css";
  * Runs before first paint. The intro overlay is only ever shown when JS
  * is alive to remove it, never to reduced-motion visitors, and only on
  * the first visit of a session.
+ *
+ * AND ONLY ON A ROUTE THAT HAS AN INTRO. This guard is in the shared
+ * layout, so it used to lock EVERY route under it — including the
+ * planner, which renders no IntroSequence and therefore had nothing to
+ * take the lock off again. Measured: a cold load of /en/planner left
+ * `is-loading` set forever, Lenis stopped waiting on an `alma:loaded`
+ * that never fired, and 574px of the page was unreachable until a 6s CSS
+ * failsafe released it. It only failed for a visitor arriving from
+ * search or a shared link — the exact visitor the route exists for.
+ *
+ * The home page is the locale segment alone (/ka, /ru, /en); anything
+ * deeper is another route and must never be frozen by this.
  */
-const loaderGuard = `try{var m=window.matchMedia("(prefers-reduced-motion: reduce)").matches,s=sessionStorage.getItem("alma:intro-seen");if(!m&&!s){document.documentElement.classList.add("is-loading")}}catch(e){}`;
+const loaderGuard = `try{var seg=location.pathname.split("/").filter(Boolean);if(seg.length<=1){var m=window.matchMedia("(prefers-reduced-motion: reduce)").matches,s=sessionStorage.getItem("alma:intro-seen");if(!m&&!s){document.documentElement.classList.add("is-loading")}}}catch(e){}`;
 
 const OG_LOCALE: Record<Locale, string> = {
   ka: "ka_GE",
@@ -137,9 +148,8 @@ export default async function LocaleLayout({
          * visible defect a theme system can ship.
          */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT }} />
-        {/* Which opening scene, for the same reason and at the same
-            moment: both are in the markup and CSS hides one. */}
-        <script dangerouslySetInnerHTML={{ __html: HERO_BOOT }} />
+        {/* HERO_BOOT retired with the walkthrough/editorial hero pair —
+            the prologue is the one opening and needs no pre-paint pick. */}
         <script dangerouslySetInnerHTML={{ __html: loaderGuard }} />
       </head>
       <body>

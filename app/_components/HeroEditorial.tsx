@@ -115,11 +115,23 @@ export default function HeroEditorial() {
 
         {/* ---- the work ---- */}
         <figure data-frame className="hero-ed-frame">
+          {/*
+            THE LCP ELEMENT, and told so explicitly.
+
+            `priority` alone is deprecated in Next 16 and — per
+            next/dist/shared/lib/get-img-props.js — never sets
+            fetchpriority on the tag; it only adds a preload. Both are
+            stated, so the browser both discovers it early AND ranks it
+            above everything else in the queue. Measured before this: the
+            hidden walkthrough poster went out High and this went Low.
+          */}
           <Image
             src={src(IMAGES.heroMain, 1800)}
             alt={t("imageAlt")}
             fill
-            priority
+            preload
+            loading="eager"
+            fetchPriority="high"
             sizes="(min-width: 1024px) 52vw, 100vw"
             className="object-cover"
           />

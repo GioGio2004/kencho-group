@@ -19,7 +19,17 @@ import { Sheet } from "@/app/_components/LineWork";
  * state. Scroll reveals live inside a reduced-motion matchMedia block.
  */
 
-const ITEM_KEYS = ["pricing", "timeline", "materials", "commercial"] as const;
+/* Keep in sync with FAQ_IDS in lib/structured-data.ts — the schema must
+ * describe exactly the questions the page shows. */
+const ITEM_KEYS = [
+  "pricing",
+  "timeline",
+  "process",
+  "materials",
+  "warranty",
+  "area",
+  "commercial",
+] as const;
 
 export default function FAQ() {
   const t = useTranslations("faq");

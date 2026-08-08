@@ -18,7 +18,6 @@ import {
   posterUrl,
   type FrameTier,
 } from "@/lib/walkthrough";
-import IntroSequence from "./IntroSequence";
 
 /*
  * HERO — the scroll-scrubbed walkthrough.
@@ -496,10 +495,6 @@ export default function Hero() {
 
   return (
     <>
-      {/* The kinetic type intro still plays over everything on first
-          visit; this hero is what its curtain reveals. */}
-      <IntroSequence />
-
       {/*
         `id="hero"` lives on the wrapper in page.tsx that holds BOTH
         openings, not here. Two sections carrying it made the wordmark's
@@ -524,14 +519,30 @@ export default function Hero() {
             data-hero-poster
             className="absolute inset-0 will-change-transform"
           >
-            {/* Phones fetch the 900px poster, desktops the wide one. */}
+            {/*
+              LAZY, AND NOT PRIORITISED — because this opening is hidden
+              by default.
+
+              Both openings ship and CSS shows one; `display: none` does
+              not stop a preload. Measured on /en at 1440x900 via CDP:
+              this poster was fetched at HIGH priority 1ms into the
+              navigation while the editorial spread's actual LCP image
+              went out at LOW, and 30KB of it was thrown away unseen.
+              The walkthrough is behind a footer switch, so it gets the
+              treatment any below-the-fold image gets, and the LCP
+              budget goes to the picture the visitor is looking at.
+
+              (The comment that used to sit here claimed phones fetch a
+              900px poster and desktops the wide one. They do not —
+              `posterUrl("desktop")` is the only call in this file, and
+              public/frames/poster-mobile.webp is never requested.)
+            */}
             <Image
               src={posterUrl("desktop")}
               alt={t("walkthroughAlt")}
               fill
               sizes="100vw"
-              loading="eager"
-              fetchPriority="high"
+              loading="lazy"
               className="object-cover"
               style={{ objectPosition: `${W.focal.x * 100}% ${W.focal.y * 100}%` }}
             />
@@ -543,13 +554,26 @@ export default function Hero() {
             className="invisible absolute inset-0 block h-full w-full opacity-0"
           />
 
-          {/* Warm-dark scrim so overlay copy reads against any frame. */}
+          {/*
+            Warm-dark scrim so the bone overlay copy reads against any
+            frame.
+
+            `--coal-0`, NOT `--ink`. `--ink` is the semantic foreground —
+            espresso in light, BONE in dark — so in dark theme this
+            gradient inverted into a 72% near-WHITE wash under
+            bone-coloured type. Measured in Chromium: the bottom band
+            went from 43 luma in light to 184 in dark, and "WELCOME IN"
+            and the h1 sat on it effectively illegible. The scrim is not
+            following the theme; it is darkening a photograph so light
+            type survives on top of it, and that job wants the raw
+            palette's darkest value in both themes.
+          */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
             style={{
               background:
-                "linear-gradient(to top, color-mix(in srgb, var(--ink) 72%, transparent) 0%, color-mix(in srgb, var(--ink) 34%, transparent) 38%, color-mix(in srgb, var(--ink) 12%, transparent) 68%, transparent 100%)",
+                "linear-gradient(to top, color-mix(in srgb, var(--coal-0) 72%, transparent) 0%, color-mix(in srgb, var(--coal-0) 34%, transparent) 38%, color-mix(in srgb, var(--coal-0) 12%, transparent) 68%, transparent 100%)",
             }}
           />
         </div>
@@ -587,7 +611,17 @@ export default function Hero() {
             data-beat="headline"
             className="col-start-1 row-start-1 self-end px-5 pb-32 sm:px-8 sm:pb-28 lg:px-12 lg:pb-24"
           >
-            <h1
+            {/*
+              NOT an <h1>. Both openings are in the document at once so
+              CSS can swap them without a re-render, and two h1 elements
+              carrying the same sentence is what a crawler saw on all
+              three locales. The editorial spread is the default, so it
+              keeps the h1 and this one is a heading by role — announced
+              identically to assistive tech, counted once by a parser.
+            */}
+            <p
+              role="heading"
+              aria-level={1}
               id="hero-title"
               data-hero-heading
               className="u-display max-w-[20ch] text-[clamp(2.4rem,9vw,6.5rem)] text-bone"
@@ -597,7 +631,7 @@ export default function Hero() {
                   {line}
                 </span>
               ))}
-            </h1>
+            </p>
           </div>
 
           {/* 45–75% — the craft line. */}

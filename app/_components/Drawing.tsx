@@ -21,6 +21,7 @@ import {
 import {
   GHOST_OPACITY,
   PANEL_TINT,
+  PRINT,
   SCROLL_LENGTH,
   SHEET,
   SHEET_BREAKPOINT,
@@ -28,7 +29,7 @@ import {
   TIMELINE,
   WAVE_AT,
   WAVE_DUR,
-  stageAt,
+  stageProgressAt,
 } from "@/lib/drawing";
 import { DUR, EASE, MASK_DESCENDER, smoothstep } from "@/lib/motion";
 
@@ -38,16 +39,20 @@ import { DUR, EASE, MASK_DESCENDER, smoothstep } from "@/lib/motion";
  * A front elevation of a 3600 mm kitchen assembles line by line as the
  * section is scrolled: carcasses, panels, fronts, worktop, appliances,
  * details, then the dimensions, each measurement counting up to its own
- * value. It holds for a beat as an approved sheet — and then the
- * photograph of the built kitchen rises underneath it, the linework
- * settles to a ghost on top of the real thing, and leaves.
+ * value. It holds for a beat as an approved sheet — and then the sheet
+ * is sent to OUTPUT: the chains and the paper clear, the linework
+ * settles to a ghost, and a gold print head sweeps the viewport left to
+ * right with the photograph of the built kitchen laid down behind it.
+ * The ghost holds over the printed reality for a long beat, then leaves.
+ * Scroll back up and the plot runs in reverse — the machine unprints.
  *
  * The argument the section is making is the company's: precision first,
  * then reality. Nothing here is decorative "technical" styling — the
  * SVG's user units ARE millimetres, every dimension is measured off the
- * geometry rather than typed next to it (lib/drawing.ts), and the
- * elevation is the arrangement in the finale photograph, so the two
- * compositions land on each other instead of merely dissolving.
+ * geometry rather than typed next to it (lib/drawing.ts), the readout
+ * counts every phase of the job to its own 100%, and the elevation is
+ * the arrangement in the finale photograph, so the print edge is always
+ * revealing the thing the drawing already promised.
  *
  * LINE WEIGHT. A drawing's line weight belongs to the drawing, not to
  * the zoom: 1.5px at 390px and 1.5px at 1440px. `non-scaling-stroke`
@@ -74,7 +79,13 @@ import { DUR, EASE, MASK_DESCENDER, smoothstep } from "@/lib/motion";
 
 /** The pen tip's length on screen, in CSS pixels. Converted to
  *  millimetres per sheet width, so it looks the same at 390 and 1440. */
-const TIP_PX = 22;
+const TIP_PX = 30;
+
+/** Hot-ink weight multiplier: what a stroke goes down at, before it
+ *  cures to its documented weight. High enough to read as molten
+ *  against the finished sheet, low enough that a curing line still
+ *  reads as the same line rather than as a replacement. */
+const HEAT = 1.85;
 
 /** Scroll either side of the section that the surface ramps across, as a
  *  share of the viewport. The dark has to arrive before the sheet does. */
@@ -240,9 +251,14 @@ export default function Drawing() {
               onUpdate: (self) => {
                 const label = q("[data-readout-stage]")[0];
                 const pct = q("[data-readout-pct]")[0];
-                if (label) label.textContent = t(`stages.${stageAt(self.progress)}`);
+                // Per-PHASE progress, not overall: the readout is a
+                // plotter's job line, and a plotter reports the pass it
+                // is on. Every phase counts 000% to its own 100%, resets
+                // on hand-off, and the section signs off at 100% BUILT.
+                const job = stageProgressAt(self.progress);
+                if (label) label.textContent = t(`stages.${job.stage}`);
                 if (pct) {
-                  pct.textContent = `${String(Math.round(self.progress * 100)).padStart(3, "0")}%`;
+                  pct.textContent = `${String(Math.round(job.pct * 100)).padStart(3, "0")}%`;
                 }
                 // Every dimension number, computed from where the scroll
                 // is rather than from whether a tween happened to render.
@@ -278,6 +294,8 @@ export default function Drawing() {
           const mmPerPx = frame.w / (svg.getBoundingClientRect().width || 1);
           const tipLen = TIP_PX * mmPerPx;
 
+          const heated: SVGGElement[] = [];
+
           const draw = (
             selector: string,
             slot: { at: number; dur: number },
@@ -294,6 +312,36 @@ export default function Drawing() {
               },
               slot.at,
             );
+
+            /*
+             * HOT INK. The group's strokes go down at HEAT× weight and
+             * cure to the documented line while the stage hands over —
+             * the cure deliberately outlives its slot, so a cooling
+             * group is always visible behind the one being drawn. The
+             * multiplier rides a CSS variable the halo clones inherit,
+             * which is what makes the glow swell and settle with the
+             * line for zero extra tweens. Groups, not paths: 95 curing
+             * strokes would be 95 tweens saying the same thing.
+             */
+            const groups = selector
+              .split(",")
+              .map((s) => s.trim().split(" ")[0])
+              .filter((id): id is string => !!id && id.startsWith("#"))
+              .map((id) => svg.querySelector<SVGGElement>(id))
+              .filter((g): g is SVGGElement => !!g);
+            if (groups.length) {
+              heated.push(...groups);
+              gsap.set(groups, { "--dwg-heat": HEAT });
+              tl.to(
+                groups,
+                {
+                  "--dwg-heat": 1,
+                  duration: slot.dur * 0.6,
+                  ease: smoothstep,
+                },
+                slot.at + slot.dur * 0.55,
+              );
+            }
 
             if (!tipLayer) return;
             const tips: SVGPathElement[] = [];
@@ -522,68 +570,197 @@ export default function Drawing() {
           }
 
           /* ---------------------------------------------------------
-           * THE FINALE — the money shot. Slow, and in this order:
-           * the photograph arrives UNDER the sheet, the sheet settles to
-           * a ghost ON TOP of it for a beat, then leaves. Reversing any
-           * two of those turns it into a plain cross-dissolve.
+           * ATMOSPHERE — paper, then light.
+           *
+           * Opacity only. A glow is normally a `filter`, and a filter on
+           * a scrubbed full-viewport layer repaints the whole thing every
+           * frame; these are gradients that were always there, being
+           * faded up. The paper arrives before the first line, because
+           * nobody draws on a sheet that is not on the table yet. The
+           * exits live in the print below — the paper leaves when the
+           * sheet is released to output, not on a clock of its own.
            * ------------------------------------------------------ */
+          const grid = q("[data-grid]")[0];
+          const glow = q("[data-glow]")[0];
+          const frameEl = q("[data-frame]")[0];
+          gsap.set([grid, glow, frameEl].filter(Boolean), { opacity: 0 });
+
+          if (grid) tl.to(grid, { opacity: 1, duration: 1.2 }, 0);
+          if (frameEl) tl.to(frameEl, { opacity: 1, duration: 1.6 }, 0.4);
+          if (glow) {
+            tl.to(glow, { opacity: 0.7, duration: 2.4 }, 0.6);
+            // The sheet is brightest at the moment it is signed off.
+            tl.to(glow, { opacity: 1, duration: 1.6, ease: smoothstep }, STAGE.dims.at);
+          }
+
+          /* ---------------------------------------------------------
+           * THE PRINT — the money shot, and it is a plot, not a fade.
+           *
+           * The approved sheet is released to output. In this order:
+           * the chains and the paper clear and the linework settles to
+           * a ghost; the gold head arrives; the head sweeps the
+           * viewport left to right with the photograph of the built
+           * kitchen laid down behind it; the ghost holds over the
+           * printed reality for a long beat; the ghost leaves. The
+           * photograph sits BELOW every drawing layer, so the
+           * ghost-over-reality moment costs nothing — by the end of the
+           * sweep the sheet simply has nothing under it any more except
+           * the thing it promised.
+           *
+           * ONE NUMBER DRIVES THE EDGE. The head is translateX'd by
+           * --print-x and the photograph's clip is inset by
+           * calc(100% − --print-x): one custom property, tweened once,
+           * read by both. Two parallel tweens — a transform and a clip
+           * — would drift under scrub lag by exactly the amount that
+           * turns a print edge into a crossfade.
+           *
+           * THE HEAD RUNS LINEAR. Everything else in the section eases;
+           * the head must not. Constant feed is the difference between
+           * a machine laying down reality and a slide changing.
+           * ------------------------------------------------------ */
+          const output = STAGE.output;
           const built = STAGE.built;
+          const sweep = {
+            at: output.at + PRINT.sweep.at,
+            dur: PRINT.sweep.dur,
+          };
+          const head = q("[data-head]")[0];
+
+          // Release to print: measurements off, paper off, line weight
+          // down to a ghost. The drawing stops being a document and
+          // becomes a preview of what the head is about to lay down.
+          tl.to(
+            qsa("[data-chain]"),
+            { opacity: 0, duration: PRINT.settle.dur, ease: smoothstep },
+            output.at,
+          );
+          const paper = [grid, frameEl].filter(Boolean);
+          if (paper.length) {
+            tl.to(
+              paper,
+              { opacity: 0, duration: PRINT.settle.dur, ease: smoothstep },
+              output.at,
+            );
+          }
+          if (sheet) {
+            tl.to(
+              sheet,
+              {
+                opacity: GHOST_OPACITY,
+                duration: PRINT.settle.dur,
+                ease: smoothstep,
+              },
+              output.at,
+            );
+          }
+
+          /*
+           * The trace arrives with the settle: as the engineering sheet
+           * recedes to a ghost, the pencil study of the finished room
+           * develops in its place — the drawing re-registering onto
+           * reality before the head starts to print. Clipped to the
+           * complement of the head's variable, so it exists only where
+           * the photograph does not yet; the sweep consumes it and
+           * scrubbing back restores it, with nothing to fade out.
+           */
+          const trace = q("[data-trace]")[0];
+          if (trace) {
+            gsap.set(trace, {
+              opacity: 0,
+              clipPath: "inset(0% 0% 0% var(--print-x, 0%))",
+            });
+            tl.to(
+              trace,
+              { opacity: 0.9, duration: PRINT.settle.dur, ease: smoothstep },
+              output.at,
+            );
+            cleanups.push(() =>
+              gsap.set(trace, { clearProps: "opacity,clipPath" }),
+            );
+          }
+
           if (photo) {
             /*
-             * The lights coming on in the finished room.
+             * The print itself. The photograph is clipped to the head's
+             * own variable, so reality only ever exists where the head
+             * has already passed. Its opacity flips on while the clip
+             * still hides everything — the one moment a flip cannot be
+             * seen — and reverses the same way.
              *
-             * Fading a bright photograph up out of a near-black section
-             * as a plain opacity ramp reads as a slide change: at 50% you
-             * are looking at a grey rectangle. Starting it dark and
-             * desaturated and bringing it UP as it fades means the light
-             * appears to come from inside the photograph — the warmth
-             * blooms out of the surface rather than being pasted over it.
-             *
-             * `filter` is normally banned in this codebase's scroll
-             * vocabulary, and this is the one place it earns its keep: a
-             * single element, for a fifth of one section, at the moment
-             * the section exists for. Everything else in the finale is
-             * opacity.
+             * The lights still come on: brightness rides up under the
+             * sweep, so the room warms as it is printed rather than
+             * arriving developed. `filter` is normally banned in this
+             * codebase's scroll vocabulary, and this is still the one
+             * place it earns its keep: a single element, for one beat,
+             * at the moment the section exists for.
              */
-            gsap.set(photo, { filter: "brightness(0.4) saturate(0.85)" });
+            gsap.set(stage, { "--print-x": "0%" });
+            gsap.set(photo, {
+              clipPath: "inset(0% calc(100% - var(--print-x, 0%)) 0% 0%)",
+              filter: "brightness(0.5) saturate(0.9)",
+            });
+            tl.set(photo, { opacity: 1 }, sweep.at - 0.05);
             tl.to(
-              photo,
-              { opacity: 1, duration: built.dur * 0.4, ease: smoothstep },
-              built.at,
+              stage,
+              { "--print-x": "100%", duration: sweep.dur },
+              sweep.at,
             );
             tl.to(
               photo,
               {
                 filter: "brightness(1) saturate(1)",
-                duration: built.dur * 0.55,
+                duration: sweep.dur * 0.7,
                 ease: smoothstep,
               },
-              built.at + built.dur * 0.05,
+              sweep.at + sweep.dur * 0.15,
             );
-            cleanups.push(() => gsap.set(photo, { clearProps: "filter" }));
+            cleanups.push(() => {
+              gsap.set(photo, { clearProps: "filter,clipPath,opacity" });
+              (stage as HTMLElement).style.removeProperty("--print-x");
+            });
           }
-          tl.to(
-            qsa("[data-chain]"),
-            { opacity: 0, duration: built.dur * 0.25, ease: smoothstep },
-            built.at + built.dur * 0.05,
-          );
+
+          if (head) {
+            // The gantry arrives just before the cut and lifts as it
+            // clears the far edge. autoAlpha, so the parked machine is
+            // not even in the hit-test tree.
+            gsap.set(head, { autoAlpha: 0 });
+            tl.to(
+              head,
+              { autoAlpha: 1, duration: 0.3, ease: smoothstep },
+              sweep.at - 0.3,
+            );
+            tl.to(
+              head,
+              { autoAlpha: 0, duration: 0.35, ease: smoothstep },
+              sweep.at + sweep.dur - 0.1,
+            );
+          }
+
+          // The reading light dies across the sweep — by the time the
+          // head clears the far edge the room is lit by its own photo.
+          if (glow) {
+            tl.to(
+              glow,
+              { opacity: 0, duration: sweep.dur * 0.8, ease: smoothstep },
+              sweep.at,
+            );
+          }
+
+          /*
+           * The overlay hold. Ghost linework over printed reality — the
+           * two compositions landing on each other is still the whole
+           * argument — and it has to be authored as dead time, same as
+           * ever: run the ghost straight into its own fade and the
+           * moment lasts two frames. It holds for seven tenths of the
+           * built stage, and only then does the drawing leave the
+           * photograph to speak for itself.
+           */
           if (sheet) {
             tl.to(
               sheet,
-              { opacity: GHOST_OPACITY, duration: built.dur * 0.4, ease: smoothstep },
-              built.at + built.dur * 0.1,
-            );
-            /*
-             * A quarter of the finale is the hold, and it has to be
-             * authored as dead time or it does not exist: the first cut
-             * of this ran the ghost straight into its own fade-out, so
-             * the drawing-over-reality moment lasted a couple of frames
-             * and the whole thing read as a plain cross-dissolve.
-             */
-            tl.to(
-              sheet,
               { opacity: 0, duration: built.dur * 0.25, ease: smoothstep },
-              built.at + built.dur * 0.75,
+              built.at + built.dur * 0.7,
             );
           }
 
@@ -606,7 +783,16 @@ export default function Drawing() {
               in: STAGE.fronts.at + 0.4,
               out: STAGE.dims.at + STAGE.dims.dur * 0.5,
             },
-            { sel: "[data-beat='3']", in: built.at, out: TIMELINE },
+            /*
+             * The closing line lands WHILE reality is printing — "we
+             * build exactly this" is strongest said over the head that
+             * is currently doing it, not after the job is finished.
+             */
+            {
+              sel: "[data-beat='3']",
+              in: sweep.at + sweep.dur * 0.3,
+              out: TIMELINE,
+            },
           ];
 
           document.fonts.ready.then(() => {
@@ -696,36 +882,6 @@ export default function Drawing() {
               ScrollTrigger.refresh();
             });
           });
-
-          /* ---------------------------------------------------------
-           * ATMOSPHERE — paper, then light.
-           *
-           * Opacity only. A glow is normally a `filter`, and a filter on
-           * a scrubbed full-viewport layer repaints the whole thing every
-           * frame; these are gradients that were always there, being
-           * faded up. The paper arrives before the first line, because
-           * nobody draws on a sheet that is not on the table yet.
-           * ------------------------------------------------------ */
-          const grid = q("[data-grid]")[0];
-          const glow = q("[data-glow]")[0];
-          const frameEl = q("[data-frame]")[0];
-          const atmosphere = [grid, glow, frameEl].filter(Boolean);
-          gsap.set(atmosphere, { opacity: 0 });
-
-          if (grid) tl.to(grid, { opacity: 1, duration: 1.2 }, 0);
-          if (frameEl) tl.to(frameEl, { opacity: 1, duration: 1.6 }, 0.4);
-          if (glow) {
-            tl.to(glow, { opacity: 0.7, duration: 2.4 }, 0.6);
-            // The sheet is brightest at the moment it is signed off.
-            tl.to(glow, { opacity: 1, duration: 1.6, ease: smoothstep }, STAGE.dims.at);
-          }
-          // All of it leaves as the photograph takes over — the room is
-          // lit by then, and the paper is not in it.
-          tl.to(
-            atmosphere,
-            { opacity: 0, duration: built.dur * 0.4, ease: smoothstep },
-            built.at,
-          );
 
           /* ---------------------------------------------------------
            * THE INTERACTIVE LAYER
@@ -888,13 +1044,13 @@ export default function Drawing() {
 
             /*
              * THE WINDOW. Inspect mode is live only through the hold —
-             * before it there is a sheet still being drawn, and after it
-             * the photograph has taken the screen. The units are only
-             * focusable inside it too, so a keyboard visitor scrolling
-             * past never lands on nine invisible buttons.
+             * before it there is a sheet still being drawn, and after
+             * it the machine is printing. The units are only focusable
+             * inside it too, so a keyboard visitor scrolling past never
+             * lands on nine invisible buttons.
              */
             const gateOpen = STAGE.approved.at / TIMELINE;
-            const gateShut = built.at / TIMELINE;
+            const gateShut = output.at / TIMELINE;
             let live = false;
 
             const gate = ScrollTrigger.create({
@@ -969,11 +1125,11 @@ export default function Drawing() {
             if (wash) gsap.set(wash, { opacity: level });
 
             /*
-             * The wash holds through the finale, but what is behind the
+             * The wash holds through the print, but what is behind the
              * fixed pills by then is not the wash — it is a bright
-             * photograph filling the viewport. So the flag also closes
-             * once the photograph has substantially arrived, a beat
-             * before the exit ramp starts.
+             * photograph being laid across the viewport. The flag
+             * closes when the head crosses the centre line: from that
+             * frame on, most of what is under the header is photo.
              */
             const pinned = gsap.utils.clamp(
               0,
@@ -981,7 +1137,7 @@ export default function Drawing() {
               -rect.top / Math.max(1, root.offsetHeight - vh),
             );
             const litByPhoto =
-              pinned > (built.at + built.dur * 0.3) / TIMELINE;
+              pinned > (sweep.at + sweep.dur * 0.5) / TIMELINE;
 
             const wantDeep = level > 0.55 && !litByPhoto;
             const keepDeep = level > 0.45 && !litByPhoto;
@@ -1024,6 +1180,7 @@ export default function Drawing() {
             tl.kill();
             splits.forEach((s) => s.revert());
             hidden.forEach((el) => gsap.set(el, { clearProps: "display" }));
+            heated.forEach((g) => g.style.removeProperty("--dwg-heat"));
           });
 
           return () => cleanups.forEach((fn) => fn());
@@ -1087,6 +1244,25 @@ export default function Drawing() {
             of twelve columns reads as an illustration of a drawing rather
             than as one.
           */}
+          {/*
+            THE TRACE — a graphite rendering generated from the finale
+            photograph itself, so ahead of the print head the visitor is
+            looking at a pencil study of EXACTLY the image being laid
+            down behind it. Clipped to the complement of --print-x: the
+            head is the seam where the study becomes the thing. Below
+            the photograph in the stack, so the printed side needs no
+            masking at all.
+          */}
+          <div data-trace aria-hidden="true" className="dwg-trace absolute inset-0">
+            <Image
+              src={src(IMAGES.drawingTrace, 2000)}
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
+          </div>
+
           <div data-photo className="absolute inset-0">
             <Image
               src={src(IMAGES.drawingReality, 2000)}
@@ -1233,6 +1409,27 @@ export default function Drawing() {
               noteLabel={(note) => t(`notes.${note.key}`)}
             />
               </svg>
+
+              {/*
+                THE PRINT HEAD. A stage-sized wrapper moved by
+                translateX(var(--print-x)) — a percentage translate of a
+                full-width element IS a percentage of the stage, which
+                keeps the sweep on the compositor and off layout. The
+                photograph's clip reads the same variable, so the gantry
+                line and the print edge are one number. Above the sheet,
+                below the copy; GSAP owns its visibility.
+              */}
+              <div
+                data-head
+                aria-hidden="true"
+                className="dwg-head pointer-events-none absolute inset-0 z-[15] opacity-0"
+              >
+                <span className="dwg-head-trail" />
+                <span className="dwg-head-halo" />
+                <span className="dwg-head-line" />
+                <span className="dwg-head-cap dwg-head-cap-t" />
+                <span className="dwg-head-cap dwg-head-cap-b" />
+              </div>
 
               {/*
                 THE CORNER. One block, one column, in document order —

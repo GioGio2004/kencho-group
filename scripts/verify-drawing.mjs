@@ -18,14 +18,25 @@
  *   - every dimension counts up to the value the geometry actually
  *     measures, imported from lib/drawing.ts rather than hard-coded here
  *   - exactly one text beat is legible at a time
+ *   - the readout reports per-phase progress, not overall progress
+ *   - mid-sweep, the print head stands mid-viewport with the photograph
+ *     clipped in behind it — the head and the print edge are one number
  *   - the finale ghosts the linework over the photograph, then leaves it
+ *   - scrolling back to the top unprints everything: strokes at zero,
+ *     photograph withdrawn
  *   - the handheld sheet drops its two outermost annotations and keeps
  *     the full 3600 run, because cropping cabinets would turn the
  *     overall dimension into a lie
  */
 
 import { chromium } from "playwright";
-import { GHOST_OPACITY, SHEET, STAGE, TIMELINE } from "../lib/drawing.ts";
+import {
+  GHOST_OPACITY,
+  PRINT,
+  SHEET,
+  STAGE,
+  TIMELINE,
+} from "../lib/drawing.ts";
 import { K01, buildScene, chainValues } from "../lib/elevation/index.ts";
 
 const BASE_URL = process.argv[2] ?? "http://localhost:3000";
@@ -63,7 +74,20 @@ const WEIGHTS = `(() => {
   const scale = svg.getBoundingClientRect().width / vb.width;
   const px = (sel) => {
     const el = svg.querySelector(sel);
-    return el ? Math.round(parseFloat(getComputedStyle(el).strokeWidth) * scale * 100) / 100 : null;
+    if (!el) return null;
+    let w = parseFloat(getComputedStyle(el).strokeWidth);
+    if (Number.isNaN(w)) {
+      // stroke-width is calc(--dwg-line * --dwg-heat) since hot ink
+      // arrived, and Chromium declines to serialise a calc of two
+      // unitless variables to a number — resolve the factors here.
+      // Heat is 1 everywhere this probe reads, but multiply anyway so
+      // a stuck multiplier fails the weight check instead of hiding.
+      const s = getComputedStyle(el);
+      const line = parseFloat(s.getPropertyValue('--dwg-line'));
+      const heat = parseFloat(s.getPropertyValue('--dwg-heat')) || 1;
+      w = line * heat;
+    }
+    return Math.round(w * scale * 100) / 100;
   };
   return {
     viewBoxX: Math.round(vb.x),
@@ -131,12 +155,29 @@ const STATE = `(() => {
     return false;
   };
   const stage = document.querySelector('[data-readout-stage]');
+  const pct = document.querySelector('[data-readout-pct]');
   return {
     beats: [1, 2, 3].map((n) => op('[data-beat="' + n + '"]')),
     legible: [1, 2, 3].map(legible),
     sheet: op('svg[data-sheet]'),
     photo: op('[data-photo]'),
-    readout: stage ? stage.textContent : null
+    readout: stage ? stage.textContent : null,
+    pct: pct ? parseInt(pct.textContent, 10) : null
+  };
+})()`;
+
+/** The print head and the edge it is welded to, in stage percent. */
+const HEAD = `(() => {
+  const stage = document.querySelector('[data-stage]');
+  const head = document.querySelector('[data-head]');
+  const photo = document.querySelector('[data-photo]');
+  const w = stage.getBoundingClientRect().width;
+  const m = new DOMMatrixReadOnly(getComputedStyle(head).transform);
+  return {
+    x: Math.round((m.m41 / w) * 1000) / 10,
+    opacity: Math.round(parseFloat(getComputedStyle(head).opacity) * 100) / 100,
+    clipped: getComputedStyle(photo).clipPath.includes('inset'),
+    photo: Math.round(parseFloat(getComputedStyle(photo).opacity) * 100) / 100
   };
 })()`;
 
@@ -171,7 +212,13 @@ for (const vp of [
     if (m.type() === "error") errors.push(m.text());
   });
 
-  await page.goto(`${BASE_URL}/en`, { waitUntil: "networkidle" });
+  /*
+   * "load", not "networkidle": the intro gate below is the real
+   * readiness wait, and networkidle hands any long-lived connection a
+   * veto over the whole harness — observed as a dev-server next/image
+   * request that stalls open forever and times every run out.
+   */
+  await page.goto(`${BASE_URL}/en`, { waitUntil: "load" });
   await page
     .waitForFunction(
       () => !document.documentElement.classList.contains("is-loading"),
@@ -210,6 +257,17 @@ for (const vp of [
     `${done.done}/${done.total} complete, ${done.part} partial`,
   );
 
+  /* The readout is a plotter's job line: it reports THE PHASE's own
+   * progress, so the centre of the approved window must read near 50 —
+   * an overall counter would read near 64 here and the regression would
+   * be invisible to the eye that already knows what it built. */
+  const holdState = await page.evaluate(STATE);
+  check(
+    "readout counts the phase, not the section",
+    holdState.pct !== null && Math.abs(holdState.pct - 50) <= 8,
+    `${holdState.pct}% during ${holdState.readout}`,
+  );
+
   /*
    * Read the numbers after a COLD jump — a fresh page landed straight in
    * the middle of the section, the way a deep link, a restored scroll
@@ -222,7 +280,7 @@ for (const vp of [
    * never runs its onUpdate. Both paths are checked now.
    */
   const cold = await ctx.newPage();
-  await cold.goto(`${BASE_URL}/en`, { waitUntil: "networkidle" });
+  await cold.goto(`${BASE_URL}/en`, { waitUntil: "load" });
   await cold
     .waitForFunction(
       () => !document.documentElement.classList.contains("is-loading"),
@@ -278,12 +336,32 @@ for (const vp of [
     );
   }
 
+  /* ---- the print ----
+   * Probed dead centre of the sweep. The head must stand mid-viewport,
+   * lit, with the photograph clipped in behind it — head and clip read
+   * the same variable, so one number answers for both. */
+  const sweepCentre =
+    (STAGE.output.at + PRINT.sweep.at + PRINT.sweep.dur * 0.5) / TIMELINE;
+  await at(page, sweepCentre);
+  const mid = await page.evaluate(HEAD);
+  check(
+    "the head stands mid-sweep",
+    mid.x > 40 && mid.x < 60 && mid.opacity > 0.6,
+    `head at ${mid.x}%, opacity ${mid.opacity}`,
+  );
+  check(
+    "reality prints in behind the head",
+    mid.photo === 1 && mid.clipped,
+    `photo opacity ${mid.photo}, clipped ${mid.clipped}`,
+  );
+
   /* ---- the finale ----
    * Probed in the middle of the authored hold, not at an arbitrary 0.86:
    * the first version of this check sampled mid-transition and reported
    * a half-faded sheet as a failure of a state it had not reached yet.
-   * The hold runs from built.at + 0.5·dur to + 0.75·dur — the centre of
-   * that window is what "the drawing sits on top of reality" means. */
+   * The ghost holds from the end of the sweep to built.at + 0.7·dur —
+   * probing at 0.625 of the built stage is safely inside the window
+   * where "the drawing sits on top of reality" is the authored state. */
   const holdCentre = (STAGE.built.at + STAGE.built.dur * 0.625) / TIMELINE;
   await at(page, holdCentre);
   const ghost = await page.evaluate(STATE);
@@ -301,6 +379,30 @@ for (const vp of [
     `sheet ${end.sheet}, photo ${end.photo}`,
   );
   check("closing beat holds", end.beats[2] > 0.9, JSON.stringify(end.beats));
+  check(
+    "the job signs off at 100% built",
+    end.pct === 100,
+    `${end.pct}% at rest`,
+  );
+
+  /* ---- the machine unprints ----
+   * Back to the top after the full plot has run. Scrub-driven
+   * choreography claims reversibility for free; this is where the
+   * claim is cashed: every stroke back at zero, the photograph
+   * withdrawn behind its clip. */
+  await at(page, 0.005);
+  const rev = await page.evaluate(DRAWN);
+  check(
+    "scrolling back unprints the sheet",
+    rev.done === 0,
+    `${rev.done}/${rev.total} still complete`,
+  );
+  const revState = await page.evaluate(STATE);
+  check(
+    "scrolling back withdraws the photograph",
+    revState.photo !== null && revState.photo < 0.05,
+    `photo ${revState.photo}`,
+  );
 
   const overflow = await page.evaluate(() => ({
     scrollW: document.documentElement.scrollWidth,

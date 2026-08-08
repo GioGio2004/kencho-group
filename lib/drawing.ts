@@ -62,7 +62,12 @@ export const STAGE = {
   /** The hold — and the window inspect mode is live in. Long enough to
    *  be a room the visitor can stop in rather than a beat they pass. */
   approved: { at: 12, dur: 3 },
-  built: { at: 15, dur: 4 },
+  /** The print: the sheet is released to output. Chains and paper clear,
+   *  then the head sweeps the viewport and reality is laid down behind
+   *  it. */
+  output: { at: 15, dur: 3.6 },
+  /** The printed photograph holds — ghost linework over it, then bare. */
+  built: { at: 18.6, dur: 2.6 },
 } as const;
 
 export type StageName = keyof typeof STAGE;
@@ -76,17 +81,33 @@ export const TIMELINE = Math.max(
 export const STAGE_ORDER = Object.keys(STAGE) as StageName[];
 
 /**
- * The stage a given timeline progress falls in. Reads backwards so an
- * overlap always reports the stage that most recently STARTED — which is
- * the one the visitor is watching, not the one still finishing.
+ * The stage a given timeline progress falls in, and how far through it
+ * the readout should say the job is. Reads backwards so an overlap
+ * always reports the stage that most recently STARTED — which is the one
+ * the visitor is watching, not the one still finishing.
+ *
+ * `pct` runs over the window a stage OWNS THE READOUT for — its own
+ * start to the next stage's start — rather than over its duration.
+ * Overlapping stages would otherwise hand over at 85%, and a progress
+ * counter that never reaches its own 100 reads as a stall, not a
+ * hand-off. This is the plotter's contract: every phase completes.
  */
-export function stageAt(progress: number): StageName {
+export function stageProgressAt(progress: number): {
+  stage: StageName;
+  pct: number;
+} {
   const t = progress * TIMELINE;
   for (let i = STAGE_ORDER.length - 1; i >= 0; i--) {
     const name = STAGE_ORDER[i]!;
-    if (t >= STAGE[name].at) return name;
+    if (t >= STAGE[name].at) {
+      const next = STAGE_ORDER[i + 1];
+      const end = next ? STAGE[next].at : TIMELINE;
+      const span = Math.max(end - STAGE[name].at, 1e-6);
+      const pct = Math.min(Math.max((t - STAGE[name].at) / span, 0), 1);
+      return { stage: name, pct };
+    }
   }
-  return STAGE_ORDER[0]!;
+  return { stage: STAGE_ORDER[0]!, pct: 0 };
 }
 
 /**
@@ -104,9 +125,22 @@ export const WAVE_AT: Record<Wave, number> = {
 /** How long one wave takes to lay itself down. */
 export const WAVE_DUR = 1.6;
 
+/**
+ * The print head's schedule INSIDE the output stage, as offsets from
+ * STAGE.output.at. First the sheet settles — chains off, paper off,
+ * linework to a ghost — and only then does the head start to travel;
+ * a machine does not cut while the stock is still moving. The gap
+ * between settle's end and sweep's start is the breath before the job.
+ */
+export const PRINT = {
+  settle: { at: 0, dur: 0.5 },
+  sweep: { at: 0.6, dur: 2.8 },
+} as const;
+
 /** Pinned scroll distance, in vh. Long enough that the hold — and so
- *  inspect mode — is a window worth stopping in. */
-export const SCROLL_LENGTH = 340;
+ *  inspect mode — is a window worth stopping in, and that the print
+ *  sweep is a shot rather than a flick. */
+export const SCROLL_LENGTH = 400;
 
 /** Opacity the finished linework settles to over the photograph, before
  *  it leaves entirely. Low enough to read as a ghost, high enough that

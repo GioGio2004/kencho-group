@@ -39,13 +39,29 @@ import { DUR, EASE } from "@/lib/motion";
  */
 const SECTIONS = [
   { id: "manifesto", label: "manifesto.eyebrow" },
-  { id: "transformation", label: "transformation.eyebrow" },
+  { id: "featured", label: "featured.eyebrow" },
   { id: "projects", label: "projects.eyebrow" },
-  { id: "drawing", label: "drawing.eyebrow" },
+  { id: "panorama", label: "panorama.eyebrow" },
   { id: "services", label: "services.eyebrow" },
   { id: "process", label: "process.eyebrow" },
   { id: "faq", label: "faq.eyebrow" },
   { id: "contact", label: "contact.eyebrow" },
+] as const;
+
+/*
+ * THE ROUTES, for every page that is not the home page. On home the
+ * centre of the bar is the live section label; on a routed page the same
+ * slot carries the site's navigation, with the current page picked out
+ * in the accent — so the nav IS the orientation there. Real routes, not
+ * hashes: a hash would be grabbed by SmoothScroll's handler and lead
+ * nowhere on a page that does not contain the section.
+ */
+const NAV_LINKS = [
+  { key: "projects", href: "/projects" },
+  { key: "services", href: "/services" },
+  { key: "process", href: "/process" },
+  { key: "faq", href: "/faq" },
+  { key: "gallery", href: "/gallery" },
 ] as const;
 
 /**
@@ -88,7 +104,6 @@ export default function SiteHeader() {
   const tAll = useTranslations();
   const pathname = usePathname();
   const onHome = pathname === "/";
-  const onPlanner = pathname === "/planner";
 
   // Resolved during render so the effect never touches next-intl.
   const labels = SECTIONS.map(({ label }) => tAll(label));
@@ -236,19 +251,38 @@ export default function SiteHeader() {
         </Anchor>
 
         {/*
-          WHERE YOU ARE. On the home page a live label; on the planner a
-          static one; empty over the hero, because the wordmark is the
-          orientation there. aria-hidden — it repeats the section
-          headings a screen reader already announces in order.
+          WHERE YOU ARE. On the home page a live label, empty over the
+          hero, because the wordmark is the orientation there —
+          aria-hidden, since it repeats the section headings a screen
+          reader already announces in order. On every other route the
+          same slot carries the navigation, with the current page in the
+          accent colour.
         */}
-        <span
-          data-section-label
-          data-empty
-          aria-hidden="true"
-          className="header-section-label"
-        >
-          {onPlanner ? t("planner") : ""}
-        </span>
+        {onHome ? (
+          <span
+            data-section-label
+            data-empty
+            aria-hidden="true"
+            className="header-section-label"
+          />
+        ) : (
+          <nav aria-label={t("journeyLabel")} className="header-nav">
+            {NAV_LINKS.map((link) => {
+              const active =
+                pathname === link.href || pathname.startsWith(`${link.href}/`);
+              return (
+                <Link
+                  key={link.key}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className="header-nav-link"
+                >
+                  {t(link.key)}
+                </Link>
+              );
+            })}
+          </nav>
+        )}
 
         {/*
           The one action. SOLID rather than outlined: on a bar with

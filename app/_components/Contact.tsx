@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,7 +8,6 @@ import { SplitText } from "gsap/SplitText";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import HeroSwitch from "@/app/_components/HeroSwitch";
 import LocaleSwitch from "@/app/_components/LocaleSwitch";
 import ThemeToggle from "@/app/_components/ThemeToggle";
 import MagneticType from "@/app/_components/MagneticType";
@@ -52,6 +51,23 @@ export default function Contact() {
   const [state, formAction, pending] = useActionState(submitLead, {
     ok: false,
   });
+
+  /*
+   * THE CONVERSION, REPORTED WHEN THERE IS ONE.
+   *
+   * This used to hang off the form's onSubmit, which runs before the
+   * server action has validated anything — measured: name="X" phone="12"
+   * fired the Contact event and then rendered "Please enter your name."
+   * Every rejected submission was counted as a lead. `state.ok` is the
+   * server's own answer, so this fires once, on the transition into
+   * success, and only then.
+   */
+  const reported = useRef(false);
+  useEffect(() => {
+    if (!state.ok || reported.current) return;
+    reported.current = true;
+    track("Contact", { method: "form" });
+  }, [state.ok]);
 
   useGSAP(
     () => {
@@ -265,11 +281,13 @@ export default function Contact() {
               ) : null}
             </div>
 
+            {/* The conversion is reported from an effect on `state.ok`,
+                not from onSubmit — see the top of this component. A
+                submit handler runs BEFORE the server action validates,
+                so name="X" phone="12" was recording a lead and then
+                showing the visitor an error. */}
             {state.ok ? null : (
-              <form
-                action={formAction}
-                onSubmit={() => track("Contact", { method: "form" })}
-              >
+              <form action={formAction}>
                 <h3 data-field className={LABEL_CLASS}>
                   {t("formTitle")}
                 </h3>
@@ -339,9 +357,30 @@ export default function Contact() {
                   >
                     {t("submit")}
                   </button>
-                  <p className="mt-6 max-w-sm text-sm text-bone/55">
-                    {t("replyNote")}
-                  </p>
+                  {/*
+                    THE DELIVERY FAILURE. Valid lead, nobody to hand it
+                    to — so the visitor is told plainly and pointed at
+                    the channel that demonstrably works, rather than
+                    being thanked for something that went nowhere.
+                  */}
+                  {state.error === "delivery" ? (
+                    <p role="alert" className="mt-6 max-w-sm text-sm text-alert">
+                      {t("errorDelivery")}{" "}
+                      <a
+                        href={whatsappUrl(tCommon("whatsappPrefill"))}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => track("Contact", { method: "whatsapp" })}
+                        className="u-link text-bone"
+                      >
+                        {tCommon("whatsappCta")}
+                      </a>
+                    </p>
+                  ) : (
+                    <p className="mt-6 max-w-sm text-sm text-bone/70">
+                      {t("replyNote")}
+                    </p>
+                  )}
                 </div>
               </form>
             )}
@@ -357,21 +396,38 @@ export default function Contact() {
  * separated by a single hairline so the two read as one field of colour.
  */
 
+/*
+ * Real routes, not section hashes. Since the site split into pages,
+ * every one of these has its own URL — and a hash link from a routed
+ * page would be intercepted by SmoothScroll and find no section to go
+ * to. On the home page these still work: they navigate, which is what a
+ * footer link promises anyway.
+ */
 const FOOTER_NAV = [
-  { key: "services", href: "#services" },
-  { key: "projects", href: "#projects" },
-  { key: "process", href: "#process" },
-  { key: "faq", href: "#faq" },
-  { key: "contact", href: "#contact" },
+  { key: "services", href: "/services" },
+  { key: "projects", href: "/projects" },
+  { key: "gallery", href: "/gallery" },
+  { key: "process", href: "/process" },
+  { key: "faq", href: "/faq" },
+  { key: "contact", href: "/contact" },
 ] as const;
 
 /* Brand names, not copy — identical in every locale. */
-const SOCIAL_LINKS = [
-  { label: "Facebook", href: SITE.socials.facebook },
-  { label: "TikTok", href: SITE.socials.tiktok },
-  { label: "Instagram", href: SITE.socials.instagram },
-  { label: "LinkedIn", href: SITE.socials.linkedin },
-] as const;
+/*
+ * Only the accounts that exist. Instagram and LinkedIn are still
+ * `TODO-kenchogroup` placeholders in lib/site.ts and were shipping as
+ * live links on every page — two guaranteed 404s for anyone who clicked
+ * them, and two dead outbound links for a crawler. They come back the
+ * moment the real URLs do; the filter is what decides, not the list.
+ */
+const SOCIAL_LINKS = (
+  [
+    { label: "Facebook", href: SITE.socials.facebook },
+    { label: "TikTok", href: SITE.socials.tiktok },
+    { label: "Instagram", href: SITE.socials.instagram },
+    { label: "LinkedIn", href: SITE.socials.linkedin },
+  ] as const
+).filter((s) => !s.href.includes("TODO"));
 
 /* Endonyms: a language switcher names each language in itself, so these
  * labels are intentionally identical across locales (not message copy). */
@@ -424,12 +480,12 @@ export function Footer() {
             <ul className="flex flex-col gap-3 text-sm">
               {FOOTER_NAV.map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     className="u-link text-bone/70 transition-colors hover:text-bone"
                     href={item.href}
                   >
                     {tNav(item.key)}
-                  </a>
+                  </Link>
                 </li>
               ))}
               {/* The header only has room for this from `sm` up, and the
@@ -463,9 +519,6 @@ export function Footer() {
                 <ThemeToggle />
               </div>
             </div>
-
-            {/* The opening scene, chosen after you have seen one. */}
-            <HeroSwitch />
 
             <p className={`${LABEL_CLASS} mt-10`}>{t("socials")}</p>
             <ul className="mt-5 flex flex-col gap-3 text-sm">
