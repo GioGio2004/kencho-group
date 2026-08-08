@@ -1,12 +1,11 @@
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
-import { fetchQuery } from "convex/nextjs";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
+import BeforeAfter from "@/app/_components/BeforeAfter";
 import Contact, { Footer } from "@/app/_components/Contact";
 import CustomCursor from "@/app/_components/CustomCursor";
 import FAQ from "@/app/_components/FAQ";
-import FocusRail, { type FocusProject } from "@/app/_components/FocusRail";
-import PanoramaRail from "@/app/_components/PanoramaRail";
+import GalleryRooms from "@/app/_components/GalleryRooms";
 import IntroSequence from "@/app/_components/IntroSequence";
 import JourneyRail from "@/app/_components/JourneyRail";
 import Manifesto from "@/app/_components/Manifesto";
@@ -20,47 +19,15 @@ import SiteHeader from "@/app/_components/SiteHeader";
 import SmoothScroll from "@/app/_components/SmoothScroll";
 import StickyWhatsApp from "@/app/_components/StickyWhatsApp";
 import { routing, type Locale } from "@/i18n/routing";
-import { galleriesApi, pick } from "@/lib/convex-gallery";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-/* The focus rail reads Convex, so home renders server-side per request
- * (fetchQuery opts out of static caching — same trade the gallery
- * routes already make): publish in the admin, appear here, no deploy. */
-
 export default async function Home({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-
-  /* Published galleries become the rail's projects — titles and
-   * descriptions resolved to this locale here, so the client component
-   * receives plain strings. */
-  const [published, slugMeta, tGallery, tPanorama] = await Promise.all([
-    fetchQuery(galleriesApi.listPublished, {}),
-    fetchQuery(galleriesApi.listPublishedSlugs, {}),
-    getTranslations({ locale, namespace: "gallery" }),
-    getTranslations({ locale, namespace: "panorama" }),
-  ]);
-  const years = new Map(
-    slugMeta.map((g) => [g.slug, new Date(g.createdAt).getFullYear()]),
-  );
-  const projects: FocusProject[] = [...published]
-    .sort((a, b) => a.order - b.order)
-    .filter((g) => g.cover?.url)
-    .slice(0, 6)
-    .map((g) => ({
-      slug: g.slug,
-      title: pick(g.title, locale as Locale),
-      description: pick(g.description, locale as Locale),
-      meta: `${tGallery("count", { count: g.imageCount })} · ${
-        years.get(g.slug) ?? new Date().getFullYear()
-      }`,
-      coverUrl: g.cover!.url as string,
-      coverAlt: pick(g.cover!.alt, locale as Locale),
-    }));
 
   /* The FAQPage schema lives on /faq with the section's own URL — one
    * FAQPage per site, on the page whose subject is the questions. The
@@ -92,19 +59,11 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         */}
         <Prologue />
         <Manifesto />
-        {/* Combo 11: the focus rail — the reference's "Our Trips"
-            accordion, fed by the published galleries. */}
-        <FocusRail projects={projects} />
+        <BeforeAfter />
         <Projects />
-        {/* Combo 12: the panorama — a pinned lateral walk through
-            three collections, closing on the workshop's word. */}
-        <PanoramaRail
-          projects={projects.slice(0, 3)}
-          quote={{
-            text: tPanorama("quote"),
-            attribution: tPanorama("attribution"),
-          }}
-        />
+        {/* The doors to the gallery — four admin-managed rooms,
+            floating over one photograph. */}
+        <GalleryRooms locale={locale as Locale} />
         <Services />
         {/* A breather between services and process, moving at scroll speed. */}
         <MarqueeBand />

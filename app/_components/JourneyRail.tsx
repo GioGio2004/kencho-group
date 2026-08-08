@@ -59,9 +59,9 @@ import { DUR, EASE } from "@/lib/motion";
 const STOPS = [
   { id: "hero", label: "nav.home" },
   { id: "manifesto", label: "manifesto.eyebrow" },
-  { id: "featured", label: "featured.eyebrow" },
+  { id: "transformation", label: "transformation.eyebrow" },
   { id: "projects", label: "projects.eyebrow" },
-  { id: "panorama", label: "panorama.eyebrow" },
+  { id: "rooms", label: "rooms.eyebrow" },
   { id: "services", label: "services.eyebrow" },
   { id: "process", label: "process.eyebrow" },
   { id: "faq", label: "faq.eyebrow" },
