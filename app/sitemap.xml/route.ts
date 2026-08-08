@@ -26,7 +26,15 @@ const PAGES = [
   { path: "/contact", priority: 0.7, fallback: 0.5 },
 ] as const;
 
-export const revalidate = 3600;
+/*
+ * Convex's fetchQuery is a no-store fetch (the gallery pages are ƒ
+ * dynamic for the same reason), so `next build`'s prerender attempt
+ * aborts with DYNAMIC_SERVER_USAGE — which the try/catch below would
+ * catch and log as a scary build error. force-dynamic skips the
+ * prerender; the s-maxage Cache-Control on the response gives the CDN
+ * the hourly caching that `revalidate = 3600` used to provide.
+ */
+export const dynamic = "force-dynamic";
 
 type Entry = {
   loc: string;
@@ -113,6 +121,10 @@ export async function GET() {
   );
 
   return new Response(serialize([...staticEntries, ...galleryEntries]), {
-    headers: { "Content-Type": "application/xml" },
+    headers: {
+      "Content-Type": "application/xml",
+      "Cache-Control":
+        "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400",
+    },
   });
 }
