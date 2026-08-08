@@ -15,6 +15,13 @@ import Script from "next/script";
  *     never show it. React 19 hoists async src scripts into <head>,
  *     where the install guide asks for it.
  *   - production-gated so dev-server visits don't count as traffic.
+ *
+ * The src is OUR /ahrefs-analytics.js proxy route, not Ahrefs' CDN —
+ * the direct fetch came back with five Cloudflare bot-management
+ * cookies that Lighthouse flags as third-party (see the proxy route
+ * for the full story). data-api / data-error pin the beacon
+ * endpoints back to Ahrefs, because the script otherwise derives
+ * them from the script's own origin, which is now us.
  */
 const AHREFS_KEY = "xjMYdF12eSLB+I0veTN9yg";
 
@@ -26,8 +33,10 @@ export default function AnalyticsScripts() {
     <>
       {process.env.NODE_ENV === "production" ? (
         <script
-          src="https://analytics.ahrefs.com/analytics.js"
+          src="/ahrefs-analytics.js"
           data-key={AHREFS_KEY}
+          data-api="https://analytics.ahrefs.com/api/event"
+          data-error="https://analytics.ahrefs.com/api/error"
           async
         />
       ) : null}
