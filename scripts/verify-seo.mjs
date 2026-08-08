@@ -6,7 +6,7 @@
 import { chromium } from "playwright";
 
 const BASE = process.env.SEO_BASE ?? "http://localhost:3100";
-const SITE_URL = "https://kenchogroup.ge";
+const SITE_URL = "https://www.kenchogroup.ge";
 const LOCALES = ["ka", "ru", "en"];
 const ROUTES = [
   { path: "", breadcrumb: false },

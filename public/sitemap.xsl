@@ -102,7 +102,7 @@
           <h1>XML Sitemap</h1>
           <p class="note">
             This file tells search engines which pages exist on
-            kenchogroup.ge — it is meant for crawlers, not visitors.
+            www.kenchogroup.ge — it is meant for crawlers, not visitors.
             It currently lists
             <strong><xsl:value-of select="count(s:urlset/s:url)" /> URLs</strong>.
           </p>

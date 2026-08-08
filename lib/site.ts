@@ -40,8 +40,13 @@ export const SITE = {
   wordmark: "KENCHO",
   wordmarkSub: "GROUP",
   location: "Tbilisi, Georgia",
-  /** TODO: confirm the production domain before launch. */
-  url: "https://kenchogroup.ge",
+  /*
+   * The www host is canonical: production 308-redirects the bare apex
+   * to www.kenchogroup.ge, so every canonical/hreflang/sitemap URL
+   * built from this value must use www or Lighthouse flags the
+   * canonical as pointing at another hreflang location.
+   */
+  url: "https://www.kenchogroup.ge",
   phone: "+995 592 82 22 60",
   phoneHref: "+995592822260",
   whatsappBase: "https://wa.me/995592822260",
