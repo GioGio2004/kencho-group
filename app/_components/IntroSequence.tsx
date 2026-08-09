@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useTranslations } from "next-intl";
 import { SITE } from "@/lib/site";
+import { FRAMES_EVENT } from "@/lib/walkthrough";
 
 /* =====================================================================
  * INTRO CONFIG — every timing and easing for the opening.
@@ -33,11 +34,20 @@ const INTRO = {
   counter: {
     /** Hard cap on the ASSET wait, in seconds. Progress is real but bounded. */
     maxWait: 1.5,
+    /**
+     * The wait once the walkthrough frames announce themselves (the
+     * FRAMES_EVENT below): the curtain holds for the real download so
+     * the hero scrubs at full quality from the first scroll. Skipping
+     * (any scroll/tap/key) still works the whole time.
+     */
+    framesWait: 8,
     /** The counter never completes before this, so it reads deliberate. */
     minDuration: 0.85,
-    /** Share of progress attributed to fonts vs the walkthrough poster. */
-    fontsWeight: 35,
-    imageWeight: 65,
+    /** Progress weights: fonts + the poster + the frame sequence. When
+     *  no frames are streaming, their share counts as already earned. */
+    fontsWeight: 10,
+    imageWeight: 20,
+    framesWeight: 70,
     /** How hard the displayed number chases the true value (0–1). */
     chase: 0.11,
   },
@@ -93,6 +103,8 @@ const INTRO = {
      * seconds, total.
      */
     hardCap: 3.5,
+    /** The hard cap once frames are streaming — a beat past framesWait. */
+    framesHardCap: 9.5,
     /** Return visits within the same session: a fast lift, no words. */
     returnLift: 0.6,
   },
@@ -391,6 +403,11 @@ export default function IntroSequence() {
          * ------------------------------------------------------------ */
         let fontsReady = false;
         let imageReady = false;
+        /* 0–1 share of the walkthrough sequence downloaded; null until
+         * the first FRAMES_EVENT proves a sequence is streaming at all
+         * (fallback paths — data-saver, reduced canvas, load failure —
+         * never fire it, and must never be waited on). */
+        let framesProgress: number | null = null;
         let displayed = 0;
         let assetsDone = false;
         let sequenceDone = false;
@@ -419,16 +436,24 @@ export default function IntroSequence() {
           release();
         };
 
-        /* Counter: real asset progress (fonts + the walkthrough poster),
-         * bounded. */
+        /* Counter: real asset progress (fonts, the walkthrough poster,
+         * and — once streaming — the frame sequence itself), bounded. */
+        const activeWait = () =>
+          framesProgress === null
+            ? INTRO.counter.maxWait
+            : INTRO.counter.framesWait;
+
         const tick = () => {
           const elapsed = (performance.now() - startedAt) / 1000;
           const assets =
             (fontsReady ? INTRO.counter.fontsWeight : 0) +
-            (imageReady ? INTRO.counter.imageWeight : 0);
+            (imageReady ? INTRO.counter.imageWeight : 0) +
+            /* No sequence streaming → its share counts as earned, so the
+             * short poster-only path still reaches 100. */
+            INTRO.counter.framesWeight * (framesProgress ?? 1);
           // Never let the number stall while assets are in flight, and never
           // finish before minDuration so the count reads as deliberate.
-          const creep = (elapsed / INTRO.counter.maxWait) * 92;
+          const creep = (elapsed / activeWait()) * 92;
           const ceiling = elapsed < INTRO.counter.minDuration ? 92 : 100;
           const target = Math.min(ceiling, Math.max(assets, creep));
 
@@ -476,16 +501,52 @@ export default function IntroSequence() {
           });
         }
 
-        // Assets are never waited on past maxWait…
-        const assetCap = gsap.delayedCall(INTRO.counter.maxWait, settleAssets);
-        // …and the WHOLE preloader is never held past hardCap.
-        const totalCap = gsap.delayedCall(INTRO.release.hardCap, () =>
+        // Assets are never waited on past the active wait…
+        let assetCap = gsap.delayedCall(INTRO.counter.maxWait, settleAssets);
+        // …and the WHOLE preloader is never held past the active hard cap.
+        let totalCap = gsap.delayedCall(INTRO.release.hardCap, () =>
           release(true),
         );
         cleanups.push(() => {
           assetCap.kill();
           totalCap.kill();
         });
+
+        /*
+         * The walkthrough announces itself: the first FRAMES_EVENT
+         * re-arms both caps to the patient values, and from then on the
+         * counter is the genuine download. The listener keeps feeding
+         * progress until settle; every event before settle refreshes
+         * nothing — the caps are re-armed exactly once.
+         */
+        const onFrames = (e: Event) => {
+          const { loaded, total } = (
+            e as CustomEvent<{ loaded: number; total: number }>
+          ).detail;
+          const rearm = framesProgress === null;
+          framesProgress = total > 0 ? loaded / total : 1;
+          if (rearm && !assetsDone && !released) {
+            const elapsed = (performance.now() - startedAt) / 1000;
+            assetCap.kill();
+            totalCap.kill();
+            assetCap = gsap.delayedCall(
+              Math.max(0, INTRO.counter.framesWait - elapsed),
+              settleAssets,
+            );
+            totalCap = gsap.delayedCall(
+              Math.max(0, INTRO.release.framesHardCap - elapsed),
+              () => release(true),
+            );
+            cleanups.push(() => {
+              assetCap.kill();
+              totalCap.kill();
+            });
+          }
+        };
+        window.addEventListener(FRAMES_EVENT, onFrames);
+        cleanups.push(() =>
+          window.removeEventListener(FRAMES_EVENT, onFrames),
+        );
 
         /* ---------------------------------------------------------------
          * SKIP — any scroll, tap or keypress jumps straight to the end.

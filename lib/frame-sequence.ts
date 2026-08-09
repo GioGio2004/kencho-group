@@ -1,4 +1,5 @@
 import {
+  FRAMES_EVENT,
   WALKTHROUGH,
   frameCount,
   frameUrl,
@@ -103,6 +104,12 @@ export class FrameSequence {
       if (this.disposed) return;
       this.frames[i] = img;
       this.loadedCount++;
+      /* Tell the preloader how the download is really going. */
+      window.dispatchEvent(
+        new CustomEvent(FRAMES_EVENT, {
+          detail: { loaded: this.loadedCount, total: this.total },
+        }),
+      );
     } catch {
       /* A missing frame must never break the scrub — the nearest loaded
        * frame is painted instead. */

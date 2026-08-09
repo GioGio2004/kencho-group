@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "frames": "node scripts/frames.mjs",
+    "reel": "node scripts/reel.mjs",
     "verify:hero": "node scripts/verify-hero.mjs",
     "verify:kinetic": "node scripts/verify-kinetic.mjs",
     "verify:rail": "node scripts/verify-rail.mjs",

@@ -78,6 +78,15 @@ export const WALKTHROUGH_STOPS: readonly LingerStop[] = Object.values(
 
 export type FrameTier = "desktop" | "mobile";
 
+/**
+ * Fired on window by FrameSequence every time a frame lands, with
+ * `detail: { loaded, total }`. The preloader listens: the moment the
+ * first event arrives it switches from its short poster-only wait to
+ * holding the curtain for the whole sequence, with the counter showing
+ * the genuine download.
+ */
+export const FRAMES_EVENT = "alma:frames";
+
 export const FRAMES = manifest;
 
 export function frameUrl(tier: FrameTier, index: number): string {

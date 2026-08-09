@@ -36,9 +36,16 @@ const CONFIG = {
       /** Hard ceiling on frame count; the source may have fewer. */
       maxFrames: 240,
       /** Capped to the source width — upscaling only costs bytes. */
-      width: 1600,
-      quality: 78,
-      budgetMB: 18,
+      width: 1920,
+      quality: 82,
+      /*
+       * Deliberately generous: the preloader now tracks the frame
+       * download with real progress and holds the curtain for it, so
+       * the sequence is allowed to cost what a sharp full-screen
+       * walkthrough costs. The budget is a guard against runaway
+       * encodes, not a target.
+       */
+      budgetMB: 45,
     },
     mobile: {
       /*
@@ -49,18 +56,18 @@ const CONFIG = {
        * budget genuinely cannot be met.
        */
       everyNth: 1,
-      width: 820,
-      quality: 73,
-      budgetMB: 6,
+      width: 960,
+      quality: 76,
+      budgetMB: 12,
     },
   },
 
   poster: {
     /** Frame index (1-based) used for the poster stills. */
     frame: 1,
-    desktopWidth: 1600,
-    mobileWidth: 900,
-    quality: 82,
+    desktopWidth: 1920,
+    mobileWidth: 960,
+    quality: 84,
   },
 
   /** Budget retry behaviour. */
