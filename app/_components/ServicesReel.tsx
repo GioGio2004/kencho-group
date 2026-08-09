@@ -33,7 +33,7 @@ import { EASE, SCRUB } from "@/lib/motion";
  */
 
 const VIDEO_SRC = "/video/workshop-reel.mp4"; // 1080p, ~9 MB
-const VIDEO_SRC_MOBILE = "/video/workshop-reel-mobile.mp4"; // 960px, ~2.6 MB
+const VIDEO_SRC_FALLBACK = "/video/workshop-reel-mobile.mp4"; // 960px, ~4.6 MB
 
 /** The four turns, in the services' own order. */
 const SLIDES = ["kitchens", "wardrobes", "paneling", "commercial"] as const;
@@ -72,9 +72,23 @@ export default function ServicesReel() {
      * the footage silently. */
     video.muted = true;
 
-    video.src = window.matchMedia("(max-width: 767px)").matches
-      ? VIDEO_SRC_MOBILE
-      : VIDEO_SRC;
+    /*
+     * EVERY screen gets the 1080p encode, phones included. A portrait
+     * phone cover-crops a landscape film to its middle third and
+     * stretches that across the whole screen — the harshest upscale on
+     * the site — so the small encode looked worst exactly where it was
+     * served. The lighter file is a fallback for connections that are
+     * genuinely constrained, not a class of device.
+     */
+    const conn = (
+      navigator as Navigator & {
+        connection?: { effectiveType?: string; saveData?: boolean };
+      }
+    ).connection;
+    const constrained =
+      conn?.saveData ||
+      ["slow-2g", "2g", "3g"].includes(conn?.effectiveType ?? "");
+    video.src = constrained ? VIDEO_SRC_FALLBACK : VIDEO_SRC;
 
     /* Three chances to start: the section scrolling into view, the
      * file becoming playable while it is in view, and — the last
