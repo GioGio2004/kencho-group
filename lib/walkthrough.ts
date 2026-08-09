@@ -15,8 +15,10 @@ import { LINGER, type LingerStop } from "@/lib/motion";
 export const WALKTHROUGH = {
   /** Pinned scroll distance, in vh. The whole story plays across this. */
   scrollLength: 350,
-  /** ScrollTrigger scrub: seconds the frames take to catch up. */
-  scrub: 1,
+  /** ScrollTrigger scrub: seconds the frames take to catch up. 1.5 is
+   *  the cinematic setting — the shot glides through wheel ticks
+   *  instead of stepping with them. */
+  scrub: 1.5,
 
   /**
    * Cover-crop focal point. The source is landscape (16:9); on a 390px
@@ -34,8 +36,7 @@ export const WALKTHROUGH = {
   /** Device-pixel-ratio ceiling — 2 is plenty and halves the fill cost. */
   maxDpr: 2,
 
-  /** Below this width, or on a slow connection, use the mobile tier. */
-  mobileBreakpoint: 768,
+  /** Connections that get the small tier regardless of screen. */
   slowConnections: ["slow-2g", "2g", "3g"],
 
   /*
@@ -60,6 +61,19 @@ export const WALKTHROUGH = {
     /** 0.75–0.95 is deliberately empty — the space speaks. */
     cue: { in: 0.95, out: 1.0, linger: LINGER.brush },
   },
+
+  /**
+   * The idle drift — the film NEVER freezes mid-section. When the
+   * wheel rests, the painted position keeps creeping in the direction
+   * the visitor was last scrolling, so the walkthrough reads as one
+   * continuous shot rather than a scrubber that parks between inputs.
+   *
+   * `speed` is progress per second (0.012 ≈ two frames a second — a
+   * breath, not a playback). `lead` caps how far the drift may run
+   * ahead of the true scroll position, so resuming the scroll never
+   * has a visible jump to recover.
+   */
+  drift: { speed: 0.012, lead: 0.05 },
 
   /** Fallback hero (reduced motion / data-saver / load failure). */
   fallback: { fromScale: 1, toScale: 1.15 },
@@ -104,9 +118,14 @@ export function frameCount(tier: FrameTier): number {
 }
 
 /**
- * Pick a tier from viewport width and the Network Information API.
- * Falls back to mobile whenever the connection looks slow or the user
- * asked to save data — the desktop tier is ~4x the bytes.
+ * Pick a tier from the Network Information API alone — NOT from screen
+ * width. A portrait phone cover-crops the landscape walkthrough to its
+ * middle third and stretches that across the whole screen, the harshest
+ * upscale in the sequence's life, so the small tier looked worst exactly
+ * where it was served (the same lesson the services reel learned). The
+ * small tier is a fallback for constrained connections, not a class of
+ * device — and the preloader now holds the curtain for the real
+ * download, so the extra bytes are paid where the visitor can see them.
  */
 export function pickTier(): FrameTier {
   if (typeof window === "undefined") return "mobile";
@@ -126,7 +145,5 @@ export function pickTier(): FrameTier {
   ) {
     return "mobile";
   }
-  return window.innerWidth >= WALKTHROUGH.mobileBreakpoint
-    ? "desktop"
-    : "mobile";
+  return "desktop";
 }

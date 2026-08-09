@@ -416,23 +416,39 @@ export default function Hero() {
             ScrollTrigger.refresh();
 
             /*
-             * Paint once per frame from the eased playhead, re-paced by
-             * the beat stops on the way through. draw() skips redundant
-             * indices, so a still page costs one comparison.
+             * Paint once per frame from a painted position that CHASES
+             * the eased playhead — and, when the playhead rests, keeps
+             * CREEPING in the direction the visitor was last scrolling.
+             * The film never freezes mid-section: between inputs it
+             * breathes forward at W.drift.speed, capped at W.drift.lead
+             * ahead of the true scroll position so resuming the scroll
+             * recovers smoothly instead of jumping. At either end of
+             * the pin the clamp parks it — the shot only stops where
+             * the section does.
              *
-             * TWO DIFFERENT SMOOTHINGS, and they do different jobs. The
-             * proxy tween above smooths the INPUT — it decouples the
-             * playhead from the browser's scroll-event cadence, which is
-             * what stops the sequence stepping. lingerStops re-paces the
-             * OUTPUT — it decides which part of the walk is worth more
-             * scroll, so the camera all but stops while a beat is being
-             * read and covers the empty stretch at full speed. Neither
-             * substitutes for the other, and neither moves a beat
-             * boundary: every window's ends stay on the frame they were
-             * already on.
+             * The old lingerStops re-pacing is gone from this path on
+             * purpose: pausing the footage under each beat is exactly
+             * the stall the drift exists to remove. The beat copy stays
+             * scroll-bound; only the film underneath stays alive.
              */
-            const paint = () => {
-              seq.draw(lingerStops(playhead.v, WALKTHROUGH_STOPS));
+            let painted = playhead.v;
+            let lastTarget = playhead.v;
+            let dir = 1;
+            const paint = (_time: number, deltaMs: number) => {
+              const dt = Math.min(deltaMs, 100) / 1000;
+              const target = playhead.v;
+              if (target !== lastTarget) {
+                dir = Math.sign(target - lastTarget) || dir;
+                lastTarget = target;
+              }
+              /* Chase the scrub. */
+              painted += (target - painted) * Math.min(1, dt * 4);
+              /* Idle creep, while it has not outrun its lead. */
+              if ((painted - target) * dir < W.drift.lead) {
+                painted += dir * W.drift.speed * dt;
+              }
+              painted = Math.max(0, Math.min(1, painted));
+              seq.draw(painted);
             };
             gsap.ticker.add(paint);
 
