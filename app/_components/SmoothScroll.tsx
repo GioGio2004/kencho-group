@@ -17,12 +17,21 @@ export default function SmoothScroll() {
 
     gsap.registerPlugin(ScrollTrigger);
 
+    /* Touch devices get syncTouch: Lenis takes over the touch scroll
+     * instead of leaving it native. Two things depend on this: the
+     * glide matches the wheel's, and — because the page never scrolls
+     * natively — the mobile URL bar never collapses mid-pin, which is
+     * what made the pinned sections stutter on phones. */
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+
     const lenis = new Lenis({
       // 1.5 is the plush setting: the page glides to rest rather than
       // stopping with the wheel — the difference between scrolling a
       // website and turning the pages of a printed portfolio.
       duration: 1.5,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      syncTouch: isTouch,
+      syncTouchLerp: 0.08,
     });
 
     lenis.on("scroll", ScrollTrigger.update);

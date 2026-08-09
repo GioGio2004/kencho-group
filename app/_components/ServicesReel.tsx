@@ -66,24 +66,46 @@ export default function ServicesReel() {
     if (!video || !root) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    /* React does not render the `muted` attribute into the server
+     * HTML, and mobile autoplay policy checks the property at play
+     * time — set it by hand before any play() call, or phones refuse
+     * the footage silently. */
+    video.muted = true;
+
     video.src = window.matchMedia("(max-width: 767px)").matches
       ? VIDEO_SRC_MOBILE
       : VIDEO_SRC;
 
+    /* Three chances to start: the section scrolling into view, the
+     * file becoming playable while it is in view, and — the last
+     * resort for the strictest mobile policies — the first touch. */
+    let visible = false;
+    const tryPlay = () => {
+      if (visible && video.paused) {
+        video.play().catch(() => {
+          /* Autoplay can still be refused; the poster stands in. */
+        });
+      }
+    };
+
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (entry?.isIntersecting) {
-          video.play().catch(() => {
-            /* Autoplay can be refused; the poster stands in. */
-          });
-        } else {
-          video.pause();
-        }
+        visible = !!entry?.isIntersecting;
+        if (visible) tryPlay();
+        else video.pause();
       },
       { rootMargin: "20% 0px" },
     );
     io.observe(root);
-    return () => io.disconnect();
+
+    video.addEventListener("canplay", tryPlay);
+    window.addEventListener("touchstart", tryPlay, { passive: true });
+
+    return () => {
+      io.disconnect();
+      video.removeEventListener("canplay", tryPlay);
+      window.removeEventListener("touchstart", tryPlay);
+    };
   }, []);
 
   useGSAP(
@@ -291,6 +313,7 @@ export default function ServicesReel() {
           <video
             ref={videoRef}
             className="reel-video"
+            autoPlay
             muted
             loop
             playsInline
