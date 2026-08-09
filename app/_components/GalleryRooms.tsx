@@ -34,6 +34,7 @@ export default async function GalleryRooms({ locale }: { locale: Locale }) {
   return (
     <section
       id="rooms"
+      data-thread-anchor=""
       aria-labelledby="rooms-title"
       className="rooms relative overflow-hidden"
     >
@@ -55,7 +56,7 @@ export default async function GalleryRooms({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      <div className="relative z-[1] mx-auto w-full max-w-[88rem] px-6 py-24 sm:px-10 sm:py-32 lg:py-40">
+      <div className="relative z-[1] mx-auto w-full max-w-[88rem] px-6 py-32 sm:px-10 sm:py-44 lg:py-56">
         <p className="u-eyebrow rooms-eyebrow">{t("eyebrow")}</p>
         <h2
           id="rooms-title"

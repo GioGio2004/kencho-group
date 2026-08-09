@@ -3637,3 +3637,290 @@ html[lang="ka"] .pano-quote-text {
   transform-origin: left;
   z-index: 2;
 }
+
+/* =====================================================================
+ * THE WALL — SideGallery's two modes, one DOM.
+ * ---------------------------------------------------------------------
+ * Default (phones, reduced motion, no JS): a native horizontal
+ * scroller with proximity snap and no visible scrollbar — the swipe
+ * carousel. With `.wall-on` (desktop + motion + JS, added by the GSAP
+ * context): overflow is released and the track rides a transform under
+ * a pinned section instead. Nothing is duplicated, nothing hidden.
+ * ================================================================== */
+
+.wall-scroller {
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.wall-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.wall-panel {
+  scroll-snap-align: center;
+}
+
+.wall-on .wall-scroller {
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+/* The walk's progress hairline — exists only in the pinned mode. */
+.wall-rule {
+  display: none;
+}
+
+.wall-on .wall-rule {
+  display: block;
+  position: absolute;
+  left: var(--space-gutter);
+  right: var(--space-gutter);
+  bottom: 2.5rem;
+  height: 1px;
+  background: color-mix(in srgb, var(--bone) 38%, transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* The walk's odometer — big ghost figures, pinned mode only. */
+.wall-count {
+  display: none;
+}
+
+.wall-on .wall-count {
+  display: block;
+  position: absolute;
+  left: var(--space-gutter);
+  bottom: 3.25rem;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--bone) 85%, transparent);
+}
+
+.wall-count-total {
+  font-size: 0.55em;
+  color: color-mix(in srgb, var(--bone) 40%, transparent);
+}
+
+/* =====================================================================
+ * THE REEL — ServicesReel's two modes, one DOM.
+ * ---------------------------------------------------------------------
+ * Default (no JS, reduced motion, crawlers): an ordinary vertical
+ * section — video poster, meta line, title, the four services as a
+ * plain list, then the statement and the link. With `.reel-on` (added
+ * by the GSAP context): the same elements become absolutely-composed
+ * layers over the RUNNING footage under one pinned scrub — the title
+ * panel from the right, the stepped card slider, the light close
+ * sweeping up. Nothing is duplicated, nothing hidden from the server
+ * HTML.
+ * ================================================================== */
+
+
+.reel-on .reel-pin {
+  min-height: 100svh;
+  overflow: clip;
+}
+
+.reel-video-wrap {
+  position: relative;
+}
+
+.reel-on .reel-video-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.reel-video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.reel-on .reel-video {
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+/* Standing scrim so type always reads over the footage. */
+.reel-scrim {
+  display: none;
+}
+
+.reel-on .reel-scrim {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--charcoal) 28%, transparent),
+    color-mix(in srgb, var(--charcoal) 55%, transparent)
+  );
+}
+
+
+/* ---------------------------------------------------------------------
+ * BEAT I — the meta line and the title, type straight on the film.
+ * ------------------------------------------------------------------ */
+.reel-meta {
+  display: block;
+  padding: 3rem var(--space-gutter) 0;
+  opacity: 0.6;
+}
+
+.reel-on .reel-meta {
+  position: absolute;
+  z-index: 2;
+  left: var(--space-gutter);
+  bottom: calc(50% + clamp(3.5rem, 11vh, 7rem));
+  max-width: 34ch;
+  padding: 0;
+  opacity: 0.7;
+  color: var(--bone);
+}
+
+.reel-title {
+  padding: 1rem var(--space-gutter) 0;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1;
+}
+
+.reel-on .reel-title {
+  position: absolute;
+  z-index: 2;
+  left: var(--space-gutter);
+  right: var(--space-gutter);
+  top: 50%;
+  margin: -0.5em 0 0;
+  padding: 0;
+  font-size: clamp(3rem, 9vw, 8rem);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+/* ---------------------------------------------------------------------
+ * BEAT II — the four terms.
+ * Fallback: the stage is a plain block and the slides stack as a list.
+ * ------------------------------------------------------------------ */
+.reel-stage {
+  position: relative;
+  padding: 2rem var(--space-gutter) 3rem;
+}
+
+.reel-on .reel-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  padding: 0;
+  pointer-events: none;
+}
+
+.reel-slide {
+  padding: 2rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--bone) 18%, transparent);
+}
+
+/* Full-height flex column centring, NOT a translateY(-50%) transform:
+ * GSAP animates this element's transform, and a tween would overwrite
+ * the centring the moment the scrub touched it. */
+.reel-on .reel-slide {
+  position: absolute;
+  left: var(--space-gutter);
+  right: var(--space-gutter);
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0;
+  border: none;
+}
+
+.reel-slide-term {
+  font-size: clamp(1.25rem, 3.2vh, 1.75rem);
+}
+
+.reel-on .reel-slide-term {
+  font-size: clamp(2.4rem, 7vw, 6rem);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.reel-slide-line {
+  margin-top: 0.75rem;
+  max-width: 44ch;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  opacity: 0.75;
+}
+
+.reel-on .reel-slide-line {
+  margin-top: clamp(1.25rem, 3.5vh, 2.25rem);
+  max-width: 40ch;
+  font-size: clamp(0.95rem, 1.9vh, 1.05rem);
+  opacity: 0.85;
+}
+
+/* The dash rail and counter — pinned mode only. They hold the same
+ * spot near the bottom while the words swap above them. */
+.reel-dashes,
+.reel-count {
+  display: none;
+}
+
+.reel-on .reel-dashes {
+  display: flex;
+  position: absolute;
+  left: var(--space-gutter);
+  bottom: clamp(5rem, 12vh, 7.5rem);
+  width: min(24rem, 50vw);
+  gap: 0.75rem;
+}
+
+.reel-dash {
+  height: 1px;
+  flex: 1;
+  background: color-mix(in srgb, var(--bone) 60%, transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.reel-on .reel-count {
+  display: flex;
+  position: absolute;
+  left: var(--space-gutter);
+  bottom: clamp(2.5rem, 6vh, 4rem);
+  width: min(24rem, 50vw);
+  justify-content: space-between;
+  align-items: baseline;
+  color: var(--bone);
+}
+
+/* ---------------------------------------------------------------------
+ * BEAT III — the close, type on film.
+ * ------------------------------------------------------------------ */
+.reel-close {
+  padding: 3rem var(--space-gutter) 4rem;
+}
+
+/* Same flex centring as the slides, for the same transform reason. */
+.reel-on .reel-close {
+  position: absolute;
+  z-index: 4;
+  left: var(--space-gutter);
+  right: var(--space-gutter);
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0;
+}
+
+/* Phones: the terms and the close keep the gutters; only the type
+ * steps down, which the clamps already do. */

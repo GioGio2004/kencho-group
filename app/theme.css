@@ -356,7 +356,7 @@
   --space-section: 6rem;
   --space-section-lg: 7rem;
   --space-block: 3.5rem;
-  --space-flow: 1.25rem;
+  --space-flow: 2rem;
   --space-gutter: 1.25rem;
 
   /* -------------------------------------------------------------------
@@ -437,7 +437,7 @@
     --space-section: 8rem;
     --space-section-lg: 10rem;
     --space-block: 5rem;
-    --space-flow: 1.5rem;
+    --space-flow: 2.75rem;
     --space-gutter: 2rem;
   }
 }
@@ -447,7 +447,7 @@
     --space-section: 10rem;
     --space-section-lg: 12rem;
     --space-block: 6rem;
-    --space-flow: 1.75rem;
+    --space-flow: 3.5rem;
     --space-gutter: 3rem;
   }
 }

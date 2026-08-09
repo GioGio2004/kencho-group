@@ -183,8 +183,9 @@ export default function Contact() {
     <section
       ref={rootRef}
       id="contact"
+      data-thread-anchor=""
       aria-labelledby="contact-title"
-      className="bg-charcoal text-bone py-28 sm:py-40 lg:py-48"
+      className="bg-charcoal text-bone py-36 sm:py-52 lg:py-64"
     >
       <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-10 lg:px-16">
         <div className="grid gap-16 lg:grid-cols-12 lg:gap-24">

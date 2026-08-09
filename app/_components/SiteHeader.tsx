@@ -39,7 +39,6 @@ import { DUR, EASE } from "@/lib/motion";
  */
 const SECTIONS = [
   { id: "manifesto", label: "manifesto.eyebrow" },
-  { id: "transformation", label: "transformation.eyebrow" },
   { id: "projects", label: "projects.eyebrow" },
   { id: "rooms", label: "rooms.eyebrow" },
   { id: "services", label: "services.eyebrow" },

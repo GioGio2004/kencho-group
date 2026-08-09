@@ -305,8 +305,9 @@ export default function BeforeAfter() {
     <section
       ref={sectionRef}
       id="transformation"
+      data-thread-anchor=""
       aria-labelledby="transformation-title"
-      className="u-band relative py-24 sm:py-32 lg:py-40"
+      className="u-band relative py-32 sm:py-44 lg:py-56"
     >
       {/* The page, set out the way the drawing is. */}
       <Sheet guides={3} inset="inset-x-5 inset-y-10 sm:inset-x-8 lg:inset-x-12" />

@@ -18,7 +18,10 @@ export default function SmoothScroll() {
     gsap.registerPlugin(ScrollTrigger);
 
     const lenis = new Lenis({
-      duration: 1.1,
+      // 1.5 is the plush setting: the page glides to rest rather than
+      // stopping with the wheel — the difference between scrolling a
+      // website and turning the pages of a printed portfolio.
+      duration: 1.5,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     });
 

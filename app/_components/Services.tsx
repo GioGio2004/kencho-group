@@ -243,13 +243,14 @@ export default function Services() {
     <section
       ref={rootRef}
       id="services"
+      data-thread-anchor=""
       aria-labelledby="services-title"
       className="u-band relative"
     >
       {/* The page, set out the way the drawing is. */}
       <Sheet guides={4} inset="inset-x-5 inset-y-12 sm:inset-x-8 lg:inset-x-12" />
 
-      <div className="px-5 pt-24 pb-12 sm:px-8 sm:pt-32 lg:px-12">
+      <div className="px-5 pt-32 pb-16 sm:px-8 sm:pt-44 lg:px-12">
         <p data-head className="u-eyebrow flex items-center gap-4">
           {/* The section's single brass moment. */}
           <span

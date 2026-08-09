@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { fetchQuery } from "convex/nextjs";
-import { setRequestLocale } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Footer } from "@/app/_components/Contact";
 import GalleryExhibit from "@/app/_components/gallery/GalleryExhibit";
 import SiteHeader from "@/app/_components/SiteHeader";
@@ -42,7 +42,22 @@ export async function generateMetadata({
   if (gallery === null) return {};
 
   const title = `${pick(gallery.title, locale as Locale)} | ${SITE.name}`;
-  const description = pick(gallery.description, locale as Locale);
+  /*
+   * Admin-written descriptions are one sentence and often land under
+   * the ~110 characters search tools expect (Ahrefs "meta description
+   * too short", 2026-08-09). Pad short ones with a localized brand
+   * line from metaGallery.tail — the tails are sized (41–50 chars) so
+   * even a 109-character description stays inside the 160-character
+   * ceiling. Long-enough copy passes through untouched.
+   */
+  const base = pick(gallery.description, locale as Locale);
+  const t = await getTranslations({ locale, namespace: "metaGallery" });
+  const description =
+    base.length === 0
+      ? t("tail")
+      : base.length < 110
+        ? `${base} ${t("tail")}`
+        : base;
   const path = `/gallery/${gallery.slug}`;
   const languages = Object.fromEntries(
     routing.locales.map((l) => [l, `${SITE.url}/${l}${path}`]),

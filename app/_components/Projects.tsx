@@ -595,8 +595,9 @@ export default function Projects() {
       <section
         ref={sectionRef}
         id="projects"
+        data-thread-anchor=""
         aria-labelledby="projects-title"
-        className="u-band py-24 sm:py-32"
+        className="u-band py-32 sm:py-44"
       >
         <div className="mx-auto w-full max-w-[88rem] px-6 sm:px-8 lg:px-12">
           <div ref={headerRef}>

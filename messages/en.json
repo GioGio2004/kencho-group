@@ -60,6 +60,10 @@
     "noteTwoTitle": "Residential and commercial",
     "noteTwo": "Apartments and houses, offices, cafés, and shops — one team from design to handover."
   },
+  "wall": {
+    "eyebrow": "Selected work",
+    "title": "Our work, hung on one wall."
+  },
   "transformation": {
     "eyebrow": "Transformation",
     "title": "From shell to home",
@@ -71,6 +75,12 @@
     "hint": "Drag the divider, tap the photo, or use the arrow keys.",
     "beforeAlt": "An office space mid fit-out, bare concrete ceiling and a single carcass",
     "afterAlt": "The finished boardroom of the same project, walnut units and a conference table"
+  },
+  "reel": {
+    "statementA": "Everything under one roof.",
+    "statementB": "We design, build and install every piece ourselves — one workshop, one team, from the first sketch to the last hinge.",
+    "caption": "What we build — from kitchens to complete fit-outs",
+    "videoAlt": "Inside the Kencho Group workshop"
   },
   "services": {
     "eyebrow": "Services",
@@ -497,7 +507,8 @@
   "metaGallery": {
     "title": "Gallery — our latest work | Kencho Group",
     "description": "Browse photo galleries of finished Kencho Group projects: kitchens, wardrobes, paneling and commercial interiors made to measure in Tbilisi.",
-    "ogAlt": "Kencho Group gallery — photographs of finished projects"
+    "ogAlt": "Kencho Group gallery — photographs of finished projects",
+    "tail": "Made to measure by Kencho Group in Tbilisi."
   },
   "pageIntro": {
     "projects": {

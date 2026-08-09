@@ -3,17 +3,20 @@
 import { useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import { useTranslations } from "next-intl";
 import { DUR, EASE, REVEAL_START, STAGGER } from "@/lib/motion";
 import { Sheet } from "@/app/_components/LineWork";
+import RevealText from "@/app/_components/RevealText";
 
 /*
  * MANIFESTO — the calm after the hero. One statement, two footnotes, and a
- * great deal of air. The statement reveals word by word out of masked lines;
- * the notes drift up on their own trigger. Everything is a `from` tween, so
- * the section renders complete and readable with JavaScript disabled.
+ * great deal of air. The statement is a scroll-scrubbed word sweep — every
+ * word waits dimmed on the page and takes its full ink as the reader
+ * reaches it, so reading pace and scroll pace become the same thing (the
+ * `scrub` variant of RevealText, which owns the split). The notes drift up
+ * on their own trigger. Everything animates off the rendered state, so the
+ * section reads complete with JavaScript disabled.
  */
 
 const NOTES = [
@@ -27,18 +30,16 @@ export default function Manifesto() {
   const rootRef = useRef<HTMLElement>(null);
   const eyebrowRef = useRef<HTMLParagraphElement>(null);
   const ruleRef = useRef<HTMLSpanElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
   const notesRef = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
-      gsap.registerPlugin(ScrollTrigger, SplitText);
+      gsap.registerPlugin(ScrollTrigger);
 
       const eyebrow = eyebrowRef.current;
       const rule = ruleRef.current;
-      const heading = headingRef.current;
       const notesWrap = notesRef.current;
-      if (!eyebrow || !rule || !heading || !notesWrap) return;
+      if (!eyebrow || !rule || !notesWrap) return;
 
       const notes = gsap.utils.toArray<HTMLElement>(
         notesWrap.querySelectorAll("[data-note]"),
@@ -46,32 +47,7 @@ export default function Manifesto() {
 
       const mm = gsap.matchMedia();
 
-      mm.add("(prefers-reduced-motion: no-preference)", (ctx) => {
-        let split: SplitText | null = null;
-        let cancelled = false;
-
-        // Split only once the display face has loaded, so the lines the mask
-        // is cut against are the final ones.
-        document.fonts.ready.then(() => {
-          if (cancelled) return;
-          ctx.add(() => {
-            const instance = SplitText.create(heading, {
-              type: "words,lines",
-              mask: "lines",
-            });
-            split = instance;
-
-            gsap.from(instance.words, {
-              yPercent: 60,
-              opacity: 0,
-              duration: DUR.base,
-              ease: EASE.out,
-              stagger: 0.018,
-              scrollTrigger: { trigger: heading, start: REVEAL_START },
-            });
-          });
-        });
-
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
         gsap.from(eyebrow, {
           y: 14,
           opacity: 0,
@@ -96,11 +72,6 @@ export default function Manifesto() {
           stagger: STAGGER.items,
           scrollTrigger: { trigger: notesWrap, start: REVEAL_START },
         });
-
-        return () => {
-          cancelled = true;
-          split?.revert();
-        };
       });
 
       return () => mm.revert();
@@ -112,8 +83,9 @@ export default function Manifesto() {
     <section
       id="manifesto"
       ref={rootRef}
+      data-thread-anchor=""
       aria-labelledby="manifesto-title"
-      className="relative bg-sand px-6 py-28 sm:px-10 sm:py-40 lg:py-56"
+      className="relative bg-sand px-6 py-36 sm:px-10 sm:py-52 lg:py-72"
     >
       {/* The page, set out the way the drawing is. */}
       <Sheet guides={2} inset="inset-x-6 inset-y-16 sm:inset-x-10" />
@@ -133,13 +105,14 @@ export default function Manifesto() {
           `leading-*` utility — the important modifier is what lets this
           statement breathe at 1.15 instead of the display default of 0.95.
         */}
-        <h2
+        <RevealText
+          as="h2"
           id="manifesto-title"
-          ref={headingRef}
+          variant="scrub"
           className="u-display mt-8 text-[clamp(1.6rem,4.6vw,3.4rem)] leading-[1.15]! text-ink sm:mt-10"
         >
           {t("statement")}
-        </h2>
+        </RevealText>
 
         <div
           ref={notesRef}

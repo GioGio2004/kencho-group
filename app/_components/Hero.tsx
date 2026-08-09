@@ -520,29 +520,18 @@ export default function Hero() {
             className="absolute inset-0 will-change-transform"
           >
             {/*
-              LAZY, AND NOT PRIORITISED — because this opening is hidden
-              by default.
-
-              Both openings ship and CSS shows one; `display: none` does
-              not stop a preload. Measured on /en at 1440x900 via CDP:
-              this poster was fetched at HIGH priority 1ms into the
-              navigation while the editorial spread's actual LCP image
-              went out at LOW, and 30KB of it was thrown away unseen.
-              The walkthrough is behind a footer switch, so it gets the
-              treatment any below-the-fold image gets, and the LCP
-              budget goes to the picture the visitor is looking at.
-
-              (The comment that used to sit here claimed phones fetch a
-              900px poster and desktops the wide one. They do not —
-              `posterUrl("desktop")` is the only call in this file, and
-              public/frames/poster-mobile.webp is never requested.)
+              PRELOADED — this is the page's LCP element now. The lazy
+              treatment this poster used to get was for the era when
+              the walkthrough shipped hidden behind the footer switch;
+              as the sole opening it must go out first, at high
+              priority, exactly like the Prologue's shot did.
             */}
             <Image
               src={posterUrl("desktop")}
               alt={t("walkthroughAlt")}
               fill
               sizes="100vw"
-              loading="lazy"
+              preload
               className="object-cover"
               style={{ objectPosition: `${W.focal.x * 100}% ${W.focal.y * 100}%` }}
             />

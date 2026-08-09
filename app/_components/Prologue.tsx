@@ -20,11 +20,11 @@ import { DUR, EASE, SCRUB, STAGGER } from "@/lib/motion";
  * cloud — until a veil of paper lifts from the bottom and hands the
  * page to the manifesto.
  *
- * One pinned, scrubbed timeline; the visitor's thumb is the dolly. A
- * SKIP pill rides the corner — a plain `#manifesto` anchor, which
- * SmoothScroll turns into a glide past the pin. Reduced motion (and no
- * JS at all) reads the whole poster as a still: shot, line, place and
- * title are all composed in CSS and served in the HTML.
+ * One pinned, scrubbed timeline; the visitor's thumb is the dolly.
+ * (The SKIP pill that used to ride the corner was cut on the client's
+ * call — the scroll cue alone marks the way on.) Reduced motion (and
+ * no JS at all) reads the whole poster as a still: shot, line, place
+ * and title are all composed in CSS and served in the HTML.
  */
 
 /** SITE.geo, set the way an expedition writes a fix. */
@@ -65,7 +65,6 @@ export default function Prologue() {
           root.querySelectorAll<HTMLElement>("[data-pro-title] > *"),
         );
         const veil = root.querySelector<HTMLElement>("[data-pro-veil]");
-        const skip = root.querySelector<HTMLElement>("[data-pro-skip]");
         const cue = root.querySelector<HTMLElement>("[data-pro-cue]");
         if (!pin) return;
 
@@ -93,7 +92,7 @@ export default function Prologue() {
             0.2,
           )
           .from(
-            [skip, cue].filter(Boolean),
+            [cue].filter(Boolean),
             { opacity: 0, duration: DUR.base, ease: EASE.soft },
             0.9,
           );
@@ -203,10 +202,6 @@ export default function Prologue() {
         {/* The paper veil that hands off to the manifesto. */}
         <div data-pro-veil aria-hidden="true" className="pro-veil" />
 
-        {/* Skip: a plain anchor — SmoothScroll makes it a glide. */}
-        <a data-pro-skip href="#manifesto" className="gx-mono pro-skip u-press">
-          {t("skip")} <span aria-hidden="true">→</span>
-        </a>
         <span data-pro-cue aria-hidden="true" className="pro-cue" />
       </div>
     </section>

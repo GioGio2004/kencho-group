@@ -1,20 +1,19 @@
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import BeforeAfter from "@/app/_components/BeforeAfter";
 import Contact, { Footer } from "@/app/_components/Contact";
 import CustomCursor from "@/app/_components/CustomCursor";
 import FAQ from "@/app/_components/FAQ";
 import GalleryRooms from "@/app/_components/GalleryRooms";
+import Hero from "@/app/_components/Hero";
 import IntroSequence from "@/app/_components/IntroSequence";
 import JourneyRail from "@/app/_components/JourneyRail";
 import Manifesto from "@/app/_components/Manifesto";
 import MarqueeBand from "@/app/_components/MarqueeBand";
 import Process from "@/app/_components/Process";
-import Projects from "@/app/_components/Projects";
-import Prologue from "@/app/_components/Prologue";
+// import Projects from "@/app/_components/Projects";
 import ScrollFX from "@/app/_components/ScrollFX";
-import Services from "@/app/_components/Services";
+import ServicesReel from "@/app/_components/ServicesReel";
 import SiteHeader from "@/app/_components/SiteHeader";
 import SmoothScroll from "@/app/_components/SmoothScroll";
 import StickyWhatsApp from "@/app/_components/StickyWhatsApp";
@@ -52,19 +51,23 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
 
       <main>
         {/*
-          THE OPENING — a two-scene, pinned prologue (welcome on
-          charcoal, made-in-Tbilisi on paper) with its own skip anchor.
-          It replaced the walkthrough/editorial hero pair; the flip
-          lands on sand, which is exactly what the manifesto opens on.
+          THE OPENING — the scroll-scrubbed walkthrough, returned by the
+          client's call: a WebP frame sequence painted to canvas as the
+          visitor scrolls, four narrative beats overlaid as real DOM.
+          The `id` lives on this wrapper (see the note in Hero.tsx).
         */}
-        <Prologue />
+        <div id="hero">
+          <Hero />
+        </div>
         <Manifesto />
-        <BeforeAfter />
-        <Projects />
+        {/* <Projects /> */}
         {/* The doors to the gallery — four admin-managed rooms,
             floating over one photograph. */}
         <GalleryRooms locale={locale as Locale} />
-        <Services />
+        {/* The reel — the workshop footage running as the primary
+            background while the section's scenes ride over it: the
+            title panel, the service card slider, the light close. */}
+        <ServicesReel />
         {/* A breather between services and process, moving at scroll speed. */}
         <MarqueeBand />
         <Process />

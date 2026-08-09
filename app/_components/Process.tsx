@@ -141,8 +141,9 @@ export default function Process() {
     <section
       ref={rootRef}
       id="process"
+      data-thread-anchor=""
       aria-labelledby="process-title"
-      className="u-band relative py-24 sm:py-32 lg:py-40"
+      className="u-band relative py-32 sm:py-44 lg:py-56"
     >
       {/* The page, set out the way the drawing is. */}
       <Sheet guides={4} inset="inset-x-5 inset-y-10 sm:inset-x-8 lg:inset-x-12" />

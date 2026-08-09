@@ -16,7 +16,10 @@ export default function MarqueeBand() {
   const t = useTranslations("kinetic");
 
   return (
-    <div className="border-y border-bone/10 bg-charcoal py-6 sm:py-8">
+    <div
+      data-thread-front=""
+      className="border-y border-bone/10 bg-charcoal py-6 sm:py-8"
+    >
       <Marquee
         className="u-display text-[clamp(1.5rem,4.4vw,3rem)] text-clay uppercase"
         direction={-1}
