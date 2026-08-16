@@ -1,8 +1,9 @@
 /* Full SEO audit against a running server (default http://localhost:3100).
  * Checks every route × locale: status, single h1, title/description
  * budgets, canonical, hreflang set, OG/Twitter, robots, JSON-LD types
- * per page — plus robots.txt, llms.txt, and the styled sitemap (valid
- * XML, stylesheet directive, every listed URL responding 200). */
+ * per page — plus robots.txt, llms.txt, and the sitemap (app/sitemap.ts,
+ * the Next metadata convention: valid XML, docs shape, every listed URL
+ * responding 200). */
 import { chromium } from "playwright";
 
 const BASE = process.env.SEO_BASE ?? "http://localhost:3100";

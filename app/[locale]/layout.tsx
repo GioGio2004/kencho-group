@@ -92,7 +92,12 @@ export async function generateMetadata({
      * metadata is inherited by every page under it, so the tag rides
      * on all 36 URLs and survives whichever page BWT decides to fetch.
      */
-    verification: { other: { "msvalidate.01": SITE.bingVerification } },
+    verification: {
+      google:
+        process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ??
+        process.env.GOOGLE_SITE_VERIFICATION,
+      other: { "msvalidate.01": SITE.bingVerification },
+    },
   };
 }
 
