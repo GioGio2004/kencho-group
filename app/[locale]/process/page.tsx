@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Footer } from "@/app/_components/Contact";
+import Footer from "@/app/_components/Footer";
 import PageIntro from "@/app/_components/PageIntro";
 import Process from "@/app/_components/Process";
 import ScrollFX from "@/app/_components/ScrollFX";

@@ -4,7 +4,7 @@ import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { fetchQuery } from "convex/nextjs";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Footer } from "@/app/_components/Contact";
+import Footer from "@/app/_components/Footer";
 import GalleryExhibit from "@/app/_components/gallery/GalleryExhibit";
 import SiteHeader from "@/app/_components/SiteHeader";
 import SmoothScroll from "@/app/_components/SmoothScroll";

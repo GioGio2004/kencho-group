@@ -177,6 +177,19 @@ export const IMAGES = {
     file: "fluted-oak-panel-detail-tbilisi-kencho-group.webp",
     alt: "Fluted oak panelling in close detail",
   },
+
+  /* The voyage — the journey construction that closes the home page. */
+  /** The drift band the ghost route-codes float over. Dark, so the
+   *  bone letters read as letters rather than as a caption. */
+  voyageDrift: {
+    file: "black-oak-kitchen-dining-tbilisi-kencho-group.webp",
+    alt: "A black oak kitchen and dining space built by Kencho Group in Tbilisi",
+  },
+  /** The closing CTA plate — warm light, an invitation. */
+  voyageClose: {
+    file: "bronze-mirror-wardrobe-tbilisi-kencho-group.webp",
+    alt: "A wardrobe with bronze mirror fronts in warm light",
+  },
 } as const satisfies Record<string, ImageAsset>;
 
 export type ImageKey = keyof typeof IMAGES;

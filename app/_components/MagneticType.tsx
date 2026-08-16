@@ -38,6 +38,16 @@ import { DUR, EASE, REPEL } from "@/lib/motion";
  * SSR. The element renders as ordinary text. Every transform is applied
  * by GSAP after mount, so the server HTML is the finished, readable
  * state — with JavaScript off this is simply a headline.
+ *
+ * ASSISTIVE TECH. The string is rendered twice: once visually hidden
+ * for screen readers, once visible (aria-hidden) for the split. The
+ * obvious alternative — SplitText's own `aria: "auto"`, which stamps
+ * the whole string on the host as aria-label and hides the fragments —
+ * is INVALID on a <p>, <div> or <span>: ARIA prohibits naming elements
+ * with the paragraph/generic roles, axe reports it as "Elements must
+ * only use permitted ARIA attributes", and the Vercel agent-
+ * accessibility audit failed the footer wordmark on exactly that
+ * (2026-08-16). Two spans, and the host carries no ARIA at all.
  */
 
 /** Only these render through this component. Text-bearing elements. */
@@ -71,13 +81,16 @@ export default function MagneticType({
   strength = 1,
 }: MagneticTypeProps) {
   const rootRef = useRef<HTMLElement>(null);
+  /** The visible, aria-hidden span — what actually gets split and moved. */
+  const hostRef = useRef<HTMLSpanElement>(null);
 
   useGSAP(
     () => {
       gsap.registerPlugin(SplitText);
 
-      const host = rootRef.current;
-      if (!host) return;
+      const root = rootRef.current;
+      const host = hostRef.current;
+      if (!root || !host) return;
 
       const mm = gsap.matchMedia();
 
@@ -103,9 +116,10 @@ export default function MagneticType({
 
               const instance = SplitText.create(host, {
                 type: perChar ? "chars" : "words",
-                // Keeps the whole string on the element for screen readers
-                // and hides the fragments from them.
-                aria: "auto",
+                // No aria-label on the host: the sr-only twin in the
+                // render carries the string, and the host is already
+                // aria-hidden as a whole (see the header note).
+                aria: "none",
               });
               split = instance;
 
@@ -247,8 +261,10 @@ export default function MagneticType({
               // Re-measure whenever the line boxes could have changed. A
               // resize alone is not enough: the host reflows when the
               // column around it does, which a resize event may not see.
+              // Observed on the ROOT, not the inline host: ResizeObserver
+              // never fires for a display:inline box.
               const observer = new ResizeObserver(measure);
-              observer.observe(host);
+              observer.observe(root);
 
               cleanup = () => {
                 listeners.abort();
@@ -284,7 +300,14 @@ export default function MagneticType({
 
   return (
     <Tag ref={rootRef} className={className} data-magnetic={unit}>
-      {children}
+      {/* Screen readers: the string, whole and unsplit. */}
+      <span className="sr-only">{children}</span>
+      {/* Sighted: the same string, split and moved by GSAP. Hidden from
+          assistive tech as one unit, so its fragments are never read
+          letter by letter and the host itself needs no ARIA. */}
+      <span ref={hostRef} aria-hidden="true">
+        {children}
+      </span>
     </Tag>
   );
 }

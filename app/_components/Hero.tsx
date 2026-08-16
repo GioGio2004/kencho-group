@@ -617,16 +617,17 @@ export default function Hero() {
             className="col-start-1 row-start-1 self-end px-5 pb-32 sm:px-8 sm:pb-28 lg:px-12 lg:pb-24"
           >
             {/*
-              NOT an <h1>. Both openings are in the document at once so
-              CSS can swap them without a re-render, and two h1 elements
-              carrying the same sentence is what a crawler saw on all
-              three locales. The editorial spread is the default, so it
-              keeps the h1 and this one is a heading by role — announced
-              identically to assistive tech, counted once by a parser.
+              THE PAGE'S ONE <h1>. This used to be a <p role="heading"
+              aria-level="1"> because the editorial opening (HeroEditorial)
+              sat in the same document with the real h1 and CSS chose
+              between them. That opening is retired, so the role-only
+              heading had become the home page's ONLY headline — fine for
+              assistive tech, invisible to a crawler's heading parser (the
+              live audit of 2026-08-16 counted zero h1 on /ka, /ru, /en).
+              A real element now; the SplitText aria-label it receives is
+              permitted on a heading role.
             */}
-            <p
-              role="heading"
-              aria-level={1}
+            <h1
               id="hero-title"
               data-hero-heading
               className="u-display max-w-[20ch] text-[clamp(2.4rem,9vw,6.5rem)] text-bone"
@@ -636,7 +637,7 @@ export default function Hero() {
                   {line}
                 </span>
               ))}
-            </p>
+            </h1>
           </div>
 
           {/* 45–75% — the craft line. */}

@@ -9,6 +9,12 @@
       "autoPort": true
     },
     {
+      "name": "prod",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["next", "start", "-p", "3100"],
+      "port": 3100
+    },
+    {
       "name": "admin",
       "runtimeExecutable": "npm",
       "runtimeArgs": [

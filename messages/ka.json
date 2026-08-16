@@ -477,7 +477,29 @@
   "footer": {
     "tagline": "ავეჯი შეკვეთით — თბილისი",
     "rights": "© {year} Kencho Group. ყველა უფლება დაცულია.",
-    "socials": "სოციალური ქსელები"
+    "socials": "სოციალური ქსელები",
+    "enquiries": "დაგვიკავშირდით",
+    "pages": "გვერდები"
+  },
+  "voyage": {
+    "eyebrow": "გზა",
+    "title": "ჩვენი ხელებიდან თქვენს სახლამდე",
+    "intro": "ყველა ნივთი ერთსა და იმავე გზას გადის: ვზომავთ ადგილზე, ვხატავთ 3D-ში, ვაწყობთ თბილისის სახელოსნოში და ვამონტაჟებთ ჩვენივე გუნდით. გზადაგზა — პასუხები კითხვებზე, რომლებსაც ყველაზე ხშირად გვისვამენ.",
+    "coordsFromLabel": "Kencho-ს სახელოსნო · თბილისი",
+    "coordsToLabel": "თქვენი მისამართი",
+    "originLabel": "საწყისი წერტილი",
+    "originName": "Kencho-ს სახელოსნო",
+    "destLabel": "დანიშნულება",
+    "destName": "თქვენი სახლი",
+    "watermark": "თბილისი",
+    "statProductionLabel": "დამზადება",
+    "statProductionValue": "3–5 კვირა",
+    "statInstallLabel": "მონტაჟი",
+    "statInstallValue": "1–3 დღე",
+    "statPriceLabel": "ფასი",
+    "statPriceValue": "ფიქსირდება წერილობით",
+    "talkLabel": "გირჩევნიათ საუბარი?",
+    "allQuestions": "ყველა კითხვა"
   },
   "metaProjects": {
     "title": "ავეჯის პროექტები თბილისში — პორტფოლიო | Kencho Group",

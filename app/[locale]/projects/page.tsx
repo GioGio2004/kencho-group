@@ -3,7 +3,7 @@ import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import BeforeAfter from "@/app/_components/BeforeAfter";
-import { Footer } from "@/app/_components/Contact";
+import Footer from "@/app/_components/Footer";
 import PageIntro from "@/app/_components/PageIntro";
 import Projects from "@/app/_components/Projects";
 import ScrollFX from "@/app/_components/ScrollFX";

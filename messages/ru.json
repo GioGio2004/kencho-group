@@ -477,7 +477,29 @@
   "footer": {
     "tagline": "Мебель на заказ — Тбилиси",
     "rights": "© {year} Kencho Group. Все права защищены.",
-    "socials": "Социальные сети"
+    "socials": "Социальные сети",
+    "enquiries": "Связаться",
+    "pages": "Страницы"
+  },
+  "voyage": {
+    "eyebrow": "Путь",
+    "title": "Из наших рук — в ваш дом",
+    "intro": "Каждое изделие проходит один и тот же путь: замер на месте, 3D-проект, производство в тбилисской мастерской и монтаж нашей командой. По пути — ответы на вопросы, которые нам задают чаще всего.",
+    "coordsFromLabel": "Мастерская Kencho · Тбилиси",
+    "coordsToLabel": "Ваш адрес",
+    "originLabel": "Точка отправления",
+    "originName": "Мастерская Kencho",
+    "destLabel": "Пункт назначения",
+    "destName": "Ваш дом",
+    "watermark": "Тбилиси",
+    "statProductionLabel": "Производство",
+    "statProductionValue": "3–5 недель",
+    "statInstallLabel": "Монтаж",
+    "statInstallValue": "1–3 дня",
+    "statPriceLabel": "Цена",
+    "statPriceValue": "Фиксируется письменно",
+    "talkLabel": "Удобнее поговорить?",
+    "allQuestions": "Все вопросы"
   },
   "metaProjects": {
     "title": "Проекты мебели в Тбилиси — портфолио | Kencho Group",

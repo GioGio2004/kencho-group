@@ -47,6 +47,20 @@ export const SITE = {
    * canonical as pointing at another hreflang location.
    */
   url: "https://www.kenchogroup.ge",
+  /**
+   * Bing Webmaster Tools site-ownership ID. Public by design (it ships
+   * in every page's <head> as msvalidate.01 and in
+   * public/BingSiteAuth.xml) — it proves nothing except that whoever
+   * deploys this repo controls the host.
+   */
+  bingVerification: "1827AF9B1C3F579DECF5A8D4F6B2AD0A",
+  /**
+   * IndexNow key (Bing / Yandex / Naver / Seznam / Yep share it). The
+   * key file public/{key}.txt must contain exactly this string; the
+   * protocol verifies each submission by fetching it. Rotate both
+   * together. Also public by design. Submit with `npm run indexnow`.
+   */
+  indexNowKey: "e384c79236aad864d1a521fbc12d681b",
   phone: "+995 592 82 22 60",
   phoneHref: "+995592822260",
   whatsappBase: "https://wa.me/995592822260",

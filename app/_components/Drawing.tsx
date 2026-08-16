@@ -803,7 +803,9 @@ export default function Drawing() {
                 const split = SplitText.create(el, {
                   type: "lines",
                   mask: "lines",
-                  aria: "auto",
+                  // aria-label is permitted on the h2 and prohibited on
+                  // the two <p> beats (paragraph role) — see RevealText.
+                  aria: /^H[1-6]$/.test(el.tagName) ? "auto" : "none",
                 });
                 splits.push(split);
                 gsap.set(split.lines, {

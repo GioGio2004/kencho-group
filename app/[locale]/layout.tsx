@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Analytics } from "@vercel/analytics/next";
 import AnalyticsScripts from "@/app/_components/AnalyticsScripts";
 import { routing, type Locale } from "@/i18n/routing";
 import { fontClassesFor } from "@/lib/fonts";
@@ -82,6 +83,16 @@ export async function generateMetadata({
       images: [src(IMAGES.heroMain, 1200)],
     },
     robots: { index: true, follow: true },
+    /*
+     * Bing Webmaster Tools ownership, belt and braces with the
+     * public/BingSiteAuth.xml file (same ID). The file sat at the repo
+     * root until 2026-08-16 — a 404 on production, so the site could
+     * never verify, so its sitemap was never submitted, so Bing (and
+     * with it Edge, DuckDuckGo, Copilot) had zero pages of it. Layout
+     * metadata is inherited by every page under it, so the tag rides
+     * on all 36 URLs and survives whichever page BWT decides to fetch.
+     */
+    verification: { other: { "msvalidate.01": SITE.bingVerification } },
   };
 }
 
@@ -155,6 +166,16 @@ export default async function LocaleLayout({
       <body>
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
         <AnalyticsScripts />
+        {/*
+         * Vercel Web Analytics. Cookieless, no consent banner needed, and
+         * the only one of the trackers that comes with the host: enable
+         * "Web Analytics" on the Vercel project and it starts counting
+         * on the next deploy — there is no key to set. Outside a Vercel
+         * deployment (local dev) the script no-ops. Page views arrive
+         * per locale-prefixed path, so /ka vs /en traffic is a filter
+         * away in the dashboard.
+         */}
+        <Analytics />
       </body>
     </html>
   );

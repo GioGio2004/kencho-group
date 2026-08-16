@@ -132,6 +132,10 @@ export type RevealTag =
   | "blockquote"
   | "figcaption";
 
+/** The tags whose role may carry an aria-label — see the `aria` note in
+ *  the split config below. */
+const HEADING_TAGS: ReadonlySet<RevealTag> = new Set(["h1", "h2", "h3", "h4"]);
+
 export interface RevealTextProps {
   /**
    * The copy to reveal. Pass translated strings from `useTranslations` —
@@ -226,9 +230,20 @@ export default function RevealText({
                   ? "lines"
                   : "words,lines",
               mask: masked ? "lines" : undefined,
-              // Keeps the original string on the element for screen
-              // readers and hides the split fragments from them.
-              aria: "auto",
+              /*
+               * `auto` keeps the original string on the element as
+               * aria-label and hides the split fragments — the right
+               * thing for a heading, whose role may be named. It is
+               * INVALID on p / span / div / li / blockquote / figcaption:
+               * ARIA prohibits aria-label on the paragraph and generic
+               * roles, and axe flags it ("Elements must only use
+               * permitted ARIA attributes" — the Vercel agent-
+               * accessibility audit, 2026-08-16). Those keep their real
+               * text: SplitText 3.15 preserves the space text nodes
+               * between word boxes and lines are block boxes, so a
+               * screen reader reads the fragments as ordinary prose.
+               */
+              aria: HEADING_TAGS.has(as) ? "auto" : "none",
             });
             split = instance;
 

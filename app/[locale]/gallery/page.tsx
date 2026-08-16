@@ -3,7 +3,7 @@ import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { fetchQuery } from "convex/nextjs";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Footer } from "@/app/_components/Contact";
+import Footer from "@/app/_components/Footer";
 import GalleryChapters from "@/app/_components/gallery/GalleryChapters";
 import PageIntro from "@/app/_components/PageIntro";
 import SiteHeader from "@/app/_components/SiteHeader";

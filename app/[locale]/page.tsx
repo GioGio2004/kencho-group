@@ -1,9 +1,8 @@
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
-import Contact, { Footer } from "@/app/_components/Contact";
 import CustomCursor from "@/app/_components/CustomCursor";
-import FAQ from "@/app/_components/FAQ";
+import Footer from "@/app/_components/Footer";
 import GalleryRooms from "@/app/_components/GalleryRooms";
 import Hero from "@/app/_components/Hero";
 import IntroSequence from "@/app/_components/IntroSequence";
@@ -17,6 +16,8 @@ import ServicesReel from "@/app/_components/ServicesReel";
 import SiteHeader from "@/app/_components/SiteHeader";
 import SmoothScroll from "@/app/_components/SmoothScroll";
 import StickyWhatsApp from "@/app/_components/StickyWhatsApp";
+import Voyage from "@/app/_components/Voyage";
+import VoyageClose from "@/app/_components/VoyageClose";
 import { routing, type Locale } from "@/i18n/routing";
 
 export function generateStaticParams() {
@@ -71,8 +72,15 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         {/* A breather between services and process, moving at scroll speed. */}
         <MarqueeBand />
         <Process />
-        <FAQ />
-        <Contact />
+        {/*
+          THE VOYAGE — Q&A, contact and the road between them as one
+          construction: drift band, coordinates, the drawn route calling
+          at five questions, then the closing plate. The full list and
+          its FAQPage schema stay on /faq; the full form is in the
+          footer and on /contact.
+        */}
+        <Voyage />
+        <VoyageClose />
       </main>
 
       <Footer />

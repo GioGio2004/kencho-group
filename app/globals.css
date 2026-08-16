@@ -3924,3 +3924,246 @@ html[lang="ka"] .pano-quote-text {
 
 /* Phones: the terms and the close keep the gutters; only the type
  * steps down, which the clamps already do. */
+
+/* =====================================================================
+ * THE VOYAGE — the journey construction that closes the home page.
+ * ---------------------------------------------------------------------
+ * Modelled on the reference's flight-map sequence: a drift band of ghost
+ * route-codes, a coordinates header, then a dark canvas where a drawn
+ * route travels from the workshop to the visitor's home, calling at the
+ * questions everyone asks. The route itself is an SVG path built at
+ * runtime through the measured waypoint dots (Voyage.tsx); everything
+ * here is the material it is drawn in.
+ * ================================================================== */
+
+/* The small tracked monospace label — the voyage's craft-data voice. */
+.vg-mono {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  line-height: 1.6;
+}
+
+/* ---------------------------------------------------------------------
+ * The drift band. The backdrop bleeds past the frame so its parallax
+ * travel never shows an edge — same trick as the rooms backdrop.
+ * ------------------------------------------------------------------ */
+.vg-drift-backdrop {
+  position: absolute;
+  inset: -12% 0;
+}
+
+.vg-drift-scrim {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--coal-0) 34%, transparent);
+}
+
+/* The ghost route-codes. Decorative texture, not copy — bone at a
+ * transparency where the letters read as atmosphere over the image.
+ * Each glyph is its own span (word gaps are explicit spacer spans), so
+ * the scroll can drift them apart at PARALLAX.items' cycled speeds. */
+.vg-ghost {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  font-size: clamp(3.6rem, 15vw, 14rem);
+  color: color-mix(in srgb, var(--bone) 66%, transparent);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---------------------------------------------------------------------
+ * The coordinates header: a dashed rule with surveyor's end ticks, the
+ * two coordinate labels hanging from its ends.
+ * ------------------------------------------------------------------ */
+.vg-dash {
+  position: relative;
+  border-top: 1px dashed var(--line-strong);
+}
+
+.vg-dash::before,
+.vg-dash::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  width: 1px;
+  height: 7px;
+  background: var(--line-strong);
+}
+
+.vg-dash::before {
+  left: 0;
+}
+
+.vg-dash::after {
+  right: 0;
+}
+
+/* ---------------------------------------------------------------------
+ * The map canvas. Sits inside data-surface="dark", so every token below
+ * already resolves to its dark value in both themes.
+ * ------------------------------------------------------------------ */
+.vg-map-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.vg-path {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+/* The whole route, faint — the flight plan. */
+.vg-path--base {
+  stroke: var(--line-strong);
+}
+
+/* The travelled part, drawn over it by scroll. */
+.vg-path--draw {
+  stroke: var(--clay);
+}
+
+/* The traveller: a filled head with two radar rings breathing off it. */
+.vg-plane-core {
+  fill: var(--clay);
+}
+
+.vg-plane-ring {
+  fill: none;
+  stroke: var(--clay);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vg-plane-ring {
+    animation: vg-ping 2.6s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  }
+
+  .vg-plane-ring--late {
+    animation-delay: 1.3s;
+  }
+}
+
+@keyframes vg-ping {
+  0% {
+    transform: scale(0.35);
+    opacity: 0.7;
+  }
+  70% {
+    opacity: 0.12;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* A waypoint's dot. Not animated by GSAP — the route logic toggles
+ * `is-passed` and these transitions answer it. */
+.vg-node {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--ink-40);
+  background: var(--surface);
+  transition:
+    background-color 0.45s var(--ease-out),
+    border-color 0.45s var(--ease-out),
+    box-shadow 0.45s var(--ease-out),
+    transform 0.45s var(--ease-out);
+}
+
+.vg-node.is-passed {
+  background: var(--clay);
+  border-color: var(--clay);
+  transform: scale(1.2);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--clay) 18%, transparent);
+}
+
+/* ---------------------------------------------------------------------
+ * A waypoint's ignition. The route logic stamps `is-passed` on the row
+ * when the traveller arrives; these transitions are the answer — the
+ * index turns clay and a short rule is drawn under it. Not GSAP-driven,
+ * so the CSS transitions are safe by the ScrollFX house rule.
+ * ------------------------------------------------------------------ */
+.vg-wp-index {
+  color: var(--ink-40);
+  transition: color 0.5s var(--ease-out);
+}
+
+[data-vg-row].is-passed .vg-wp-index {
+  color: var(--clay);
+}
+
+.vg-wp-rule {
+  display: block;
+  width: 2.5rem;
+  height: var(--rule-weight);
+  margin-top: 0.65rem;
+  background: var(--clay);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.7s var(--ease-expo) 0.08s;
+}
+
+[data-vg-row].is-passed .vg-wp-rule {
+  transform: scaleX(1);
+}
+
+/* The dark canvas's panels — stats, and the "prefer to talk" card. */
+.vg-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface-raised);
+  padding: 1.75rem;
+}
+
+@media (min-width: 640px) {
+  .vg-card {
+    padding: 2.25rem;
+  }
+}
+
+/* The faint geographic watermark, an ocean label's job. */
+.vg-watermark {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  font-family: var(--font-mono);
+  font-size: clamp(1.4rem, 3vw, 2.4rem);
+  text-transform: uppercase;
+  letter-spacing: 0.6em;
+  color: color-mix(in srgb, var(--fg) 9%, transparent);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------
+ * The closing plate's scrim — over a photograph, so it is the media
+ * recipe: always dark, whatever the theme.
+ * ------------------------------------------------------------------ */
+.vgc-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--coal-0) 52%, transparent),
+    color-mix(in srgb, var(--coal-0) 38%, transparent) 45%,
+    color-mix(in srgb, var(--coal-0) 56%, transparent)
+  );
+}
