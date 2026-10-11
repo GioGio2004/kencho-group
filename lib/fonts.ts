@@ -1,72 +1,45 @@
-import {
-  Fraunces,
-  Instrument_Sans,
-  Inter,
-  Noto_Sans_Georgian,
-  Noto_Serif_Georgian,
-  Playfair_Display,
-} from "next/font/google";
+import { Inter, Inter_Tight, Noto_Sans_Georgian } from "next/font/google";
 import type { Locale } from "@/i18n/routing";
 
 /*
- * Per-script typography. Fraunces has no Georgian and no Cyrillic;
- * Instrument Sans has no Cyrillic or Georgian — so each locale gets its
- * own display + body pair, and only the active locale's variables are
- * attached to <html>. globals.css resolves the fonts through a var()
- * fallback chain, so whichever pair is present wins.
- *
- *   en: Fraunces + Instrument Sans (latin)
- *   ka: Noto Serif Georgian + Noto Sans Georgian (georgian + latin,
- *       latin needed for the wordmark, numerals, and brand names)
- *   ru: Playfair Display + Inter (cyrillic + latin)
+ * One grotesk voice, in the weights the design uses: regular for
+ * everything LPAS-like (titles at 400–500), bold for the noho-style
+ * headline. Inter Tight carries Latin and Cyrillic; Georgian has no
+ * case and its own letterforms, so it gets Noto Sans Georgian for both
+ * display and body. Only the active locale's variables are attached to
+ * <html>; globals.css resolves the fonts through a var() fallback chain.
  */
 
-const fraunces = Fraunces({
-  subsets: ["latin"],
+const interTight = Inter_Tight({
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-display-en",
 });
 
-const instrumentSans = Instrument_Sans({
-  subsets: ["latin"],
+const inter = Inter({
+  subsets: ["latin", "cyrillic"],
   display: "swap",
   variable: "--font-body-en",
 });
 
-const notoSerifGeorgian = Noto_Serif_Georgian({
+/** The Latin wordmark uses its original lettering in every language. */
+export const brandFontClass = interTight.variable;
+
+const notoSansGeorgian = Noto_Sans_Georgian({
   subsets: ["georgian", "latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-display-ka",
 });
 
-const notoSansGeorgian = Noto_Sans_Georgian({
-  subsets: ["georgian", "latin"],
-  display: "swap",
-  variable: "--font-body-ka",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["cyrillic", "latin"],
-  display: "swap",
-  variable: "--font-display-ru",
-});
-
-const inter = Inter({
-  subsets: ["cyrillic", "latin"],
-  display: "swap",
-  variable: "--font-body-ru",
-});
-
-export const LOCALE_FONTS: Record<
-  Locale,
-  { display: { variable: string }; body: { variable: string } }
-> = {
-  en: { display: fraunces, body: instrumentSans },
-  ka: { display: notoSerifGeorgian, body: notoSansGeorgian },
-  ru: { display: playfair, body: inter },
+export const LOCALE_FONTS: Record<Locale, { variables: string[] }> = {
+  en: { variables: [interTight.variable, inter.variable] },
+  ru: { variables: [interTight.variable, inter.variable] },
+  // Georgian: the same family for display and body.
+  ka: { variables: [notoSansGeorgian.variable] },
 };
 
 export function fontClassesFor(locale: Locale): string {
-  const pair = LOCALE_FONTS[locale];
-  return `${pair.display.variable} ${pair.body.variable}`;
+  return LOCALE_FONTS[locale].variables.join(" ");
 }

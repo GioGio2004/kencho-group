@@ -31,7 +31,7 @@ export async function GET() {
     if (galleries.length > 0) {
       galleriesSection = [
         "",
-        "## Project galleries",
+        "## Catalogue chapters",
         "",
         ...galleries.map((g) => {
           const line = g.description?.en ? `: ${g.description.en}` : "";
@@ -65,12 +65,9 @@ Every page is available in Georgian (/ka), Russian (/ru) and English (/en);
 the English URLs are listed.
 
 - [Home](${SITE.url}/en): who we are and what we make
-- [Projects](${SITE.url}/en/projects): portfolio with before/after transformations
-- [Services](${SITE.url}/en/services): kitchens, wardrobes, wall paneling, commercial fit-outs
-- [Gallery](${SITE.url}/en/gallery): photo galleries of finished projects
-- [Process](${SITE.url}/en/process): how a project runs from measurement to installation
-- [FAQ](${SITE.url}/en/faq): prices, timelines, materials, warranty, service area
-- [Kitchen planner](${SITE.url}/en/planner): free interactive kitchen planning tool
+- [Catalogue](${SITE.url}/en/gallery): photographs of finished kitchens, wardrobes, interiors and commercial fit-outs
+- [About us](${SITE.url}/en/about): the workshop, how a project runs from measurement to installation, and working with interior designers
+- [FAQ](${SITE.url}/en/faq): prices, timelines, materials, commercial work
 - [Contact](${SITE.url}/en/contact): free consultation
 ${galleriesSection}
 

@@ -1,0 +1,68 @@
+{
+  "label": "Selected projects",
+  "title": "Two projects, from the first drawing to the last handle.",
+  "all": "View the full gallery",
+  "learn": "Learn more",
+  "close": "Close",
+  "quote": "Discuss project",
+  "photos": "{count, plural, one {# photograph} other {# photographs}}",
+  "drag": "Drag to look around",
+  "prev": "Previous photograph",
+  "next": "Next photograph",
+  "back": "Back",
+  "nextShort": "Next",
+  "goTo": "Photograph {n} of {count}",
+  "why": "Why it works",
+  "details": "Details",
+  "cta": "A project like this starts with a conversation.",
+  "house": {
+    "name": "A family house, Tbilisi",
+    "kind": "Kitchen & living room",
+    "more": "More kitchens",
+    "quote": "“One kitchen that runs the whole house.”",
+    "text": "White fronts and walnut uppers around a marble island on a fluted base. A wine rack behind glass turns the corner into the living room, where a long walnut bench carries the television. We drew, made and installed all of it.",
+    "why": {
+      "1": { "title": "Made to this house", "text": "Every cabinet drawn to the millimetre around the stairs, the windows and the appliances." },
+      "2": { "title": "Appliances built in", "text": "Oven, microwave and fridge sit flush in the fronts — framed, not squeezed in." },
+      "3": { "title": "One material story", "text": "The walnut of the upper cabinets returns on the island base and on the living-room bench." }
+    },
+    "pair": {
+      "1": "Walnut uppers over a marble splashback.",
+      "2": "The oven column, flush with the fronts."
+    },
+    "alts": {
+      "0": "A white and walnut kitchen with a marble island and the staircase beyond",
+      "1": "A wine rack behind a glass door, set into white cabinetry",
+      "2": "Walnut upper cabinets and a marble splashback over the hob",
+      "3": "A built-in oven and microwave in a white column",
+      "4": "The open plan: a long walnut television bench and the kitchen behind",
+      "5": "The wine rack with its glass door open",
+      "6": "The kitchen island with three stools by the window"
+    }
+  },
+  "lobby": {
+    "name": "A lobby and café, Tbilisi",
+    "kind": "Commercial space",
+    "more": "More commercial spaces",
+    "quote": "“One detail that holds a whole floor together.”",
+    "text": "Oak-slat columns and partitions, a mirror wall cut into a half moon, arched shelving and a fluted counter in the café — one hand across an entire ground floor, from the lobby to the corridors.",
+    "why": {
+      "1": { "title": "Slats and light", "text": "Backlit oak slats on the columns, the partitions and the corridor wall." },
+      "2": { "title": "Joinery at the scale of a building", "text": "Partitions, shelving, counters and benches, all from one workshop." },
+      "3": { "title": "Fitted around a working business", "text": "Measured on site and installed in stages, without closing the doors." }
+    },
+    "pair": {
+      "1": "The café: arched shelving and a fluted counter.",
+      "2": "The lobby: a slatted column and the lounge."
+    },
+    "alts": {
+      "0": "A lobby with a revolving door and an oak-slat partition",
+      "1": "The lobby lounge: a slatted oak column and two armchairs",
+      "2": "A backlit slat wall with a half-moon mirror and a velvet bench",
+      "3": "The half-moon mirror on the slat wall, from the side",
+      "4": "A corridor with a slat wall, a round mirror and a bench",
+      "5": "Arched oak shelving in the café, on a mint wall",
+      "6": "The café: a fluted counter and green chairs"
+    }
+  }
+}

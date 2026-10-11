@@ -11,12 +11,9 @@ import { SITE } from "@/lib/site";
 
 const PAGES = [
   { path: "", priority: 1.0, fallback: 0.8 },
-  { path: "/planner", priority: 0.9, fallback: 0.7 },
-  { path: "/projects", priority: 0.8, fallback: 0.6 },
-  { path: "/services", priority: 0.8, fallback: 0.6 },
-  { path: "/gallery", priority: 0.8, fallback: 0.6 },
-  { path: "/process", priority: 0.7, fallback: 0.5 },
-  { path: "/faq", priority: 0.7, fallback: 0.5 },
+  { path: "/gallery", priority: 0.9, fallback: 0.7 },
+  { path: "/about", priority: 0.7, fallback: 0.5 },
+  { path: "/faq", priority: 0.6, fallback: 0.4 },
   { path: "/contact", priority: 0.7, fallback: 0.5 },
 ] as const;
 

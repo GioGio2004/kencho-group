@@ -4,17 +4,19 @@
  * when they are absent, so components can call track() unconditionally.
  *
  * Vercel Web Analytics is the third sink (its <Analytics /> mounts in
- * the locale layout). Its track() is a no-op until the script is live,
- * and custom events need the project's Analytics plan to allow them —
- * on the free tier they are dropped silently, page views still count.
+ * the locale layout). Custom events need the project's Analytics plan to
+ * allow them — on the free tier they are dropped silently, page views
+ * still count.
  *
- * Standard events used:
- *   "Contact" — any WhatsApp click, tel: click, or lead-form submit.
+ * Events:
+ *   "Contact"       a WhatsApp click, tel: click, or lead-form submit
+ *   "OpenCatalogue" the hero button — the one step between ad and photos
+ *   "ViewPage"      a catalogue page opened (which photos sell)
  */
 
 import { track as vercelTrack } from "@vercel/analytics";
 
-type Fbq = (command: "track", event: string, params?: object) => void;
+type Fbq = (command: "track" | "trackCustom", event: string, params?: object) => void;
 type Gtag = (command: "event", event: string, params?: object) => void;
 
 declare global {
@@ -24,15 +26,21 @@ declare global {
   }
 }
 
+type Params = Record<string, string | undefined>;
+
 export function track(
-  event: "Contact",
-  params?: { method?: "whatsapp" | "phone" | "form" },
+  event: "Contact" | "OpenCatalogue" | "ViewPage",
+  params: Params = {},
 ): void {
   if (typeof window === "undefined") return;
+  const clean = Object.fromEntries(
+    Object.entries(params).filter(([, v]) => v !== undefined),
+  ) as Record<string, string>;
   try {
-    window.fbq?.("track", event, params);
-    window.gtag?.("event", event.toLowerCase(), params);
-    vercelTrack(event, params?.method ? { method: params.method } : undefined);
+    // "Contact" is a Meta standard event; the others are custom.
+    window.fbq?.(event === "Contact" ? "track" : "trackCustom", event, clean);
+    window.gtag?.("event", event.replace(/[A-Z]/g, (c, i) => (i ? "_" : "") + c.toLowerCase()), clean);
+    vercelTrack(event, clean);
   } catch {
     /* analytics must never break the page */
   }

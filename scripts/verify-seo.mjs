@@ -11,10 +11,7 @@ const SITE_URL = "https://www.kenchogroup.ge";
 const LOCALES = ["ka", "ru", "en"];
 const ROUTES = [
   { path: "", breadcrumb: false },
-  { path: "/planner", breadcrumb: true },
-  { path: "/projects", breadcrumb: true },
-  { path: "/services", breadcrumb: true },
-  { path: "/process", breadcrumb: true },
+  { path: "/about", breadcrumb: true },
   { path: "/faq", breadcrumb: true, faq: true },
   { path: "/contact", breadcrumb: true },
   { path: "/gallery", breadcrumb: true },
@@ -22,6 +19,7 @@ const ROUTES = [
 ];
 
 const results = [];
+const publishedGalleryPaths = new Set();
 const check = (name, ok, detail = "") => {
   results.push(`${ok ? "PASS" : "FAIL"}  ${name}${detail ? `  (${detail})` : ""}`);
 };
@@ -38,6 +36,9 @@ for (const route of ROUTES) {
     const path = `/${locale}${route.path}`;
     const res = await fetch(BASE + path);
     const html = await res.text();
+    if (route.path === "/gallery" && locale === "en") {
+      for (const match of html.matchAll(/href="\/en(\/gallery\/[^"?/#]+)"/g)) publishedGalleryPaths.add(match[1]);
+    }
     const id = path;
     const problems = [];
 
@@ -135,7 +136,9 @@ check(
     sm.startsWith("<?xml"),
 );
 const urlCount = (sm.match(/<url>/g) ?? []).length;
-check("sitemap: 36 entries (8 routes + 4 galleries, ×3 locales)", urlCount === 36, String(urlCount));
+const expectedPaths = [...ROUTES.filter(route => !route.creativeWork).map(route => route.path), ...publishedGalleryPaths];
+const expectedUrls = expectedPaths.flatMap(path => LOCALES.map(locale => `${SITE_URL}/${locale}${path}`));
+check("sitemap: current public routes and galleries in every locale", urlCount === expectedUrls.length, String(urlCount));
 /* Docs-conformant shape: every entry carries loc + hreflang alternates
  * + lastmod, nothing else rides along. */
 const lastmods = (sm.match(/<lastmod>/g) ?? []).length;
@@ -143,7 +146,7 @@ check("sitemap: lastmod on every entry (docs shape)", lastmods === urlCount, Str
 check("sitemap: no image/video extensions", !/xmlns:(image|video)/.test(sm));
 
 /* Well-formedness + every listed URL answers 200 (mapped to this host). */
-const browser = await chromium.launch();
+const browser = await chromium.launch({ channel: "chrome", headless: true });
 const page = await browser.newPage();
 const parse = await page.evaluate((xml) => {
   const doc = new DOMParser().parseFromString(xml, "application/xml");
@@ -154,6 +157,7 @@ const parse = await page.evaluate((xml) => {
   };
 }, sm);
 check("sitemap: well-formed XML", parse.ok, `${parse.locs.length} locs`);
+check("sitemap: covers every expected URL without duplicates", new Set(parse.locs).size === expectedUrls.length && expectedUrls.every(url => parse.locs.includes(url)));
 let broken = 0;
 for (const loc of parse.locs) {
   const local = loc.replace(SITE_URL, BASE);

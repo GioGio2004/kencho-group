@@ -6,9 +6,9 @@ export const contentType = "image/png";
 export const alt = "Kencho Group — custom furniture in Tbilisi";
 
 /*
- * Wordmark-on-warm-background OG card. Latin-only text so the bundled
- * font renders every locale safely; replace with a designed static
- * image once the real logo SVG arrives.
+ * The share card: the wordmark on cream, an orange line under it.
+ * Latin-only text so the bundled font renders every locale safely;
+ * replace with a designed static image once the real logo SVG arrives.
  */
 export default function OpenGraphImage() {
   return new ImageResponse(
@@ -21,7 +21,7 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: PALETTE.sand,
+          backgroundColor: PALETTE.cream,
           color: PALETTE.ink,
         }}
       >
@@ -41,7 +41,7 @@ export default function OpenGraphImage() {
             fontSize: 36,
             letterSpacing: "0.6em",
             marginLeft: "0.6em",
-            color: PALETTE.clay,
+            color: PALETTE.orange,
             display: "flex",
           }}
         >

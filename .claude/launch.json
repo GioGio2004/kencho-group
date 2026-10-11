@@ -9,6 +9,10 @@
       "autoPort": true
     },
     {
+      "name": "dev-running",
+      "url": "http://localhost:3000"
+    },
+    {
       "name": "prod",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["next", "start", "-p", "3100"],

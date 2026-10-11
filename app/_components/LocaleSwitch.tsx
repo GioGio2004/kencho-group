@@ -5,18 +5,11 @@ import { usePathname, useRouter } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 
 /*
- * THE LANGUAGE SWITCH.
+ * THE LANGUAGE SWITCH — Georgian first, Russian second, English third.
+ * Available on light navigation and the dark footer.
  *
- * Lifted out of SiteHeader when the header became an island carrying
- * nothing but the wordmark and one button. The control still has to
- * exist — this site is Georgian first, Russian second and English third,
- * and a visitor who lands on the wrong one needs a way out — so it moved
- * to the footer rather than being deleted.
- *
- * Endonyms: a language switcher names each language in itself, so these
- * labels are intentionally identical across locales and are NOT message
- * copy. A Russian speaker looking for their language is looking for
- * "RU", not for whatever Georgian calls Russian.
+ * Endonyms: each language is named in itself, so these labels are the
+ * same in every locale and are NOT message copy.
  */
 const LOCALE_OPTIONS: ReadonlyArray<{
   code: Locale;
@@ -30,8 +23,10 @@ const LOCALE_OPTIONS: ReadonlyArray<{
 
 export default function LocaleSwitch({
   className = "",
+  light = false,
 }: {
   className?: string;
+  light?: boolean;
 }) {
   const t = useTranslations("nav");
   const locale = useLocale();
@@ -53,15 +48,20 @@ export default function LocaleSwitch({
             aria-label={option.name}
             aria-current={active ? "true" : undefined}
             onClick={() => {
-              if (!active) {
-                router.replace(pathname, {
-                  locale: option.code,
-                  scroll: false,
-                });
-              }
+              if (!active)
+                router.replace(
+                  `${pathname}${window.location.search}${window.location.hash}`,
+                  { locale: option.code, scroll: false },
+                );
             }}
-            className={`u-press rounded-full px-2.5 py-1.5 text-[0.6875rem] leading-none tracking-[0.08em] ${
-              active ? "text-bone" : "text-bone/50 hover:text-bone/80"
+            className={`locale-option px-2.5 py-1.5 text-[0.8125rem] leading-none transition-colors ${
+              light
+                ? active
+                  ? "text-ink"
+                  : "text-ink/65 hover:text-ink"
+                : active
+                  ? "text-paper"
+                  : "text-paper/70 hover:text-paper"
             }`}
           >
             {option.short}

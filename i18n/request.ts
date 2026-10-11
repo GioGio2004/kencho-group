@@ -10,6 +10,10 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
-    messages: (await import(`../messages/${locale}.json`)).default,
+    messages: {
+      ...(await import(`../messages/${locale}.json`)).default,
+      home: (await import(`../messages/home-${locale}.json`)).default,
+      tiles: (await import(`../messages/tiles-${locale}.json`)).default,
+    },
   };
 });

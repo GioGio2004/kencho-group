@@ -20,17 +20,10 @@ import type { Locale } from "@/i18n/routing";
 import { IMAGES, src } from "@/lib/images";
 import { SITE } from "@/lib/site";
 
-/* Keep in sync with ITEM_KEYS in app/_components/FAQ.tsx — the schema
- * must describe exactly the questions the page shows. */
-const FAQ_IDS = [
-  "pricing",
-  "timeline",
-  "process",
-  "materials",
-  "warranty",
-  "area",
-  "commercial",
-] as const;
+/* Keep in sync with FaqList's ids — the schema must describe exactly the
+ * questions the page shows (the complete ones; the rest of the old set
+ * still carried [FILL] placeholders and were dropped from the copy). */
+export const FAQ_IDS = ["pricing", "timeline", "materials", "commercial"] as const;
 
 /** The four things the workshop sells, in the order the page lists them. */
 const SERVICE_IDS = [
@@ -60,7 +53,7 @@ export async function businessLd(locale: Locale): Promise<string> {
     url: `${SITE.url}/${locale}`,
     // Absolute, not the site-relative path src() now returns — JSON-LD
     // is read outside the page, where a relative URL points nowhere.
-    image: `${SITE.url}${src(IMAGES.heroMain, 1200)}`,
+    image: `${SITE.url}${src(IMAGES.heroMain)}`,
     telephone: SITE.phone,
     email: SITE.email,
     address: {
@@ -70,17 +63,6 @@ export async function businessLd(locale: Locale): Promise<string> {
       addressCountry: SITE.address.country,
     },
     areaServed: { "@type": "City", name: SITE.address.city },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: SITE.geo.latitude,
-      longitude: SITE.geo.longitude,
-    },
-    openingHoursSpecification: SITE.openingHours.map((spec) => ({
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: spec.days,
-      opens: spec.opens,
-      closes: spec.closes,
-    })),
     // Only the accounts that exist — TODO placeholders in lib/site.ts
     // must not ship as claimed profiles.
     sameAs: Object.values(SITE.socials).filter((url) => !url.includes("TODO")),
@@ -215,30 +197,5 @@ export function creativeWorkLd(
     datePublished: new Date(gallery.createdAt).toISOString(),
     inLanguage: locale,
     author: { "@id": `${SITE.url}/#business` },
-  });
-}
-
-/**
- * The planner, as a thing rather than as a page. It is a free tool with
- * a real function, and saying so is the difference between ranking for
- * "kitchen planner" and ranking for the company name.
- */
-export async function plannerLd(locale: Locale): Promise<string> {
-  const t = await getTranslations({ locale, namespace: "planner" });
-  const meta = await getTranslations({ locale, namespace: "metaPlanner" });
-
-  return JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: t("title"),
-    url: `${SITE.url}/${locale}/planner`,
-    description: meta("description"),
-    applicationCategory: "DesignApplication",
-    operatingSystem: "Any",
-    browserRequirements: "Requires JavaScript",
-    inLanguage: locale,
-    isAccessibleForFree: true,
-    offers: { "@type": "Offer", price: "0", priceCurrency: "GEL" },
-    provider: { "@id": `${SITE.url}/#business` },
   });
 }

@@ -1,0 +1,173 @@
+{
+  "arrival": {
+    "eyebrow": "Custom furniture · Tbilisi, Georgia",
+    "edition": "A study in considered living",
+    "title": "The art of living. Made personal.",
+    "intro": "A closer look at the spaces and details we make.",
+    "scroll": "Scroll to discover",
+    "explore": "Explore our work",
+    "continue": "Continue to Kencho Group",
+    "navigation": "Explore the three photographic chapters",
+    "goTo": "View {chapter}",
+    "chapters": {
+      "0": {
+        "label": "The space",
+        "title": "Room for the everyday. And the exceptional.",
+        "line": "A finished kitchen. Designed around the way you live.",
+        "alt": "Kencho Group's finished walnut and white kitchen with a fluted island and three stools"
+      },
+      "1": {
+        "label": "The detail",
+        "title": "Character, in every detail.",
+        "line": "The warmth of wood. The rhythm of a carefully made surface.",
+        "alt": "Close view of fluted oak furniture and open shelves made by Kencho Group"
+      },
+      "2": {
+        "label": "Your way of living",
+        "title": "A space that feels like you.",
+        "line": "Considered colour. Personal proportions. Made to belong.",
+        "alt": "Kencho Group's deep green kitchen with a pale stone island and black stools"
+      }
+    }
+  },
+  "skip": "Skip to content",
+  "location": "Custom furniture · Tbilisi, Georgia",
+  "title": "Made for the way you live.",
+  "intro": "Kitchens, wardrobes and complete interiors. Individually designed, made in our workshop and installed by our team.",
+  "start": "Discuss your project",
+  "view": "Explore our work",
+  "workNav": "Our work",
+  "processNav": "Our approach",
+  "proof1": "Our own workshop",
+  "proof2": "Design to installation",
+  "proof3": "We work with your designer",
+  "heroAlt": "A finished walnut and white kitchen with an island and three stools by Kencho Group",
+  "heroCaption": "A place for everyday living.",
+  "selectedLabel": "Selected work",
+  "selectedTitle": "Spaces with a personal character.",
+  "selectedIntro": "A closer look at the kitchens, storage and living spaces we make.",
+  "allWork": "View the full gallery",
+  "open": "View project",
+  "projects": {
+    "green": {
+      "title": "The green kitchen",
+      "category": "Kitchen",
+      "line": "Deep green cabinetry, a generous island and a place to gather."
+    },
+    "cane": {
+      "title": "A considered entrance",
+      "category": "Wardrobe & storage",
+      "line": "Cane fronts, a built-in bench and storage that belongs in the space."
+    },
+    "walnut": {
+      "title": "The living room, composed",
+      "category": "Home interior",
+      "line": "A media wall that brings display, storage and warm wood together."
+    }
+  },
+  "servicesLabel": "Made to measure",
+  "servicesTitle": "One room. Or the whole space.",
+  "services": {
+    "kitchens": {
+      "title": "Kitchens",
+      "line": "Built around your space and the way you use it."
+    },
+    "wardrobes": {
+      "title": "Wardrobes & storage",
+      "line": "Thoughtful storage, from the entrance to the dressing room."
+    },
+    "home-interiors": {
+      "title": "Home interiors",
+      "line": "Media walls, shelving, panelling and furniture that belong together."
+    },
+    "offices": {
+      "title": "Commercial spaces",
+      "line": "Custom furniture for offices, cafés and other business interiors."
+    }
+  },
+  "approachLabel": "Our approach",
+  "approachTitle": "Your idea. One team to bring it to life.",
+  "approachIntro": "From the first drawings to the final installation, the details stay connected.",
+  "steps": {
+    "1": {
+      "title": "Tell us what you have in mind",
+      "line": "Share your plans, inspiration or your designer’s project. We help define what the space needs."
+    },
+    "2": {
+      "title": "Refine the details",
+      "line": "Measurement, design, materials and finishes come together before we start making."
+    },
+    "3": {
+      "title": "Made in our workshop",
+      "line": "Our team takes the agreed design into production, piece by piece."
+    },
+    "4": {
+      "title": "Installed in your space",
+      "line": "We bring the furniture together on site and walk through the finished result with you."
+    }
+  },
+  "detailsLabel": "A closer look",
+  "detailsTitle": "Good design lives in the details.",
+  "detailsIntro": "The rhythm of a panel. The curve of an edge. The way a door meets its frame. Explore the details in our work.",
+  "expand": "Enlarge photograph",
+  "collapse": "Close enlarged photograph",
+  "detailHint": "Choose a photograph to take a closer look.",
+  "detailOpen": "View",
+  "detailClose": "Close",
+  "workshopLabel": "The people behind the work",
+  "workshopTitle": "Made here. By our team.",
+  "workshopIntro": "Kencho Group is a furniture workshop in Tbilisi. Our team measures, makes and installs — and works with your interior designer to carry the project through.",
+  "workshopLink": "Meet Kencho Group",
+  "ownerAlt": "Kencho Group’s owner walking through a completed interior",
+  "questionsLabel": "Before we begin",
+  "questionsTitle": "A few useful answers.",
+  "questions": {
+    "1": {
+      "q": "Can you work with my interior designer?",
+      "a": "Yes. Send the drawings or renders on WhatsApp. Our team will review the project with you and your designer."
+    },
+    "2": {
+      "q": "Can you furnish an entire space?",
+      "a": "We make kitchens, wardrobes, storage and other interior furniture. Share the full project so the team can discuss the pieces together."
+    },
+    "3": {
+      "q": "What should I send to get started?",
+      "a": "A plan, a few inspiration photographs or a short description is a useful starting point. If you have drawings, send those too. The team will guide the next steps."
+    }
+  },
+  "closingLabel": "Let’s make it yours",
+  "closingTitle": "A good project starts with a conversation.",
+  "closingIntro": "Have a space in mind? Share your ideas with our team.",
+  "contactIntro": "Talk directly with our team about your space. Send a message or give us a call.",
+  "contactPrepare": "A plan, a reference photograph or your designer’s drawings are a useful place to start.",
+  "viewerDetail": "Detail view",
+  "viewerFull": "Full photograph",
+  "viewerZoom": "Enlarge photograph",
+  "viewerNext": "Next",
+  "viewerCount": "Photograph {current} of {total}",
+  "detailAlts": {
+    "0": "Bronze mirror wardrobe doors",
+    "1": "A black kitchen with a marble-pattern backsplash",
+    "2": "Cane wardrobe fronts with a built-in shoe bench",
+    "3": "Fluted wood panels and a curved edge",
+    "4": "Deep green kitchen cabinetry and island",
+    "5": "A living room media wall and shelving",
+    "6": "A walnut and white island kitchen"
+  },
+  "film": {
+    "label": "Interior film",
+    "title": "Step inside.",
+    "intro": "A cinematic study of light, proportion and warmth.",
+    "description": "A cinematic interior walkthrough of a living room, kitchen and bedroom",
+    "play": "Play film",
+    "pause": "Pause film",
+    "fullscreen": "View full screen",
+    "exitFullscreen": "Exit full screen",
+    "fallback": "Your browser does not support this video. Explore our work in the gallery.",
+    "unavailable": "Film unavailable"
+  },
+  "greeting": {
+    "welcome": "Welcome to Kencho Group",
+    "skip": "Skip intro"
+  }
+}

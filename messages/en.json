@@ -4,83 +4,15 @@
     "description": "Made-to-measure kitchens, wardrobes and full interiors from one Tbilisi workshop — 3D design, precise production and installation by a single team.",
     "ogAlt": "Kencho Group — custom furniture in Tbilisi"
   },
-  "metaPlanner": {
-    "title": "Kitchen planner — design your kitchen online | Kencho Group",
-    "description": "Plan your kitchen online with Kencho Group's free 3D planner — set sizes, modules and finishes, then send the sheet straight to the workshop.",
-    "ogAlt": "Kencho Group kitchen planner — a workshop elevation being drawn"
+  "metaFaq": {
+    "title": "FAQ — custom furniture questions | Kencho Group",
+    "description": "Working with a designer, planning furniture, choosing materials and commercial interiors — useful answers from Kencho Group.",
+    "ogAlt": "Kencho Group — frequently asked questions"
   },
-  "nav": {
-    "services": "Services",
-    "projects": "Projects",
-    "process": "Process",
-    "faq": "FAQ",
-    "contact": "Contact",
-    "home": "Back to top",
-    "langLabel": "Language",
-    "journeyLabel": "Page sections",
-    "planner": "Planner",
-    "crumbHome": "Home",
-    "gallery": "Gallery"
-  },
-  "theme": {
-    "label": "Theme",
-    "system": "Match my system",
-    "light": "Light",
-    "dark": "Dark",
-    "cycle": "switch to {next}"
-  },
-  "common": {
-    "whatsappPrefill": "Hello, I'm interested in custom furniture",
-    "close": "Close",
-    "whatsappCta": "Message us on WhatsApp",
-    "whatsappSticky": "Message us",
-    "phoneCta": "Call us",
-    "discuss": "Discuss your project"
-  },
-  "hero": {
-    "lines": "From empty space\nto finished interior.",
-    "sub": "Custom furniture — made in Tbilisi",
-    "scroll": "Scroll",
-    "imageAlt": "A kitchen built by Kencho Group in natural light",
-    "walkthroughAlt": "Walking through a finished Kencho Group interior",
-    "beatWelcome": "Welcome in",
-    "beatCraft": "Every piece measured, drawn, and built for this room.",
-    "beatContinue": "Keep scrolling",
-    "switch": {
-      "label": "Opening scene",
-      "cinematic": "Walkthrough",
-      "editorial": "Editorial"
-    }
-  },
-  "manifesto": {
-    "eyebrow": "About us",
-    "statement": "We draw the design ourselves, build it in our own workshop, and install it with our own hands. Every piece is made precisely for your space.",
-    "noteOneTitle": "Made to measure",
-    "noteOne": "We have no standard sizes — we start from your walls, ceilings, and habits. The furniture adapts to the space, never the other way around.",
-    "noteTwoTitle": "Residential and commercial",
-    "noteTwo": "Apartments and houses, offices, cafés, and shops — one team from design to handover."
-  },
-  "wall": {
-    "eyebrow": "Selected work",
-    "title": "Our work, hung on one wall."
-  },
-  "transformation": {
-    "eyebrow": "Transformation",
-    "title": "From shell to home",
-    "sub": "One project — mid fit-out and finished. Drag the divider and compare.",
-    "before": "In progress",
-    "after": "Finished",
-    "sliderLabel": "Move the divider between the fit-out and the finished interior",
-    "sliderValue": "Fit-out view: {percent}%",
-    "hint": "Drag the divider, tap the photo, or use the arrow keys.",
-    "beforeAlt": "An office space mid fit-out, bare concrete ceiling and a single carcass",
-    "afterAlt": "The finished boardroom of the same project, walnut units and a conference table"
-  },
-  "reel": {
-    "statementA": "Everything under one roof.",
-    "statementB": "We design, build and install every piece ourselves — one workshop, one team, from the first sketch to the last hinge.",
-    "caption": "What we build — from kitchens to complete fit-outs",
-    "videoAlt": "Inside the Kencho Group workshop"
+  "metaContact": {
+    "title": "Contact — Kencho Group",
+    "description": "Contact Kencho Group on WhatsApp or by phone. Share your ideas or designer’s drawings with our furniture team in Tbilisi.",
+    "ogAlt": "Contact Kencho Group — custom furniture in Tbilisi"
   },
   "services": {
     "eyebrow": "Services",
@@ -109,250 +41,10 @@
       }
     }
   },
-  "drawing": {
-    "index": "04",
-    "eyebrow": "From the workshop",
-    "title": "The Drawing",
-    "beatTwo": "Every piece begins here — measured to the <em>millimetre</em> before a single board is cut.",
-    "beatThree": "Then we build <em>exactly this</em>, and hand you the room.",
-    "svgTitle": "Technical front elevation of a fitted kitchen",
-    "svgDesc": "A workshop drawing of a 3600 mm kitchen run seen from the front: five base cabinets including an oven housing and drawer units, a worktop, wall units, an extractor hood and an open shelf unit, annotated with dimensions in millimetres.",
-    "photoAlt": "The finished kitchen, built from the drawing",
-    "sheet": "K-01",
-    "scaleLabel": "Scale",
-    "unitsNote": "Dimensions in mm",
-    "stages": {
-      "carcass": "Carcasses",
-      "dividers": "Panels",
-      "fronts": "Fronts",
-      "worktop": "Worktop",
-      "appliances": "Appliances",
-      "details": "Details",
-      "dims": "Dimensions",
-      "approved": "Approved",
-      "output": "Printing",
-      "built": "Built"
-    },
-    "units": {
-      "oven": "Oven housing",
-      "drawers": "Drawer unit",
-      "doors": "Door unit",
-      "sink": "Sink unit",
-      "door": "Wall unit",
-      "shelf": "Open shelves",
-      "tall": "Tall unit"
-    },
-    "inspectHint": "Tap any unit",
-    "materials": {
-      "oak": "Solid oak fronts, oiled",
-      "lacquer": "Matt lacquered MDF",
-      "stone": "Stone worktop, oak carcass",
-      "veneer": "Oak veneer, open back"
-    },
-    "plannerCta": "Plan your own kitchen",
-    "notes": {
-      "tallBay": "Tall unit — no wall cabinet"
-    }
-  },
-  "planner": {
-    "eyebrow": "Plan it yourself",
-    "title": "Kitchen planner",
-    "lede": "Set your wall, drop the modules along it, and watch the workshop drawing build itself. Every number on the sheet is measured off the geometry, not typed beside it.",
-    "mm": "mm",
-    "reset": "Start again",
-    "disclaimer": "Preliminary drawing — final sizes are confirmed at the on-site measurement.",
-    "stage": {
-      "sheet": "PLAN",
-      "aria": "Front elevation of a {wall} mm kitchen run with {modules} base modules, dimensioned in millimetres."
-    },
-    "wall": {
-      "title": "The wall",
-      "hint": "How much wall the kitchen has to fit into.",
-      "label": "Wall width",
-      "presets": "Common widths",
-      "advanced": "Heights",
-      "worktop": "Worktop height",
-      "upper": "Wall unit top"
-    },
-    "modules": {
-      "title": "Base modules",
-      "hint": "Tap a module to resize it, move it along the run, or take it out.",
-      "stripLabel": "The base run, left to right",
-      "free": "{mm} mm free",
-      "over": "{mm} mm over the wall",
-      "add": "Add a module",
-      "cancelAdd": "Close",
-      "fullWall": "The wall is full",
-      "width": "Width",
-      "position": "{n} of {of}",
-      "reorder": "Move along the run",
-      "remove": "Remove",
-      "blocked": {
-        "space": "Needs {mm} mm",
-        "limit": "Only one"
-      },
-      "confirm": {
-        "hood": "The extractor would move off the bay you put it on.",
-        "openShelf": "The open shelf at the end would be lost — a tall unit takes that bay all the way up.",
-        "yes": "Add anyway",
-        "no": "Leave it as it is"
-      }
-    },
-    "upper": {
-      "title": "Wall units",
-      "hint": "The wall run mirrors the rhythm of the base run below it.",
-      "toggle": "Wall units",
-      "toggleHint": "A row of cabinets above the worktop.",
-      "stripLabel": "The wall run, left to right",
-      "hoodAt": "Extractor over bay {position}.",
-      "noHood": "No extractor.",
-      "openShelf": "Open shelves at the end",
-      "openShelfHint": "The last bay becomes shelving instead of a door.",
-      "openShelfBlocked": "The last bay is a tall unit, so there is no cabinet up there to open."
-    },
-    "types": {
-      "doors": "Doors",
-      "drawers": "Drawers",
-      "oven": "Oven",
-      "sink": "Sink",
-      "tall": "Tall unit"
-    },
-    "issues": {
-      "empty": "Add a module to start the run.",
-      "overfull": "The run is {mm} mm longer than the wall.",
-      "wallRange": "The wall has to be between {min} and {max} mm.",
-      "unitBelowMin": "A {type} module needs at least {min} mm.",
-      "unitAboveMax": "A single module cannot be wider than {max} mm.",
-      "tooMany": "One {type} module per kitchen — you have {count}.",
-      "worktopRange": "Worktop height has to be between {min} and {max} mm.",
-      "upperRange": "The wall units have to top out between {min} and {max} mm.",
-      "upperTooLow": "No room left for a wall cabinet — it needs at least {min} mm above the splashback."
-    },
-    "a11y": {
-      "decrease": "Decrease {field}",
-      "increase": "Increase {field}",
-      "moveLeft": "Move left",
-      "moveRight": "Move right",
-      "module": "Module {position}: {type}, {mm} mm",
-      "hoodHere": "Extractor is on bay {position}. Select again to remove it.",
-      "hoodMove": "Put the extractor on bay {position}"
-    }
-  },
-  "intro": {
-    "words": "WE MEASURE\nWE DESIGN\nWE BUILD\nWE INSTALL"
-  },
-  "kinetic": {
-    "eyebrow": "Start to finish",
-    "words": "MEASURE\nDESIGN\nBUILD\nINSTALL",
-    "note": "Four stages, one team, and no handover in between.",
-    "marquee": "Made to measure in Tbilisi"
-  },
-  "projects": {
-    "eyebrow": "Work",
-    "title": "Selected projects",
-    "lightboxCta": "Discuss a similar project",
-    "lightboxPrev": "Previous photo",
-    "lightboxNext": "Next photo",
-    "filters": {
-      "all": "All",
-      "kitchens": "Kitchens",
-      "wardrobes": "Wardrobes",
-      "commercial": "Commercial"
-    },
-    "items": {
-      "p1": {
-        "caption": "Walnut and concrete-grey kitchen",
-        "alt": "A walnut and concrete-grey kitchen with a black extractor"
-      },
-      "p2": {
-        "caption": "Dark walnut kitchen",
-        "alt": "A dark kitchen with a walnut feature wall and island"
-      },
-      "p3": {
-        "caption": "Oak-framed wardrobes",
-        "alt": "Oak-framed wardrobes along a parquet hallway"
-      },
-      "p4": {
-        "caption": "Office boardroom",
-        "alt": "An office boardroom with walnut shelving and a long table"
-      },
-      "p5": {
-        "caption": "Green kitchen, marble splashback",
-        "alt": "A green kitchen with a marble splashback and island seating"
-      },
-      "p6": {
-        "caption": "Bronze mirror wardrobe",
-        "alt": "A wardrobe with bronze mirror fronts in warm light"
-      },
-      "p7": {
-        "caption": "Commercial lobby lounge",
-        "alt": "A commercial lobby lounge with slatted wood and glass"
-      },
-      "p8": {
-        "caption": "Grey kitchen with marble",
-        "alt": "A grey kitchen with a marble splashback"
-      },
-      "p9": {
-        "caption": "Cane entryway wardrobe",
-        "alt": "An entryway wardrobe with cane door panels and a shoe bench"
-      },
-      "p10": {
-        "caption": "Office wall unit in walnut",
-        "alt": "An office storage wall in walnut with display shelving"
-      },
-      "p11": {
-        "caption": "White wardrobe, brass pulls",
-        "alt": "A white built-in wardrobe with brass pulls"
-      },
-      "p12": {
-        "caption": "Green island kitchen",
-        "alt": "A green kitchen with an island and black breakfast bar"
-      },
-      "p13": {
-        "caption": "Lobby mirror wall",
-        "alt": "A curved mirror wall with wood slats in a commercial lobby"
-      },
-      "p14": {
-        "caption": "Built-in wine rack",
-        "alt": "A diamond wine rack built into white cabinetry"
-      },
-      "p15": {
-        "caption": "Open-plan island kitchen",
-        "alt": "An open-plan kitchen with island beside a staircase"
-      },
-      "p16": {
-        "caption": "Classic white kitchen",
-        "alt": "A classic white kitchen with ornate cabinetry"
-      }
-    }
-  },
-  "showcase": {
-    "eyebrow": "Featured",
-    "title": "Three spaces, up close",
-    "cta": "We want something like this",
-    "counterLabel": "photo",
-    "items": {
-      "lobby": {
-        "title": "Hotel lobby",
-        "location": "Vera, Tbilisi · 2023",
-        "line": "Timber battens, integrated lighting, and a bespoke reception desk."
-      },
-      "office": {
-        "title": "Office space",
-        "location": "Saburtalo, Tbilisi · 2024",
-        "line": "Boardroom tables, acoustic panelling, and full-height storage walls."
-      },
-      "residence": {
-        "title": "Private residence",
-        "location": "Vake, Tbilisi · 2025",
-        "line": "Kitchen, living room, and bedroom — one material language throughout."
-      }
-    }
-  },
   "process": {
     "eyebrow": "Process",
     "title": "How we work",
-    "note": "The exact price is set after the on-site measurement and design approval — and never changes after that.",
+    "note": "Our team discusses the details with you and your designer before production.",
     "steps": {
       "s1": {
         "title": "Measurement",
@@ -364,261 +56,188 @@
       },
       "s3": {
         "title": "Approval",
-        "line": "We settle materials, colours, and the final price."
+        "line": "We agree on materials, colours and the final design."
       },
       "s4": {
         "title": "Manufacturing",
-        "line": "In our own workshop, within 3–5 weeks."
+        "line": "Our team makes the agreed design in our own workshop."
       },
       "s5": {
         "title": "Installation",
         "line": "We install cleanly and hand over a finished space."
       }
-    },
-    "weeksValue": "3–5",
-    "weeksLabel": "weeks in production"
-  },
-  "social": {
-    "eyebrow": "Trust",
-    "title": "People trust us",
-    "statFollowersValue": "43",
-    "statFollowersSuffix": "K",
-    "statFollowersLabel": "followers on Facebook",
-    "statRecommendValue": "100",
-    "statRecommendSuffix": "%",
-    "statRecommendLabel": "recommended · 17 reviews",
-    "quotes": {
-      "q1": {
-        "text": "Delivered exactly on time, and the quality is better than the photos. The kitchen looks precisely like the 3D design.",
-        "author": "N. K. — Vake"
-      },
-      "q2": {
-        "text": "One team handled everything from measurement to installation. The process was calm and transparent.",
-        "author": "G. M. — Saburtalo"
-      },
-      "q3": {
-        "text": "They built the full interior for our café — we opened without a day of delay.",
-        "author": "T. B. — Vera"
-      }
     }
   },
-  "faq": {
-    "eyebrow": "FAQ",
-    "title": "Common questions",
-    "items": {
-      "pricing": {
-        "q": "How is the price set?",
-        "a": "We quote after an on-site measurement and an agreed design. The price is fixed in writing and never changes."
-      },
-      "timeline": {
-        "q": "How long does it take?",
-        "a": "Production takes 3–5 weeks on average after design approval. Installation usually takes 1–3 days."
-      },
-      "materials": {
-        "q": "What materials do you use, and is there a warranty?",
-        "a": "We work with European MDF and solid wood; hardware is Blum and Häfele. Every piece we build is covered by a warranty."
-      },
-      "commercial": {
-        "q": "Do you take commercial projects?",
-        "a": "Yes — offices, cafés, and shops, from single pieces to complete turnkey fit-outs."
-      },
-      "process": {
-        "q": "How does the process work from start to finish?",
-        "a": "First a site visit and measurement, then a 3D design you approve, then production in our workshop and installation by our own team. One contact person keeps you informed at every stage — most projects need [FILL: number] visits in total."
-      },
-      "warranty": {
-        "q": "What warranty do you give on finished furniture?",
-        "a": "Every piece we install carries a [FILL: number]-year warranty covering the construction and the installation. Hardware is covered by the manufacturers' own warranties, and we keep servicing what we build after the warranty ends."
-      },
-      "area": {
-        "q": "Where do you work — Tbilisi only?",
-        "a": "Our workshop is in Tbilisi and most projects are within the city. We also take on projects in [FILL: other cities/regions, e.g. Batumi, Rustavi] — travel and delivery for out-of-town work are agreed in the quote."
-      }
-    }
+  "nav": {
+    "faq": "FAQ",
+    "contact": "Contact",
+    "langLabel": "Language",
+    "crumbHome": "Home",
+    "catalogue": "Catalogue",
+    "about": "About",
+    "getInTouch": "Get in touch",
+    "menu": "Menu",
+    "home": "Home",
+    "primary": "Main navigation",
+    "gallery": "Catalogue"
+  },
+  "common": {
+    "whatsappPrefill": "Hello, I'm interested in custom furniture",
+    "close": "Close",
+    "photoPrefill": "Hello! I would like to discuss a project like this: {title}",
+    "designerPrefill": "Hello! I'm an interior designer and would like to send you a project.",
+    "codeSuffix": "(code {code})"
   },
   "contact": {
-    "eyebrow": "Contact",
     "title": "Let's start your project",
-    "sub": "Message us on WhatsApp or leave your number — we reply within one business day.",
-    "bookMeasure": "Book a measurement",
+    "sub": "Talk directly with our team about your space. Send a message or give us a call.",
     "formTitle": "Leave your number",
     "nameLabel": "Name",
     "namePlaceholder": "Your name",
     "phoneLabel": "Phone",
     "phonePlaceholder": "5XX XX XX XX",
     "submit": "Send",
-    "replyNote": "We reply within one business day.",
     "success": "Thank you — we'll be in touch shortly.",
     "errorName": "Please enter your name.",
     "errorPhone": "Please enter a valid phone number.",
+    "errorDelivery": "We could not send that just now — please message us instead:",
     "addressLabel": "Address",
     "address": "Guram Panjikidze St 1, Tbilisi",
     "mapCta": "View on the map",
-    "phoneLabel2": "Phone",
     "emailLabel": "Email",
-    "detailAlt": "An interior detail — a wooden surface in soft light",
-    "errorDelivery": "We could not send that just now — please message us instead:"
-  },
-  "audio": {
-    "label": "Listen",
-    "play": "Play",
-    "pause": "Pause",
-    "close": "Close",
-    "transcriptLink": "Read transcript",
-    "transcriptTitle": "Audio guide transcript",
-    "transcript": "Welcome to Kencho Group. We're a small team in Tbilisi that designs, builds, and installs custom furniture — all under one roof. Every project begins in your space: we visit, we measure, and we listen to how you live. Our designers then draw your interior in 3D, so you see the result before we cut a single board. In our own workshop, your kitchen, wardrobe, or complete interior takes shape within three to five weeks — European materials, precise joinery, and a warranty on everything we make. Then we arrive, install cleanly, and hand over a finished space. If you're thinking about a project of your own, write to us on WhatsApp. The measurement is free.",
-    "sectionLabel": {
-      "hero": "Introduction",
-      "manifesto": "About us",
-      "process": "Process",
-      "contact": "Contact"
-    }
+    "whatsapp": "Message us on WhatsApp",
+    "call": "Call {phone}",
+    "designerLabel": "I have a designer's project",
+    "noteLabel": "What are you planning? (optional)",
+    "notePlaceholder": "Kitchen, wardrobe, a whole apartment…",
+    "sending": "Sending…",
+    "consent": "We use your number only to reply to this request.",
+    "drawings": "Have drawings or renders? Send them on WhatsApp.",
+    "about": "About: {title}",
+    "code": "Mention code {code} when you call",
+    "or": "or leave your number",
+    "dialog": "Get in touch"
   },
   "footer": {
-    "tagline": "Custom furniture — Tbilisi",
+    "tagline": "Kitchens, wardrobes and interiors, made to measure in Tbilisi.",
     "rights": "© {year} Kencho Group. All rights reserved.",
     "socials": "Social media",
     "enquiries": "Enquiries",
-    "pages": "Pages"
-  },
-  "voyage": {
-    "eyebrow": "The journey",
-    "title": "From our hands to your home",
-    "intro": "Every piece travels the same road: measured on site, drawn in 3D, built in the Tbilisi workshop and installed by our own team. The questions we are asked along the way are answered along it.",
-    "coordsFromLabel": "Kencho workshop · Tbilisi",
-    "coordsToLabel": "Your address",
-    "originLabel": "Starting point",
-    "originName": "The Kencho workshop",
-    "destLabel": "Destination",
-    "destName": "Your home",
-    "watermark": "Tbilisi",
-    "statProductionLabel": "Production",
-    "statProductionValue": "3–5 weeks",
-    "statInstallLabel": "Installation",
-    "statInstallValue": "1–3 days",
-    "statPriceLabel": "The price",
-    "statPriceValue": "Fixed in writing",
-    "talkLabel": "Prefer to talk?",
-    "allQuestions": "All questions"
-  },
-  "metaProjects": {
-    "title": "Furniture projects in Tbilisi — portfolio | Kencho Group",
-    "description": "Real projects by Kencho Group: custom kitchens, wardrobes and commercial fit-outs made in our Tbilisi workshop — with before-and-after transformations.",
-    "ogAlt": "Kencho Group portfolio — custom furniture projects in Tbilisi"
-  },
-  "metaServices": {
-    "title": "Services — kitchens, wardrobes, fit-outs | Kencho Group",
-    "description": "What we make: custom kitchens, built-in wardrobes, wall paneling and commercial interiors. From technical drawing to installation, one team in Tbilisi.",
-    "ogAlt": "Kencho Group services — custom furniture made in Tbilisi"
-  },
-  "metaProcess": {
-    "title": "How we work — measurement to installation | Kencho Group",
-    "description": "The Kencho Group process step by step: site measurement, 3D design, production in our Tbilisi workshop, delivery and installation by one team.",
-    "ogAlt": "Kencho Group process — from technical drawing to installation"
-  },
-  "metaFaq": {
-    "title": "FAQ — custom furniture questions | Kencho Group",
-    "description": "Answers about ordering custom furniture in Tbilisi: prices and payment, timelines, materials and hardware, warranty and service area.",
-    "ogAlt": "Kencho Group — frequently asked questions"
-  },
-  "metaContact": {
-    "title": "Contact us — free consultation | Kencho Group",
-    "description": "Get in touch with Kencho Group: call, WhatsApp or send the form. Visit the workshop at Guram Panjikidze St 1, Tbilisi. We reply within one working day.",
-    "ogAlt": "Contact Kencho Group — custom furniture in Tbilisi"
+    "pages": "Pages",
+    "workshop": "Workshop",
+    "focus": "What we make"
   },
   "metaGallery": {
-    "title": "Gallery — our latest work | Kencho Group",
-    "description": "Browse photo galleries of finished Kencho Group projects: kitchens, wardrobes, paneling and commercial interiors made to measure in Tbilisi.",
     "ogAlt": "Kencho Group gallery — photographs of finished projects",
-    "tail": "Made to measure by Kencho Group in Tbilisi."
+    "tail": "Made to measure by Kencho Group in Tbilisi.",
+    "title": "Catalogue — kitchens, wardrobes, interiors | Kencho Group",
+    "description": "The Kencho Group catalogue: finished kitchens, wardrobes and interiors made to measure in Tbilisi. Bring your designer's project — we build it."
+  },
+  "catalogue": {
+    "title": "Catalogue",
+    "lede": "Finished kitchens, wardrobes and interiors, photographed in our clients' homes. Find what your designer has in mind, and we'll build it.",
+    "all": "All",
+    "chapters": "Catalogue chapters",
+    "designerNote": "Working with a designer? Send us the drawings — we build to the millimetre.",
+    "open": "Open: {title}",
+    "page": "Page",
+    "quote": "Get a quote for this",
+    "pin": "Save to Pinterest",
+    "swipe": "Swipe to turn the page",
+    "viewer": "Catalogue page",
+    "count": "{count, plural, one {# photograph} other {# photographs}}",
+    "empty": "Galleries are being prepared — check back soon.",
+    "close": "Close",
+    "prev": "Previous photograph",
+    "next": "Next photograph"
+  },
+  "about": {
+    "eyebrow": "About us",
+    "title": "One workshop. Every piece made here.",
+    "lede": "Kencho Group is a custom furniture workshop in Tbilisi. We measure, build and install everything ourselves — one team from the first visit to the last screw.",
+    "videoTitle": "A walk through a finished home",
+    "videoNote": "Our owner shows a kitchen and storage we built — from the wine rack to the hidden pantry.",
+    "designersEyebrow": "For interior designers",
+    "designersTitle": "Your drawings, built to the millimetre.",
+    "designersText": "Most of our clients come to us with a designer. Send us the project and we follow it exactly — materials, joints and details — and keep you informed at every stage.",
+    "designersCta": "Send drawings on WhatsApp",
+    "faqMore": "All questions",
+    "heroMeta": "Measurement, 3D design, production, installation",
+    "heroLine": "We believe the best furniture comes from one team that measures, builds and installs it."
+  },
+  "metaAbout": {
+    "title": "About us — how we work | Kencho Group",
+    "description": "Kencho Group is a custom furniture workshop in Tbilisi: measurement, production and installation by one team. We build designers' projects exactly.",
+    "ogAlt": "Kencho Group — the owner in a finished kitchen"
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Common questions",
+    "items": {
+      "pricing": {
+        "q": "Can you work with my interior designer?",
+        "a": "Yes. Send the drawings or renders on WhatsApp. Our team will review the project with you and your designer."
+      },
+      "timeline": {
+        "q": "What should I send to get started?",
+        "a": "A plan, a few inspiration photographs or a short description is a useful starting point. If you have drawings, send those too. The team will guide the next steps."
+      },
+      "materials": {
+        "q": "How do we choose materials and finishes?",
+        "a": "Share the look and practical requirements you have in mind. Our team will discuss materials, finishes and hardware that suit the project."
+      },
+      "commercial": {
+        "q": "Do you take commercial projects?",
+        "a": "Yes — offices, cafés, and shops, from single pieces to complete turnkey fit-outs."
+      }
+    }
   },
   "pageIntro": {
-    "projects": {
-      "eyebrow": "Portfolio",
-      "title": "Projects that left the workshop",
-      "lede": "Kitchens, wardrobes and commercial spaces — measured, drawn, built and installed by one team."
-    },
-    "services": {
-      "eyebrow": "Services",
-      "title": "What we build to measure",
-      "lede": "Four things we do well — and everything between the first drawing and the final fitting."
-    },
-    "process": {
-      "eyebrow": "Process",
-      "title": "From site measurement to installation",
-      "lede": "A clear sequence with no surprises: you always know what happens next and when."
-    },
     "faq": {
       "eyebrow": "FAQ",
       "title": "Questions we hear before every project",
-      "lede": "Prices, timelines, materials and what happens after installation — answered plainly."
+      "lede": "Working with a designer, sharing your plans and choosing the details — answered plainly."
     },
     "contact": {
       "eyebrow": "Contact",
       "title": "Start with a conversation",
       "lede": "Tell us what you are planning — we measure, advise and quote before you commit to anything."
-    },
-    "gallery": {
-      "eyebrow": "Gallery",
-      "title": "Work in photographs",
-      "lede": "Finished projects from the workshop, gallery by gallery."
     }
   },
-  "gallery": {
-    "empty": "Galleries are being prepared — check back soon.",
-    "back": "All galleries",
-    "count": "{count, plural, one {# photograph} other {# photographs}}",
-    "galleriesCount": "{count, plural, one {# gallery} other {# galleries}}",
-    "view": "View gallery",
-    "next": "Next gallery",
+  "hero": {
+    "title": "We make furniture that's made to measure, to fit the way you live.",
+    "note": "Custom-made in Tbilisi",
+    "tileKitchens": "Kitchens",
+    "tileWardrobes": "Wardrobes",
+    "scroll": "Scroll to explore"
+  },
+  "strip": {
+    "label": "What we make",
+    "scroll": "Scroll to explore",
+    "swipe": "Swipe",
+    "open": "Open {title}",
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "statement": {
+    "eyebrow": "How we work",
+    "title": "Measured. Drawn. Built. Installed.",
+    "text": "One workshop in Tbilisi does all of it. We measure your space, draw it in 3D, build every piece ourselves and install it with our own team — so what you approve on screen is exactly what arrives. Most of our clients come with a designer; we build their drawings to the millimetre.",
+    "cta": "More about us"
+  },
+  "latest": {
+    "title": "Latest work",
+    "all": "All work",
+    "open": "Open {title}"
+  },
+  "menu": {
+    "menu": "Menu",
     "close": "Close",
-    "prevPhoto": "Previous photograph",
-    "nextPhoto": "Next photograph",
-    "openPhoto": "View photograph {index} full screen",
-    "scroll": "Scroll",
-    "fig": "Fig."
-  },
-  "prologue": {
-    "line": "Made by hand, for the most personal place on earth.",
-    "place": "Tbilisi, Georgia",
-    "skip": "Skip intro"
-  },
-  "rooms": {
-    "eyebrow": "The collection",
-    "title": "Four rooms of work",
-    "items": {
-      "kitchens": {
-        "name": "Kitchens",
-        "line": "The heart of the flat, built to the millimetre."
-      },
-      "wardrobes": {
-        "name": "Wardrobes & storage",
-        "line": "Every corner measured and put to work."
-      },
-      "commercial": {
-        "name": "Commercial spaces",
-        "line": "Offices and lobbies, from drawing to opening day."
-      },
-      "interiors": {
-        "name": "Home interiors",
-        "line": "The details that finish a home."
-      }
-    }
-  },
-  "featured": {
-    "eyebrow": "Featured work",
-    "title": "Four projects, up close",
-    "view": "View project",
-    "prev": "Previous project",
-    "next": "Next project",
-    "show": "Show: {name}",
-    "railLabel": "Featured projects"
-  },
-  "panorama": {
-    "eyebrow": "The panorama",
-    "title": "Where the work lives",
-    "intro": "Kitchens, storage and commercial spaces — three collections from one Tbilisi workshop, each measured, drawn, built and installed by the same hands.",
-    "quote": "We never repeat a piece. Every home asks a different question, and the workshop answers it in wood.",
-    "attribution": "[FILL: NAME] — FOUNDER, KENCHO GROUP"
+    "focus": "Our focus",
+    "explore": "Explore our",
+    "company": "Company",
+    "workshop": "Workshop",
+    "follow": "Follow",
+    "email": "E-mail"
   }
 }

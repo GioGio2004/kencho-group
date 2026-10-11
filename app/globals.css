@@ -1,4169 +1,1368 @@
 @import "tailwindcss";
+@import "./landing.css";
+@import "./project-tiles.css";
+@import "./arrival.css";
+@import "./cinematic.css";
+@import "./greeting.css";
 
 /*
- * Every colour, space, size, radius and CSS easing lives in theme.css.
- * This file is component CSS only — if you are about to type a literal
- * value below, it belongs there instead.
+ * KENCHO GROUP — white, black, orange, grass green.
+ *
+ * One grotesk voice. White pages with black components; a cream and a
+ * sand for the hero's two halves; orange for the action that matters
+ * and green for the one that says "talk to us". Nothing ornamental.
+ *
+ * Motion: one easing for everything that reveals (--ease-out, 0.3s on
+ * hovers, 0.6–0.8s on pages and panels), and transform/opacity only.
  */
-@import "./theme.css";
+@theme {
+  --color-paper: #ffffff;
+  --color-cream: #f3f1ec;
+  --color-sand: #e9e5df;
+  --color-ink: #111111;
+  --color-ink-2: #3a3a3a;
+  --color-mute: #6f6f6f;
+  --color-orange: #b34d2c;
+  --color-grass: #a8d672;
+  --color-line: rgb(17 17 17 / 0.12);
 
-/* ---------------------------------------------------------------------
- * BASE
- * ------------------------------------------------------------------ */
-html {
-  -webkit-text-size-adjust: 100%;
+  --ease-out: cubic-bezier(0, 0, 0.13, 0.99);
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/*
- * Hide the native scrollbar — but ONLY where Lenis is actually running.
- * SmoothScroll returns before constructing Lenis under reduced motion,
- * so this rule used to leave those visitors on a seventeen-thousand-pixel
- * page with native scrolling, no scrollbar and no position indicator of
- * any kind. The reduced-motion path is exactly the one that needs the
- * platform's own affordances most.
- */
-@media (prefers-reduced-motion: no-preference) {
+/* Per-locale fonts (lib/fonts.ts). Georgian uses one family for both. */
+@theme inline {
+  --font-display: var(--font-display-ka, var(--font-display-en, ui-sans-serif));
+  --font-sans: var(--font-display-ka, var(--font-body-en, ui-sans-serif));
+}
+
+@layer components {
+  /* -------------------------------------------------------------------
+   * BASE
+   * ---------------------------------------------------------------- */
   html {
+    /* The breath between the home page's sections, and the white band
+     * that heads the strip (its panels fill the rest of the viewport). */
+    --gap-y: 6.5rem;
+    --strip-head: 5.5rem;
+    /* The fixed header's height (landing.css .site-header). */
+    --header-h: 88px;
+    -webkit-text-size-adjust: 100%;
+    background: var(--color-paper);
+    scroll-padding-top: 6rem;
+    /* No browser scrollbar: the rail (ScrollRail.tsx) stands in for it. */
     scrollbar-width: none;
-    -ms-overflow-style: none;
   }
 
   html::-webkit-scrollbar {
-    width: 0;
-    height: 0;
     display: none;
   }
-}
 
-body {
-  background: var(--sand);
-  color: var(--ink);
-  font-family: var(--font-sans), system-ui, sans-serif;
-  font-synthesis-weight: none;
-}
-
-::selection {
-  background: var(--selection);
-}
-
-:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 3px;
-}
-
-/* Display type: tight tracking, optical balance at large sizes. */
-.u-display {
-  font-family: var(--font-display), Georgia, serif;
-  font-weight: 400;
-  letter-spacing: -0.03em;
-  line-height: 0.95;
-}
-
-/* Georgian display: Mkhedruli has no italic/tight-tracking tradition —
- * loosen slightly so ascenders and descenders breathe. */
-html[lang="ka"] .u-display {
-  letter-spacing: -0.01em;
-  line-height: 1.02;
-}
-
-/* Outlined display type — used by the kinetic intro's alternating cuts. */
-.u-outline {
-  -webkit-text-stroke: 1.5px var(--ink);
-  color: transparent;
-}
-
-@supports not (-webkit-text-stroke: 1px black) {
-  .u-outline {
-    color: var(--ink);
+  @media (max-width: 767px) {
+    html {
+      --header-h: 72px;
+    }
   }
-}
 
-/*
- * Small tracked label used for section eyebrows — and the site's most
- * repeated line.
- *
- * THE RULE IS PART OF THE LABEL. Every section on the page opens with
- * one of these, so putting the hairline here rather than in each section
- * is what makes the line system structural instead of decorative: one
- * declaration, thirteen sections, and no way for a new section to be
- * added without it.
- *
- * `currentColor` rather than --line: an eyebrow appears on stone and on
- * charcoal, and the rule that belongs beside it is always a faded
- * version of the label itself. That is one value that is correct on
- * every surface instead of two that have to be chosen between.
- *
- * `--rule-open` defaults to 1, so the server's markup — and a visitor
- * with no JS or reduced motion — gets the line already ruled. ScrollFX
- * winds it back to 0 and draws it.
- */
-.u-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  font-size: 0.6875rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--ink-55);
-}
-
-.u-eyebrow::after {
-  content: "";
-  flex: 1 1 auto;
-  /* A tick, not a divider. A rule that runs to the far gutter turns
-   * every section heading into a table header. */
-  max-width: 7rem;
-  height: var(--rule-weight);
-  background: currentColor;
-  opacity: 0.32;
-  transform: scaleX(var(--rule-open, 1));
-  transform-origin: var(--rule-origin, left center);
-}
-
-/*
- * OPT-OUT, not opt-in. The class is also borrowed by things that are
- * tracked labels rather than section openings — a stat's caption, a
- * testimonial's attribution — and a hairline after "N. K. — Vake" reads
- * as a missing sentence. Those four say so.
- *
- * Deliberately this way round: a NEW section written tomorrow gets the
- * rule without anyone remembering to ask for it, which is the only
- * reason the line system is structural rather than decorative.
- */
-.u-eyebrow--plain::after {
-  display: none;
-}
-
-/* ---------------------------------------------------------------------
- * MICRO-INTERACTIONS
- * ------------------------------------------------------------------ */
-
-/* Underline that slides in from the left, out to the right. */
-.u-link {
-  position: relative;
-  display: inline-block;
-}
-
-.u-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -0.15em;
-  width: 100%;
-  height: 1px;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.u-link:hover::after,
-.u-link:focus-visible::after {
-  transform: scaleX(1);
-  transform-origin: left;
-}
-
-/* Every button settles slightly on press. */
-.u-press {
-  transition:
-    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
-    background-color 0.35s ease,
-    color 0.35s ease,
-    border-color 0.35s ease;
-}
-
-.u-press:active {
-  transform: scale(0.98);
-}
-
-/* ---------------------------------------------------------------------
- * INTRO OVERLAY — gated by the pre-paint script in layout.tsx.
- * Without the `is-loading` class the overlay never displays, so a JS
- * failure can never hide the page.
- * ------------------------------------------------------------------ */
-.intro-overlay {
-  display: none;
-}
-
-.is-loading .intro-overlay {
-  display: block;
-  /* Failsafe: uncover the page after 6s even if JS never runs. */
-  animation: kg-failsafe-hide 0s linear 6s forwards;
-}
-
-.is-loading body {
-  overflow: hidden;
-  animation: kg-failsafe-scroll 0s linear 6s forwards;
-}
-
-@keyframes kg-failsafe-hide {
-  to {
-    visibility: hidden;
+  @media (min-width: 640px) {
+    html {
+      --gap-y: 8.5rem;
+      --strip-head: 6.5rem;
+    }
   }
-}
 
-@keyframes kg-failsafe-scroll {
-  to {
-    overflow: auto;
+  @media (min-width: 1024px) {
+    html {
+      --gap-y: 12rem;
+      --strip-head: 7rem;
+    }
   }
-}
 
-/* ---------------------------------------------------------------------
- * GLASS MATERIAL — reuse via className="glass". Only ever place glass
- * over imagery; on flat sand it reads as a gray box.
- * ------------------------------------------------------------------ */
-.glass {
-  background: var(--glass-tint);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  border: 1px solid var(--glass-border);
-  border-radius: var(--glass-radius, var(--radius-pill));
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    var(--glass-shadow);
-}
-
-/*
- * Perf switch: invisible glass still costs GPU, so fully faded cards get
- * this class from JS. Keep at most two live glass surfaces per frame.
- */
-.glass--off {
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
-
-/* Fallback when backdrop-filter is unsupported: solid, still on-palette. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass {
-    background: color-mix(in srgb, var(--sand) 90%, transparent);
+  @media (min-width: 1440px) {
+    html {
+      --gap-y: 14rem;
+    }
   }
-}
 
-/*
- * Interactive glass surface: iOS press + desktop hover lift. These live
- * on an INNER element so CSS transforms never fight GSAP's choreography
- * on the outer card.
- */
-.glass-interactive {
-  transition:
-    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.35s ease;
-}
-
-.glass-interactive:active {
-  transform: scale(0.985);
-}
-
-@media (hover: hover) {
-  .glass-interactive:hover {
-    transform: translateY(-4px);
-    border-color: var(--glass-border-bright);
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-synthesis-weight: none;
+    -webkit-tap-highlight-color: transparent;
+    /* Nothing wide (the strip's run of panels) may scroll the page
+     * sideways. `clip`, not `hidden`: it is not a scroll container, so
+     * sticky and fixed children are unaffected. */
+    overflow-x: clip;
   }
-}
 
-/*
- * Header colour is driven by these variables rather than by utilities,
- * because the header floats over two very different backgrounds: the
- * dark walkthrough hero at the top of the page, and the warm sand body
- * once scrolled. Charcoal type vanished against the video.
- */
-[data-site-header] {
-  --header-fg: var(--sand);
-  --header-fg-dim: color-mix(in srgb, var(--shell) 72%, transparent);
-  --header-accent: var(--dwg-gold, var(--clay));
-}
-
-/* Frosted header once the page has scrolled (attribute set from JS). */
-[data-site-header][data-scrolled] {
-  --header-fg: var(--ink);
-  --header-fg-dim: var(--ink-70);
-  --header-accent: var(--clay-deep);
-}
-
-.header-fg {
-  color: var(--header-fg);
-  transition: color 0.4s ease;
-}
-
-.header-fg-dim {
-  color: var(--header-fg-dim);
-  transition: color 0.4s ease;
-}
-
-.header-accent {
-  color: var(--header-accent);
-  border-color: var(--header-accent);
-  transition:
-    color 0.4s ease,
-    border-color 0.4s ease;
-}
-
-/* A whisper of shadow keeps header type legible over moving video. */
-[data-site-header]:not([data-scrolled]) .header-fg,
-[data-site-header]:not([data-scrolled]) .header-fg-dim,
-[data-site-header]:not([data-scrolled]) .header-accent {
-  text-shadow: 0 1px 12px color-mix(in srgb, var(--charcoal) 50%, transparent);
-}
-
-/* ---------------------------------------------------------------------
- * CUSTOM CURSOR — desktop only, activated from JS.
- * ------------------------------------------------------------------ */
-.has-cursor,
-.has-cursor a,
-.has-cursor button {
-  cursor: none;
-}
-
-.cursor-dot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 90;
-  pointer-events: none;
-  border-radius: 9999px;
-  will-change: transform;
-}
-
-/*
- * Hero narrative beats. They cross-fade in one shared grid cell once JS
- * takes over, but the server-rendered markup carries `data-static` so a
- * crawler, a JS failure, or a reduced-motion visitor gets a readable
- * column instead of four strings overprinting each other.
- */
-[data-beats][data-static] {
-  position: static;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  justify-content: flex-end;
-  padding-block: 6rem 3rem;
-}
-
-[data-beats][data-static] > * {
-  grid-column: auto;
-  grid-row: auto;
-  align-self: auto;
-  justify-self: auto;
-  padding-bottom: 0;
-}
-
-/* Hero scroll cue — a segment travelling down a hairline. */
-.cue-travel {
-  animation: cue-travel 2.1s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-}
-
-@keyframes cue-travel {
-  0% {
-    transform: translateY(-100%);
+  ::selection {
+    background: var(--color-orange);
+    color: var(--color-paper);
   }
-  55%,
-  100% {
-    transform: translateY(400%);
+
+  :focus-visible {
+    outline: 2px solid #b34d2c;
+    outline-offset: 3px;
   }
-}
 
-/* ---------------------------------------------------------------------
- * MARQUEE — GSAP drives the track; static and readable without JS.
- * ------------------------------------------------------------------ */
-.marquee {
-  overflow: hidden;
-  mask-image: linear-gradient(
-    90deg,
-    transparent 0,
-    #000 10%,
-    #000 90%,
-    transparent 100%
-  );
-}
-
-.marquee-track {
-  display: flex;
-  width: max-content;
-  will-change: transform;
-}
-
-/* ---------------------------------------------------------------------
- * THE DRAWING — the scroll-drawn kitchen elevation.
- *
- * The SVG's user units are millimetres, so every weight below is a
- * millimetre value. JS measures the rendered sheet and rewrites these
- * four variables, which is what holds the line weight at a constant
- * 1.5px from 390px to 1440px instead of scaling it with the zoom. The
- * defaults are the 390px values, so the server's sheet is already right
- * on the viewport that matters most.
- * ------------------------------------------------------------------ */
-.dwg {
-  --dwg-line: 17.4;
-  --dwg-dim: 11.6;
-  --dwg-label: 128px;
-  --dwg-note: 110px;
-
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  overflow: visible;
-}
-
-/*
- * Cabinet work — bone-white on the dark surface.
- *
- * `stroke` and `stroke-width` are read from custom properties rather
- * than set literally, which is what makes the glow layer possible: a
- * <use> of a whole group inherits these two variables, so overriding
- * them on the <use> restyles the clone without touching the original,
- * and the clone follows the original's dash animation for free. Set
- * them as plain values here and the glow needs 69 duplicated tweens.
- */
-/*
- * --dwg-heat is the hot-ink multiplier: a stroke goes down HEAVY and
- * cures to its final weight as its stage completes. Set per structural
- * group by the draw choreography, 1 at rest — so the static sheet and
- * every finished state render at exactly the documented weight. The
- * halo's <use> clones mirror the group's inline style, so a hot group's
- * glow thickens with it for free.
- */
-.dwg-line {
-  fill: none;
-  stroke: var(--dwg-line-color, var(--dwg-bone));
-  stroke-width: calc(var(--dwg-line) * var(--dwg-heat, 1));
-}
-
-/* Annotation — gold, and deliberately lighter than the thing it
- * annotates. A dimension line that out-weighs the cabinet reads as the
- * subject of the drawing. */
-.dwg-dim {
-  fill: none;
-  stroke: var(--dwg-gold-line);
-  stroke-width: var(--dwg-dim);
-}
-
-/* Arrowheads and numbers take the full gold; only the lines are held
- * back to 60%. */
-.dwg-solid {
-  fill: var(--dwg-gold);
-  stroke: none;
-}
-
-/*
- * The halo. A single <use> per structural group, painted underneath the
- * real linework at ~3x the width and a tenth of the opacity.
- *
- * Deliberately NOT `filter: drop-shadow`. A filter on a scrubbed,
- * full-viewport SVG re-rasterises the whole layer every frame, which is
- * the first thing to collapse on a mid-range phone — the same reason
- * lib/motion.ts keeps blur out of the scroll vocabulary entirely. This
- * costs one extra element per group and nothing per frame.
- */
-#glow {
-  --dwg-line-color: var(--dwg-halo);
-  --dwg-line: var(--dwg-halo-width);
-  pointer-events: none;
-}
-
-/* The pen tip: a bright dash riding the head of each stroke while it
- * draws, and nothing at all once it has arrived. Heavier than the line
- * it leads — it is the tool, not the mark, and a nib is wider than the
- * ink it leaves. */
-.dwg-tip {
-  fill: none;
-  stroke: var(--dwg-tip);
-  stroke-width: calc(var(--dwg-line) * 1.6);
-  stroke-linecap: round;
-}
-
-.dwg-label,
-.dwg-note,
-.dwg-readout {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
-  letter-spacing: 0.06em;
-  font-variant-numeric: tabular-nums;
-}
-
-.dwg-label {
-  font-size: var(--dwg-label);
-  fill: var(--dwg-gold);
-  stroke: none;
-}
-
-.dwg-note {
-  font-size: var(--dwg-note);
-  fill: var(--dwg-gold);
-  stroke: none;
-}
-
-.dwg-ink {
-  fill: var(--dwg-bone-dim);
-}
-
-/* The panels that give the elevation depth at the very end. */
-.dwg-tint {
-  fill: var(--dwg-bone);
-  stroke: none;
-}
-
-.dwg-readout {
-  font-size: 0.625rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--dwg-bone-dim);
-}
-
-/* The emphasised word in each beat — gold, italic, the site's own
- * emphasis pattern carried onto the dark surface. */
-[data-drawing] [data-beat] em {
-  color: var(--dwg-gold);
-  font-style: italic;
-}
-
-
-/*
- * THE FIXED UI OVER THE DRAWING CHAPTER.
- *
- * Almost nothing left to do here, and that is the point. The header and
- * the glass pills used to need a whole second colour scheme because the
- * drawing forced charcoal onto a light page; now the sheet is drawn in
- * whatever material the theme is made of, so the only thing that
- * actually changes under the header is the DEPTH of the surface behind
- * it. One frosted background, retinted.
- *
- * The transition is what stops a fast scroll across the boundary from
- * strobing: the attribute flips instantly, the colour takes 400ms to
- * agree with it.
- */
-html[data-chapter="drawing"] [data-site-header][data-scrolled] {
-  background: color-mix(in srgb, var(--surface-deep) 82%, transparent);
-}
-
-/*
- * A subtree that is charcoal REGARDLESS of the theme — the planner's
- * drawing board. The tokens themselves are swapped in theme.css; these
- * two rules are the pieces that are painted rather than tokenised.
- */
-html[data-surface="dark"] [data-site-header][data-scrolled] {
-  background: var(--dwg-header-bg);
-}
-
-.glass {
-  transition:
-    background-color 0.4s ease,
-    border-color 0.4s ease,
-    color 0.4s ease;
-}
-
-/*
- * THE SHEET ITSELF — paper, light, and a frame.
- *
- * All three are full-bleed DOM layers rather than anything inside the
- * SVG. The SVG is letterboxed by `preserveAspectRatio`, so anything
- * drawn in it stops at the sheet's own edges; these have to run to the
- * corners of the viewport for the section to read as a page rather than
- * as a picture of one. They also animate on opacity alone, which is the
- * only way to have a glow on a scrubbed section without paying for a
- * repaint every frame.
- */
-
-/* Graph paper. Finer on dark than the light version would be — bone
- * lines on charcoal carry further than ink lines on sand, so the same
- * spacing reads as busier. */
-.dwg-grid {
-  background-image:
-    linear-gradient(to right, var(--dwg-grid) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--dwg-grid) 1px, transparent 1px),
-    linear-gradient(to right, var(--dwg-grid-major) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--dwg-grid-major) 1px, transparent 1px);
-  background-size:
-    20px 20px,
-    20px 20px,
-    100px 100px,
-    100px 100px;
-}
-
-/*
- * The material the sheet is made of: a warm vignette lifting the centre
- * about eight points above the edges, and a fine noise over the top.
- *
- * The noise is a rasterised SVG turbulence tile, not a filter — the
- * browser decodes it once and then it is an ordinary repeating
- * background image, so it costs nothing per frame. Kept at 3%: enough to
- * break the gradient's banding on an 8-bit panel, not enough to read as
- * texture.
- */
-.dwg-surface {
-  background:
-    radial-gradient(
-      68% 58% at 50% 44%,
-      var(--dwg-bg-lift) 0%,
-      var(--dwg-bg) 78%
-    ),
-    var(--dwg-bg);
-}
-
-.dwg-noise {
-  opacity: var(--dwg-noise-opacity);
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 120px 120px;
-}
-
-/* The light the sheet is being read under. Two overlapping radials
- * rather than one, so the falloff has no visible ring. */
-.dwg-glow {
-  background:
-    radial-gradient(
-      54% 48% at 50% 44%,
-      color-mix(in srgb, var(--dwg-gold) 12%, transparent) 0%,
-      transparent 74%
-    ),
-    radial-gradient(
-      84% 70% at 50% 48%,
-      color-mix(in srgb, var(--dwg-bone) 9%, transparent) 0%,
-      transparent 70%
-    );
-}
-
-/* Copy sits directly on the surface — no card. Where the linework would
- * fight it, this washes the paper back behind the text instead, with no
- * edge to see.
- *
- * Opaque at the origin rather than 92%: on charcoal an 8% leak was
- * invisible, and on paper — where the linework is dark and the wash is
- * light — the same leak printed cabinet edges straight through the
- * sentence. The gradient has to actually reach the paper colour before
- * it starts falling off. */
-.dwg-copy-wash {
-  background: radial-gradient(
-    130% 105% at 0% 0%,
-    var(--dwg-bg) 0%,
-    color-mix(in srgb, var(--dwg-bg) 82%, transparent) 44%,
-    transparent 78%
-  );
-}
-
-/* The sheet border, with registration ticks at the corners — the two
- * details that separate "a drawing" from "an illustration of a
- * drawing". */
-.dwg-frame {
-  border: 1px solid color-mix(in srgb, var(--dwg-gold) 34%, transparent);
-}
-
-.dwg-tick {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border-width: 2px;
-  border-color: var(--dwg-gold);
-}
-
-/* The hovered-unit readout. Only ever holds numbers already on the
- * sheet, so it can never disagree with the drawing. */
-.dwg-chip {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
-  font-size: 0.625rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Hit targets are invisible and only listen once the sheet is finished
- * being drawn — hovering a cabinet that has not been drawn yet is the
- * one interaction that would make the section feel fake. */
-.dwg-hit {
-  fill: transparent;
-  stroke: none;
-  pointer-events: none;
-}
-
-[data-drawing][data-live] .dwg-hit {
-  pointer-events: all;
-  cursor: crosshair;
-}
-
-/* The single highlight the hit targets move around. */
-.dwg-highlight {
-  fill: color-mix(in srgb, var(--dwg-gold) 14%, transparent);
-  stroke: var(--dwg-gold);
-  stroke-width: var(--dwg-line);
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* The corner block: title, units note, readout. One column. */
-.dwg-note-dom {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
-  font-size: 0.625rem;
-  letter-spacing: 0.14em;
-  color: var(--dwg-bone-dim);
-  font-variant-numeric: tabular-nums;
-}
-
-/*
- * INSPECT MODE
- *
- * A typographic block with a gold rule, not a card — a bordered box on a
- * drawing reads as UI dropped on top of the sheet, where this reads as
- * an annotation belonging to it.
- */
-.dwg-spec {
-  max-width: 15rem;
-  transition: opacity 0.3s ease;
-}
-
-.dwg-spec-rule {
-  display: block;
-  width: 2.5rem;
-  height: 1px;
-  margin-bottom: 0.6rem;
-  background: var(--dwg-gold);
-}
-
-.dwg-spec-name {
-  font-size: 0.75rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--dwg-bone);
-}
-
-.dwg-spec-size,
-.dwg-spec-material {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
-  font-variant-numeric: tabular-nums;
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  margin-top: 0.35rem;
-}
-
-.dwg-spec-size {
-  color: var(--dwg-gold);
-}
-
-.dwg-spec-material {
-  color: var(--dwg-bone-dim);
-}
-
-/* The invitation during the hold. */
-.dwg-hint {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
-  font-size: 0.625rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--dwg-gold);
-}
-
-/*
- * THE PRINT HEAD — the gantry reality is laid down behind. A gold
- * hairline with a heat trail on the printed side and registration caps
- * at its ends.
- *
- * The wrapper is stage-sized and moved by a percentage translate of its
- * own width, so the sweep is transform-only — no `left`, no layout. The
- * finale tweens --print-x and the photograph's clip-path reads the same
- * variable, which is what welds the line to the print edge.
- *
- * Every glow here is a gradient, never a box-shadow: a shadow on an
- * element that moves every frame re-rasterises its blur region every
- * frame, and this line crosses the whole viewport.
- */
-.dwg-head {
-  transform: translateX(var(--print-x, 0%));
-}
-
-.dwg-head-line {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -1px;
-  width: 2px;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    var(--dwg-gold) 7%,
-    var(--dwg-gold) 93%,
-    transparent 100%
-  );
-}
-
-.dwg-head-halo {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -14px;
-  width: 28px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    color-mix(in srgb, var(--dwg-gold) 32%, transparent) 50%,
-    transparent
-  );
-}
-
-/* Heat on the side the work just happened on. */
-.dwg-head-trail {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: calc(100% + 1px);
-  width: clamp(70px, 12vw, 170px);
-  background: linear-gradient(
-    to left,
-    color-mix(in srgb, var(--dwg-gold) 18%, transparent),
-    transparent
-  );
-}
-
-.dwg-head-cap {
-  position: absolute;
-  left: -6px;
-  width: 12px;
-  height: 2px;
-  background: var(--dwg-gold);
-}
-
-.dwg-head-cap-t {
-  top: 12px;
-}
-
-.dwg-head-cap-b {
-  bottom: 12px;
-}
-
-/* A selected unit's own linework, brightened; everything else recedes. */
-[data-drawing][data-inspecting] #carcass,
-[data-drawing][data-inspecting] #dividers,
-[data-drawing][data-inspecting] #fronts,
-[data-drawing][data-inspecting] #countertop,
-[data-drawing][data-inspecting] #appliances,
-[data-drawing][data-inspecting] #details,
-[data-drawing][data-inspecting] #dims,
-[data-drawing][data-inspecting] #glow {
-  opacity: 0.25;
-  transition: opacity 0.35s ease;
-}
-
-/* Keyboard access: the units are real buttons, so they take the site's
- * focus ring — which on this surface has to be gold, not clay. */
-.dwg-hit:focus-visible {
-  outline: 2px solid var(--dwg-gold);
-  outline-offset: 3px;
-}
-
-/*
- * THE TRACE — the graphite study of the finale photograph, multiplied
- * onto the paper so only its pencil survives. White in the asset is
- * the sheet showing through; the blend is what lets one grayscale
- * image read as ink on whatever paper the theme is running.
- */
-.dwg-trace {
-  mix-blend-mode: multiply;
-}
-
-/*
- * The copy holds over the photograph once it arrives, and ink on a
- * photograph is a coin toss. A sand wash from the edge the copy sits on
- * — top on a phone, left on desktop — keeps it legible without putting a
- * box around it.
- */
-.dwg-scrim {
-  background: linear-gradient(
-    to bottom,
-    var(--sand) 0%,
-    color-mix(in srgb, var(--sand) 62%, transparent) 30%,
-    transparent 58%
-  );
-}
-
-@media (min-width: 1024px) {
-  .dwg-scrim {
-    background: linear-gradient(
-      to right,
-      var(--sand) 0%,
-      color-mix(in srgb, var(--sand) 58%, transparent) 32%,
-      transparent 60%
-    );
+  /* The menu is open: the page behind it stands still. */
+  html.menu-open {
+    overflow: hidden;
   }
-}
 
-/*
- * STATIC SHEET — the server's state, and the one a reduced-motion
- * visitor keeps. The stage stops being a sticky viewport and becomes an
- * ordinary block: the copy, the completed drawing, then the photograph
- * below it as a figure. The section still makes its argument — drawing,
- * then reality — with nothing moving.
- */
-/* The static sheet paints its own surface — the fixed wash is a scroll
- * effect, and there is no scroll here to drive it. */
-[data-drawing][data-static] {
-  background: var(--dwg-bg);
-}
-
-[data-drawing][data-static] [data-wash] {
-  display: none;
-}
-
-[data-drawing][data-static] [data-scroller] {
-  height: auto;
-}
-
-[data-drawing][data-static] [data-stage] {
-  position: static;
-  display: flex;
-  flex-direction: column;
-  height: auto;
-  overflow: visible;
-}
-
-[data-drawing][data-static] [data-photo] {
-  position: relative;
-  order: 3;
-  aspect-ratio: 16 / 10;
-  margin-top: 2.5rem;
-}
-
-[data-drawing][data-static] [data-copy] {
-  position: static;
-  order: 1;
-}
-
-[data-drawing][data-static] [data-sheet] {
-  position: static;
-  order: 2;
-  height: auto;
-  width: 100%;
-}
-
-/* The atmosphere is for the animated sheet; a static reader gets the
- * drawing on plain paper. */
-[data-drawing][data-static] [data-glow],
-[data-drawing][data-static] [data-grid],
-[data-drawing][data-static] [data-frame] {
-  display: none;
-}
-
-/* The three beats are stacked in one cell while animating; un-stack them
- * so a static reader gets a column instead of three overprinted lines. */
-[data-drawing][data-static] [data-beat] {
-  position: static;
-}
-
-[data-drawing][data-static] .dwg-readout {
-  display: none;
-}
-
-/* The print head is a scroll instrument; the static sheet has no
- * machine in it. The photograph's clip is only ever applied by GSAP,
- * so the static figure needs no undoing here. The trace belongs to the
- * print too — a static reader gets the drawing and the photograph,
- * not the seam between them. */
-[data-drawing][data-static] [data-head],
-[data-drawing][data-static] [data-trace] {
-  display: none;
-}
-
-/* =====================================================================
- * THE HEADER — a bar hung from the ceiling.
- * ---------------------------------------------------------------------
- * Flush to the top of the screen, inset from the sides, rounded only on
- * its bottom corners: it HANGS rather than floats, which is what lets
- * the hero plate run to the very top of the viewport and slide in
- * underneath it. Tall — half again the island it replaces — because a
- * bar carrying three things needs the air to read as deliberate.
- *
- * No top border: that edge is the edge of the screen, and a hairline
- * there reads as a rendering artefact.
- * ================================================================== */
-.header-island {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  min-height: 4.75rem;
-  padding: 0.85rem 0.85rem 0.85rem 1.5rem;
-  border-radius: 0 0 var(--radius-shell) var(--radius-shell);
-  background: var(--glass-tint);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  border: 1px solid var(--glass-border);
-  border-top: 0;
-  box-shadow:
-    inset 0 1px 0 var(--glass-highlight),
-    var(--glass-shadow);
-  transition: background-color 0.4s ease;
-}
-
-@media (min-width: 640px) {
-  .header-island {
-    min-height: 7rem;
-    padding: 1rem 1rem 1rem 2.25rem;
+  /* TYPE */
+  .u-display {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    text-wrap: balance;
   }
-}
 
-/*
- * WHERE YOU ARE — the live section label, dead centre. Absolute, so the
- * wordmark and the button keep their edge positions regardless of how
- * long a Georgian section name runs. Hidden on phones, where the bar
- * has no middle to spare.
- */
-.header-section-label {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 34%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  pointer-events: none;
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--header-fg-dim);
-  opacity: 1;
-  transition: opacity 0.4s ease;
-  display: none;
-}
-
-.header-section-label[data-empty] {
-  opacity: 0;
-}
-
-@media (min-width: 640px) {
-  .header-section-label {
-    display: block;
+  .u-bold {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+    text-wrap: balance;
   }
-}
 
-/*
- * THE NAV — routed pages only, in the label's centre slot and in its
- * voice: same monospace, same size, tighter tracking so five links fit.
- * Hidden on phones like the label; the footer carries the routes there.
- */
-.header-nav {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  display: none;
-  align-items: center;
-  gap: 1.4rem;
-  max-width: 52%;
-  white-space: nowrap;
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.header-nav-link {
-  color: var(--header-fg-dim);
-  transition: color 0.3s ease;
-}
-
-.header-nav-link:hover {
-  color: var(--header-fg);
-}
-
-.header-nav-link[aria-current="page"] {
-  color: var(--header-accent);
-}
-
-@media (min-width: 768px) {
-  .header-nav {
-    display: flex;
+  :lang(ka) .u-bold {
+    letter-spacing: -0.01em;
+    line-height: 1.08;
   }
-}
 
-/* Denser once the page has moved and there is content behind it. */
-[data-site-header][data-scrolled] .header-island {
-  background: var(--glass-tint-strong);
-}
+  /* Georgian words run long: the headline takes a wider measure at a
+   * smaller size, and the coloured tiles' words shrink to fit. */
+  :lang(ka) .hero-title {
+    max-width: 15ch;
+    font-size: clamp(2rem, 4.3vw, 4.2rem);
+  }
 
-/* The one action, solid. */
-.header-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.85rem 1.25rem;
-  border-radius: var(--radius-pill);
-  background: var(--invert);
-  color: var(--invert-fg);
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
+  :lang(ka) .tile-color {
+    font-size: 1rem;
+    letter-spacing: 0;
+  }
 
-@media (min-width: 640px) {
-  .header-cta {
-    padding: 0.95rem 1.6rem;
+  :lang(ka) .u-display {
+    letter-spacing: 0;
+  }
+
+  .u-meta {
     font-size: 0.8125rem;
-  }
-}
-
-.header-cta-arrow {
-  transition: transform 0.4s var(--ease-out);
-}
-
-@media (hover: hover) {
-  .header-cta:hover .header-cta-arrow {
-    transform: translateX(0.25rem);
-  }
-}
-
-/* =====================================================================
- * THE TWO OPENINGS
- * ---------------------------------------------------------------------
- * Both are in the served HTML and CSS shows one. That is what lets the
- * boot script in layout.tsx decide before the first paint, and what lets
- * the footer toggle swap them with an attribute instead of a re-render —
- * no flash, no hydration branch, and both openings in the markup a
- * crawler reads.
- *
- * The cost is that the hidden one is still mounted, so the walkthrough
- * guards its own frame decoding — see Hero.tsx.
- * ================================================================== */
-html[data-hero="editorial"] [data-hero-variant="cinematic"],
-html[data-hero="cinematic"] [data-hero-variant="editorial"] {
-  display: none;
-}
-
-/* Nothing stamped yet — a crawler, or JS that never ran. Show the
- * default (editorial) and hide the other, so the page is never both at
- * once. Must agree with HERO_DEFAULT in lib/hero.ts. */
-html:not([data-hero]) [data-hero-variant="cinematic"] {
-  display: none;
-}
-
-/*
- * THE HEADER OVER THE EDITORIAL OPENING.
- *
- * `[data-site-header]` defaults to sand-coloured type because it was
- * written to float over a charcoal walkthrough. The editorial opening is
- * the PAGE surface, so those same defaults put light type on light paper
- * and the nav all but disappeared. Ink from the start here, and the
- * scrolled state is unchanged — it was already correct.
- */
-/* The same treatment when NO variant has been stamped at all — a
- * crawler, or JavaScript that never ran. `data-hero` comes only from the
- * inline HERO_BOOT script, so without this the header kept its
- * sand-coloured default (written for the charcoal walkthrough) on a
- * light page: measured contrast 1.00, an invisible wordmark and nav.
- * globals.css already uses this fallback pattern for hero VISIBILITY;
- * the colour block simply lacked its twin. */
-html:not([data-hero]) [data-site-header]:not([data-scrolled]),
-html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) {
-  --header-fg: var(--ink);
-  --header-fg-dim: var(--ink-70);
-  --header-accent: var(--clay-deep);
-}
-
-/* The shadow exists to hold type legible over moving video. On paper it
- * is a smudge. */
-html:not([data-hero]) [data-site-header]:not([data-scrolled]) .header-fg,
-html:not([data-hero]) [data-site-header]:not([data-scrolled]) .header-fg-dim,
-html:not([data-hero]) [data-site-header]:not([data-scrolled]) .header-accent,
-html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-fg,
-html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-fg-dim,
-html[data-hero="editorial"] [data-site-header]:not([data-scrolled]) .header-accent {
-  text-shadow: none;
-}
-
-/* ---------------------------------------------------------------------
- * THE EDITORIAL OPENING — a spread, not a shot.
- * ------------------------------------------------------------------ */
-.hero-ed {
-  position: relative;
-  background: var(--surface);
-  padding-block: 7rem 3rem;
-}
-
-.hero-ed-grid {
-  display: grid;
-  gap: 2.5rem;
-  align-items: center;
-  padding-inline: var(--space-gutter);
-}
-
-@media (min-width: 1024px) {
-  .hero-ed {
-    /* Not `100svh`: the masthead has to be able to grow past the fold in
-     * Georgian, where the same sentence sets two lines longer. A minimum
-     * holds the composition without ever clipping the type. */
-    min-height: 100svh;
-    /* The plate is the full height of the screen, so the section
-     * cannot add padding around it. The copy column carries its own
-     * headroom for the island instead. */
-    padding-block: 0;
+    line-height: 1.5;
   }
 
-  .hero-ed-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
-    gap: 4rem;
+  /* The wordmark — a white pill, the twin of the black Menu pill, so it
+   * reads over anything it crosses. */
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    transition: background-color 0.3s var(--ease-out);
   }
-}
 
-/*
- * DELIBERATELY SMALLER THAN `--type-1`.
- *
- * The hero step is sized for a headline that owns a whole screen. Here
- * the type shares the screen with a photograph, and at the display step
- * three lines of Georgian filled the column edge to edge with no air
- * above or below — which is the opposite of what makes a spread read as
- * a spread. The reference this is modelled on gives its name about a
- * quarter of the canvas and lets the rest breathe.
- */
-.hero-ed-copy {
-  /* Clears the hanging bar above it. */
-  padding-top: 3.5rem;
-}
+  /* On the menu's own glass it is just the word. */
+  .logo-plain {
+    padding: 0;
+    background: transparent;
+    color: var(--color-paper);
+    font-size: 1.05rem;
+  }
 
-/*
- * The annotated brief: the title holds the upper-middle of the column
- * and the one line of copy moves DOWN into the empty space at the
- * bottom, where it reads as a signature rather than a subtitle. Flex
- * with an auto margin on the title centres it in whatever is left.
- */
-@media (min-width: 1024px) {
-  .hero-ed-copy {
+  /* -------------------------------------------------------------------
+   * CONTROLS
+   * ---------------------------------------------------------------- */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.5rem 0.75rem 0.5rem 0.95rem;
+    border-radius: 0.5rem;
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-size: 0.8125rem;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background-color 0.3s var(--ease-out),
+      color 0.3s var(--ease-out);
+  }
+
+  .pill-light {
+    background: var(--color-paper);
+    color: var(--color-ink);
+  }
+
+  @media (hover: hover) {
+    .pill:hover {
+      background: var(--color-orange);
+      color: var(--color-paper);
+    }
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 3.1rem;
+    padding: 0 1.4rem;
+    border-radius: 0.75rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    white-space: normal;
+    transition:
+      background-color 0.3s var(--ease-out),
+      color 0.3s var(--ease-out),
+      border-color 0.3s var(--ease-out),
+      transform 0.3s var(--ease-out);
+  }
+
+  .btn:active {
+    transform: scale(0.98);
+  }
+
+  .btn-ink {
+    background: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  .btn-orange {
+    background: var(--color-orange);
+    color: var(--color-paper);
+  }
+
+  .btn-grass {
+    background: var(--color-grass);
+    color: var(--color-ink);
+  }
+
+  .btn-line {
+    border: 1px solid var(--color-line);
+    color: var(--color-ink);
+  }
+
+  @media (hover: hover) {
+    .btn-ink:hover {
+      background: var(--color-ink-2);
+    }
+    .btn-orange:hover {
+      background: #d94c12;
+    }
+    .btn-grass:hover {
+      background: #97cc5c;
+    }
+    .btn-line:hover {
+      border-color: var(--color-ink);
+    }
+  }
+
+  /* A circle holding an arrow or a plus. */
+  .circle {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    color: inherit;
+    transition:
+      background-color 0.3s var(--ease-out),
+      color 0.3s var(--ease-out),
+      border-color 0.3s var(--ease-out),
+      transform 0.3s var(--ease-out);
+  }
+
+  .circle-fill {
+    border-color: transparent;
+    background: var(--color-sand);
+  }
+
+  @media (hover: hover) {
+    a:hover > .circle,
+    button:hover > .circle,
+    .circle:hover {
+      background: var(--color-orange);
+      border-color: var(--color-orange);
+      color: var(--color-paper);
+    }
+  }
+
+  /* A link with a chevron, ruled underneath — the panel links. It steps
+   * right on hover. */
+  .chev {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.55rem 0 0.6rem;
+    border-bottom: 1px solid currentColor;
+    font-size: 0.9375rem;
+    line-height: 1.3;
+    transition: padding-left 0.3s var(--ease-out);
+  }
+
+  .chev > svg {
+    flex-shrink: 0;
+    opacity: 0.8;
+  }
+
+  @media (hover: hover) {
+    .chev:hover {
+      padding-left: 0.5rem;
+    }
+  }
+
+  /* Underline that draws on hover. */
+  .u-link {
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size 0.4s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .u-link:hover {
+      background-size: 100% 1px;
+    }
+  }
+
+  /* -------------------------------------------------------------------
+   * HEADER — the wordmark and the Menu pill, over everything.
+   * ---------------------------------------------------------------- */
+  .hdr {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.25rem;
+    pointer-events: none;
+  }
+
+  .hdr > * {
+    pointer-events: auto;
+  }
+
+  @media (min-width: 640px) {
+    .hdr {
+      padding: 1.5rem 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hdr {
+      padding: 1.75rem 2.5rem;
+    }
+  }
+
+  /* -------------------------------------------------------------------
+   * RAIL — the page's own scrollbar (ScrollRail.tsx): a hairline down
+   * the right edge with an orange thumb, visible while the page moves
+   * and for a moment after, then gone. Draggable with a fine pointer.
+   * ---------------------------------------------------------------- */
+  .rail {
+    position: fixed;
+    top: calc(var(--header-h) + 0.75rem);
+    right: 0.5rem;
+    bottom: 1.5rem;
+    z-index: 50;
+    width: 2px;
+    border-radius: 999px;
+    background: rgb(127 127 127 / 0.28);
+    opacity: 0;
+    transition: opacity 0.5s var(--ease-out) 0.2s;
+    cursor: pointer;
+    touch-action: none;
+  }
+
+  /* A hand-sized hit area around a 2px line. */
+  .rail::before {
+    content: "";
+    position: absolute;
+    inset: -0.5rem -0.75rem;
+  }
+
+  .rail.is-live,
+  .rail:hover {
+    opacity: 1;
+    transition-delay: 0s;
+  }
+
+  .rail.is-off,
+  html.menu-open .rail {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .rail-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 20%;
+    border-radius: 999px;
+    background: var(--color-orange);
+    transform-origin: center;
+    transition: transform 0.1s linear;
+    will-change: transform;
+  }
+
+  .rail:hover .rail-thumb,
+  .rail.is-drag .rail-thumb {
+    box-shadow: 0 0 0 1px var(--color-orange);
+  }
+
+  .rail.is-drag .rail-thumb {
+    transition: none;
+  }
+
+  @media (min-width: 640px) {
+    .rail {
+      right: 0.75rem;
+    }
+  }
+
+  /* On phones it only reads; the finger scrolls the page itself. */
+  @media (pointer: coarse) {
+    .rail {
+      pointer-events: none;
+    }
+  }
+
+  /* -------------------------------------------------------------------
+   * MENU — black glass, sliding up from the bottom.
+   * ---------------------------------------------------------------- */
+  .menu {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
     display: flex;
     flex-direction: column;
-    height: 100svh;
-    padding-top: 11rem;
-    padding-bottom: 3.5rem;
+    color: var(--color-paper);
+    background: rgb(8 8 8 / 0.74);
+    -webkit-backdrop-filter: blur(26px) saturate(1.3);
+    backdrop-filter: blur(26px) saturate(1.3);
+    transform: translateY(100%);
+    visibility: hidden;
+    overflow-y: auto;
+    transition:
+      transform 0.65s var(--ease-out),
+      visibility 0s linear 0.65s;
   }
 
-  .hero-ed-title {
-    margin-block: auto;
-  }
-}
-
-.hero-ed-foot {
-  margin-top: 2.5rem;
-}
-
-@media (min-width: 1024px) {
-  .hero-ed-foot {
-    margin-top: 0;
-  }
-}
-
-.hero-ed-title {
-  font-size: clamp(2.1rem, 5.2vw, 4.5rem);
-  color: var(--fg);
-  max-width: 15ch;
-}
-
-/* One mask per line. `clip` rather than `hidden`: a hidden ancestor
- * would establish a scroll container and Lenis would inherit the
- * problem four sections later. */
-.hero-ed-mask {
-  display: block;
-  overflow: clip;
-  /* Descender headroom — the display line-height is tight enough that a
-   * "g" sits outside its line box and the mask would guillotine it. */
-  padding-bottom: 0.12em;
-  margin-bottom: -0.12em;
-}
-
-.hero-ed-sub {
-  margin-top: 1.75rem;
-  font-size: 1rem;
-  color: var(--ink-70);
-}
-
-.hero-ed-rule {
-  max-width: 22rem;
-}
-
-
-.hero-ed-frame {
-  position: relative;
-  overflow: clip;
-  aspect-ratio: 4 / 5;
-  border-radius: var(--radius-shell);
-  background: var(--surface-raised);
-}
-
-@media (min-width: 1024px) {
-  .hero-ed-frame {
-    /*
-     * FULL HEIGHT, AND OFF THE RIGHT EDGE.
-     *
-     * The plate now runs the whole screen and touches the right side of
-     * the viewport, so the header island floats ON it rather than above
-     * it. Only the left corners are rounded — a radius on an edge that
-     * is flush with the screen would leave a sliver of page showing
-     * through the corner.
-     *
-     * The grid gutter is cancelled on this side with a negative margin
-     * rather than by removing the padding, so the copy column keeps its
-     * own gutter and only the photograph escapes.
-     */
-    aspect-ratio: auto;
-    height: 100svh;
-    margin-right: calc(var(--space-gutter) * -1);
-    border-radius: var(--radius-shell) 0 0 var(--radius-shell);
-  }
-}
-
-/* ---------------------------------------------------------------------
- * THE OPENING SWITCH — in the footer, on the inverted band.
- * ------------------------------------------------------------------ */
-.hero-switch {
-  margin-bottom: 2.5rem;
-}
-
-.hero-switch-label {
-  display: block;
-  font-size: 0.6875rem;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  color: color-mix(in srgb, var(--invert-fg) 55%, transparent);
-}
-
-.hero-switch-group {
-  display: inline-flex;
-  margin-top: 1.25rem;
-  padding: 0.25rem;
-  border: 1px solid var(--line-invert);
-  border-radius: var(--radius-pill);
-}
-
-.hero-switch-option {
-  padding: 0.45rem 0.95rem;
-  border-radius: var(--radius-pill);
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  color: color-mix(in srgb, var(--invert-fg) 60%, transparent);
-}
-
-.hero-switch-option[aria-pressed="true"] {
-  background: color-mix(in srgb, var(--invert-fg) 12%, transparent);
-  color: var(--invert-fg);
-}
-
-@media (hover: hover) {
-  .hero-switch-option:not([aria-pressed="true"]):hover {
-    color: var(--invert-fg);
-  }
-}
-
-/* =====================================================================
- * THE BAND — a content section, floating on the page.
- * ---------------------------------------------------------------------
- * Inset from the gutter, raised half a step off the page surface, and
- * carrying the top rung of the radius ladder. Everything the visitor is
- * meant to READ sits in one of these; everything they are meant to WATCH
- * — the hero, the drawing, the showcase, the poster band — stays
- * full-bleed.
- *
- * That contrast is the point and it is why the whole page is NOT put in
- * a single shell the way the reference site does. Four of this site's
- * sections are pinned or sticky, and an ancestor that clips is exactly
- * how sticky positioning breaks. Cards for the reading, full bleed for
- * the cinema — better rhythm, a fraction of the risk.
- *
- * No `overflow: clip` here for the same reason. Nothing inside a band
- * paints into its corner; the media has its own, smaller radius.
- * ================================================================== */
-.u-band {
-  position: relative;
-  margin-inline: var(--space-gutter);
-  border-radius: var(--radius-shell);
-  background: var(--surface-raised);
-}
-
-/* On a phone the gutter is most of the screen, so a band inset by it
- * would be a column rather than a page. Half the inset, and a radius
- * that stays proportional to the width it is cornering. */
-/* Two bands in a row used to touch, corner to corner — which welds two
- * floating cards into one broken shape. The page surface shows through
- * the seam now. */
-.u-band + .u-band {
-  margin-top: var(--space-flow);
-}
-
-@media (max-width: 639px) {
-  .u-band {
-    margin-inline: calc(var(--space-gutter) * 0.6);
-    border-radius: calc(var(--radius-shell) * 0.62);
-  }
-}
-
-/* ---------------------------------------------------------------------
- * GLASS ON MEDIA — a label sitting on a photograph.
- *
- * The one place glass earns its cost. Over a flat surface it reads as a
- * grey box; over an image it reads as a pane, because there is something
- * behind it worth blurring.
- * ------------------------------------------------------------------ */
-/*
- * SELF-SUFFICIENT, and deliberately WITHOUT the blur.
- *
- * `.glass` carries the backdrop-filter, and this file's own budget is at
- * most two live glass surfaces per frame — a portfolio wall is twelve
- * tiles, so twelve blurred captions is twelve full-tile re-rasterisations
- * on a wall that is already drifting under a scrub. The tint alone at 44%
- * coal is legible over every photograph in the set.
- *
- * Pair it WITH `.glass` only where the count is small and the surface is
- * still: the two before/after chips, the lightbox chrome.
- */
-.glass--media {
-  border: 1px solid var(--glass-media-border);
-  border-radius: var(--radius-chip);
-  background: var(--glass-media-bg);
-  box-shadow: inset 0 1px 0 var(--glass-media-highlight);
-  color: var(--glass-media-fg);
-}
-
-/* Backdrop blur is unsupported on a handful of Android browsers, and the
- * fallback has to stay legible over a photograph rather than merely
- * on-palette — so it deepens instead of thinning out. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass--media {
-    background: color-mix(in srgb, var(--coal-0) 72%, transparent);
-  }
-}
-
-/*
- * A horizontally scrolling strip, fading at the edge it continues past.
- * Only below `sm`, where the overflow actually happens — above it the
- * row fits and a fade would be a gradient over nothing.
- */
-@media (max-width: 639px) {
-  .u-scroll-fade {
-    mask-image: linear-gradient(to right, #000 82%, transparent 100%);
-  }
-}
-
-/* =====================================================================
- * THE WALL — the portfolio's tiles.
- * ---------------------------------------------------------------------
- * A pinboard rather than a grid: rounded stock, tight gutters, and each
- * tile lifting off the surface under the pointer. The lift is what makes
- * a wall of photographs browsable — without it the eye has nothing to
- * land on and the whole thing reads as one texture.
- *
- * `translateY` and `box-shadow` only, and the shadow is pre-declared at
- * zero spread rather than added on hover, so the browser has already
- * built the layer and the first hover does not cost a paint.
- * ================================================================== */
-.tile {
-  transition:
-    transform 0.5s var(--ease-out),
-    box-shadow 0.5s var(--ease-out);
-  box-shadow: 0 0 0 0 transparent;
-}
-
-@media (hover: hover) {
-  .tile:hover,
-  .tile:focus-visible {
-    transform: translateY(-6px);
-    box-shadow: 0 22px 44px -18px
-      color-mix(in srgb, var(--coal-0) 42%, transparent);
-  }
-}
-
-/*
- * The caption is now an inset glass chip rather than a full-width scrim,
- * so it no longer has to match the tile's own corner — it sits inside it
- * at the next rung down the radius ladder. `.tile-caption` and the
- * gradient it carried are gone with it.
- */
-
-/*
- * THE FEED, ON A PHONE.
- *
- * The portfolio keeps its floating band on desktop, where the inset is
- * what makes it read as a card on the page. At phone width the same
- * inset leaves a two-column feed squeezed between two margins — so the
- * band goes full-bleed and square there, and the wall runs edge to edge
- * the way a feed is expected to.
- */
-@media (max-width: 639px) {
-  #projects.u-band {
-    margin-inline: 0;
-    border-radius: 0;
-  }
-}
-
-/* =====================================================================
- * THE LINE SYSTEM
- * ---------------------------------------------------------------------
- * The page's own furniture, drawn in the elevation's hand. Every one of
- * these is a hairline or a tick — nothing filled, nothing blurred — and
- * every one of them arrives by being RULED rather than by fading in.
- * See app/_components/LineWork.tsx for the components and ScrollFX's
- * `rule` / `ticks` effects for the motion.
- * ================================================================== */
-
-/*
- * `position: relative` here is for the nib, which is absolute inside it.
- *
- * CAUTION: this file is unlayered, so this declaration BEATS a Tailwind
- * `absolute` utility on the same element. Anything that needs a rule out
- * of flow must say so with an inline style — see <Sheet>, where using
- * the utility left four full-height guides stacked in normal flow and
- * put twelve thousand pixels of blank page under the footer.
- */
-.u-rule {
-  position: relative;
-  /* The nib rides along the rule and must stay inside it. Without
-   * this it travelled past the end and widened the document by
-   * 64px at 390. `clip` rather than `hidden`: it never creates a
-   * scroll container, so nothing sticky above it is affected. */
-  overflow: clip;
-  display: block;
-  height: var(--rule-weight);
-  width: 100%;
-  background: var(--line);
-  /* The start state is GSAP's, never CSS's — so the server's markup is
-   * a page whose lines are already ruled. */
-}
-
-.u-rule--v {
-  height: 100%;
-  width: var(--rule-weight);
-}
-
-/*
- * THE NIB. A short brass segment riding the head of the stroke.
- *
- * Hidden by default rather than by the effect: the effect only runs for
- * a visitor with JS and full motion, and a stray brass dash sitting on
- * every hairline is exactly the kind of thing a dead bundle leaves
- * behind. ScrollFX turns it on for the two cadence entries that use it.
- */
-.u-rule-tip {
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-  width: 14%;
-  visibility: hidden;
-  background: linear-gradient(
-    to right,
-    transparent,
-    var(--accent) 65%,
-    var(--accent)
-  );
-}
-
-.u-rule--v .u-rule-tip {
-  inset-block: auto;
-  inset-inline: 0;
-  top: 0;
-  width: auto;
-  height: 14%;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    var(--accent) 65%,
-    var(--accent)
-  );
-}
-
-.u-rule--invert {
-  background: var(--line-invert);
-}
-
-.u-rule--accent {
-  background: color-mix(in srgb, var(--accent) 55%, transparent);
-}
-
-/* Registration ticks. Same 2px corner mark the sheet carries, at the
- * scale of the page rather than of the drawing. */
-.u-tick {
-  position: absolute;
-  width: var(--tick-size);
-  height: var(--tick-size);
-  border-width: 1px;
-  border-color: var(--line-strong);
-}
-
-.u-sheet--invert .u-tick {
-  border-color: var(--line-invert);
-}
-
-/* ---------------------------------------------------------------------
- * SEAM — the annotated join between two sections.
- * ------------------------------------------------------------------ */
-.u-seam {
-  position: relative;
-  margin-inline: var(--space-gutter);
-}
-
-.u-seam-label {
-  position: absolute;
-  top: 0.75rem;
-  left: 0;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
-  font-size: var(--type-micro);
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--ink-40);
-}
-
-.u-seam-label--invert {
-  color: color-mix(in srgb, var(--invert-fg) 45%, transparent);
-}
-
-.u-seam-index {
-  color: var(--accent);
-}
-
-/* ---------------------------------------------------------------------
- * THE SECTION'S HAND-OFF TO THE PLANNER
- * ------------------------------------------------------------------ */
-.dwg-cta {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--dwg-gold);
-  border-color: var(--dwg-gold-line);
-}
-
-@media (hover: hover) {
-  .dwg-cta:hover {
-    background: var(--dwg-gold);
-    border-color: var(--dwg-gold);
-    color: var(--dwg-bg);
-  }
-}
-
-/* =====================================================================
- * THE PLANNER
- * ---------------------------------------------------------------------
- * One dark surface, the drawing's own material, because the drawing is
- * the subject of the page and the controls are the margin notes. Every
- * colour resolves through the --dwg-* tokens the interlude established,
- * so the planner and the section are demonstrably the same room.
- *
- * No cards. A configurator drifts towards a stack of bordered panels and
- * ends up looking like a settings screen; the rail here is separated by
- * hairlines and whitespace, the way a drawing's title block is.
- * ================================================================== */
-
-.plan-root {
-  position: relative;
-  min-height: 100svh;
-  background: var(--dwg-bg);
-  color: var(--dwg-bone);
-  padding-inline: var(--space-gutter);
-  padding-bottom: 5rem;
-}
-
-/* The page's dark surface has to reach past the planner's own box, or
- * an overscroll shows sand under a charcoal page. */
-html:has([data-planner]) body {
-  background: var(--dwg-bg);
-}
-
-.plan-masthead {
-  padding-top: 6.5rem;
-  padding-bottom: 2rem;
-  max-width: 46rem;
-}
-
-.plan-title {
-  margin-top: 0.75rem;
-  font-size: var(--type-2);
-  color: var(--dwg-bone);
-}
-
-.plan-lede {
-  margin-top: 1rem;
-  max-width: 44ch;
-  font-size: 0.9375rem;
-  line-height: 1.6;
-  color: var(--dwg-bone-soft);
-}
-
-.plan-grid {
-  display: block;
-}
-
-/*
- * MOBILE: the drawing sticks to the top and the controls run under it,
- * so the sheet is never off screen while it is being changed. That is
- * the whole proposition of the page — an edit you cannot see the result
- * of is a form field.
- */
-.plan-stage-col {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  margin-inline: calc(var(--space-gutter) * -1);
-  padding-top: 3.5rem;
-  background: var(--dwg-bg);
-}
-
-.plan-stage {
-  position: relative;
-  height: 42svh;
-  min-height: 15rem;
-  overflow: hidden;
-}
-
-.plan-sheet {
-  display: block;
-  height: 100%;
-  width: 100%;
-}
-
-@media (min-width: 1024px) {
-  .plan-root {
-    padding-inline: var(--space-gutter);
+  .menu[data-open="true"] {
+    transform: translateY(0);
+    visibility: visible;
+    transition: transform 0.65s var(--ease-out);
   }
 
-  .plan-grid {
-    display: grid;
-    grid-template-columns: 380px minmax(0, 1fr);
-    gap: 3.5rem;
-    align-items: start;
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .menu {
+      background: rgb(8 8 8 / 0.96);
+    }
   }
 
-  .plan-rail-col {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .plan-stage-col {
-    grid-column: 2;
-    grid-row: 1;
-    top: 5.5rem;
-    margin-inline: 0;
-    padding-top: 0;
-  }
-
-  .plan-stage {
-    height: min(76svh, 46rem);
-  }
-}
-
-/* ---------------------------------------------------------------------
- * THE RAIL
- * ------------------------------------------------------------------ */
-.plan-rail {
-  display: flex;
-  flex-direction: column;
-}
-
-.plan-step {
-  padding-block: 2rem;
-  border-top: 1px solid var(--dwg-glass-border);
-}
-
-.plan-step:first-child {
-  border-top: 0;
-  padding-top: 1.5rem;
-}
-
-.plan-step-head {
-  display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
-}
-
-.plan-step-index,
-.plan-label,
-.plan-unit,
-.plan-free,
-.plan-chip-w,
-.plan-stepper-value,
-.plan-editor-pos,
-.plan-palette-w,
-.plan-gap-label,
-.plan-chip-sm {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
-  font-variant-numeric: tabular-nums;
-}
-
-.plan-step-index {
-  font-size: 0.625rem;
-  letter-spacing: 0.22em;
-  color: var(--dwg-gold);
-}
-
-.plan-step-title {
-  font-family: var(--font-display), Georgia, serif;
-  font-size: 1.375rem;
-  letter-spacing: -0.01em;
-  color: var(--dwg-bone);
-}
-
-.plan-hint {
-  margin-top: 0.5rem;
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  color: var(--dwg-bone-dim);
-}
-
-.plan-step-body {
-  margin-top: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.125rem;
-}
-
-.plan-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.plan-label {
-  font-size: 0.625rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--dwg-bone-dim);
-}
-
-.plan-unit {
-  margin-left: 0.35em;
-  font-size: 0.625rem;
-  letter-spacing: 0.12em;
-  color: var(--dwg-bone-dim);
-}
-
-/* ---------------------------------------------------------------------
- * THE WALL SLIDER
- * ------------------------------------------------------------------ */
-.plan-wall-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.plan-range {
-  flex: 1 1 auto;
-  min-width: 0;
-  appearance: none;
-  height: 1.5rem;
-  background: transparent;
-  cursor: ew-resize;
-}
-
-.plan-range::-webkit-slider-runnable-track {
-  height: 1px;
-  background: var(--dwg-glass-border);
-}
-
-.plan-range::-moz-range-track {
-  height: 1px;
-  background: var(--dwg-glass-border);
-}
-
-.plan-range::-webkit-slider-thumb {
-  appearance: none;
-  width: 0.875rem;
-  height: 0.875rem;
-  margin-top: -0.4375rem;
-  border-radius: var(--radius-pill);
-  background: var(--dwg-gold);
-}
-
-.plan-range::-moz-range-thumb {
-  width: 0.875rem;
-  height: 0.875rem;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: var(--dwg-gold);
-}
-
-.plan-number {
-  display: inline-flex;
-  align-items: baseline;
-  flex: 0 0 auto;
-}
-
-.plan-number-input {
-  width: 4.5ch;
-  border: 0;
-  border-bottom: 1px solid var(--dwg-glass-border);
-  background: transparent;
-  padding-bottom: 0.2rem;
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
-  font-variant-numeric: tabular-nums;
-  font-size: 1.125rem;
-  color: var(--dwg-bone);
-  text-align: right;
-}
-
-/* The spinner duplicates the slider beside it and steals four characters
- * of a field that is exactly wide enough for its number. */
-.plan-number-input::-webkit-outer-spin-button,
-.plan-number-input::-webkit-inner-spin-button {
-  appearance: none;
-  margin: 0;
-}
-
-.plan-number-input {
-  appearance: textfield;
-}
-
-.plan-presets {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.plan-chip-sm {
-  padding: 0.4rem 0.75rem;
-  border: 1px solid var(--dwg-glass-border);
-  border-radius: var(--radius-pill);
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  color: var(--dwg-bone-soft);
-}
-
-.plan-chip-sm[aria-pressed="true"] {
-  border-color: var(--dwg-gold);
-  color: var(--dwg-gold);
-}
-
-/* ---------------------------------------------------------------------
- * ADVANCED
- * ------------------------------------------------------------------ */
-.plan-summary {
-  cursor: pointer;
-  font-size: 0.625rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--dwg-bone-dim);
-  list-style: none;
-}
-
-.plan-summary::-webkit-details-marker {
-  display: none;
-}
-
-.plan-summary::before {
-  content: "+ ";
-  color: var(--dwg-gold);
-}
-
-.plan-advanced[open] .plan-summary::before {
-  content: "âˆ’ ";
-}
-
-.plan-advanced-body {
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* ---------------------------------------------------------------------
- * STEPPER
- * ------------------------------------------------------------------ */
-.plan-stepper {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  border: 1px solid var(--dwg-glass-border);
-  border-radius: var(--radius-pill);
-  padding: 0.25rem;
-  width: fit-content;
-}
-
-.plan-stepper-value {
-  min-width: 6.5ch;
-  text-align: center;
-  font-size: 0.9375rem;
-  color: var(--dwg-bone);
-}
-
-.plan-nudge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--dwg-glass-border);
-  font-size: 1rem;
-  line-height: 1;
-  color: var(--dwg-bone);
-}
-
-.plan-nudge:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-@media (hover: hover) {
-  .plan-nudge:not(:disabled):hover {
-    border-color: var(--dwg-gold);
-    color: var(--dwg-gold);
-  }
-}
-
-/* ---------------------------------------------------------------------
- * TOGGLE
- * ------------------------------------------------------------------ */
-.plan-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  width: 100%;
-  text-align: left;
-}
-
-.plan-toggle:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.plan-toggle-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.plan-toggle-label {
-  font-size: 0.875rem;
-  color: var(--dwg-bone);
-}
-
-.plan-toggle-hint {
-  font-size: 0.75rem;
-  line-height: 1.4;
-  color: var(--dwg-bone-dim);
-}
-
-.plan-switch {
-  flex: 0 0 auto;
-  display: block;
-  width: 2.75rem;
-  height: 1.5rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--dwg-glass-border);
-  padding: 0.1875rem;
-  transition: border-color 0.35s var(--ease-out);
-}
-
-.plan-switch-knob {
-  display: block;
-  width: 1rem;
-  height: 1rem;
-  border-radius: var(--radius-pill);
-  background: var(--dwg-bone-dim);
-  transition:
-    transform 0.35s var(--ease-out),
-    background-color 0.35s var(--ease-out);
-}
-
-.plan-toggle[aria-checked="true"] .plan-switch {
-  border-color: var(--dwg-gold);
-}
-
-.plan-toggle[aria-checked="true"] .plan-switch-knob {
-  background: var(--dwg-gold);
-  transform: translateX(1.25rem);
-}
-
-/* ---------------------------------------------------------------------
- * THE MODULE STRIP — a plan of the run, drawn to scale.
- * ------------------------------------------------------------------ */
-.plan-strip-wrap {
-  position: relative;
-}
-
-.plan-strip {
-  display: flex;
-  align-items: stretch;
-  gap: 2px;
-  height: 4.25rem;
-}
-
-.plan-strip-cell {
-  display: flex;
-  min-width: 2.25rem;
-}
-
-.plan-strip-free {
-  border: 1px dashed var(--dwg-glass-border);
-  border-radius: 4px;
-  min-width: 0.5rem;
-}
-
-.plan-chip {
-  display: flex;
-  flex: 1 1 auto;
-  min-width: 0;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-  border: 1px solid var(--dwg-glass-border);
-  border-radius: 4px;
-  background: var(--dwg-glass-bg);
-  color: var(--dwg-bone-soft);
-  overflow: hidden;
-}
-
-.plan-chip-icon {
-  width: 1.375rem;
-  height: 1.375rem;
-  flex: 0 0 auto;
-}
-
-.plan-chip-w {
-  font-size: 0.625rem;
-  letter-spacing: 0.04em;
-}
-
-.plan-chip[aria-pressed="true"] {
-  border-color: var(--dwg-gold);
-  color: var(--dwg-gold);
-}
-
-.plan-chip[data-invalid] {
-  border-color: var(--alert);
-  color: var(--alert);
-}
-
-@media (hover: hover) {
-  .plan-chip:hover {
-    border-color: var(--dwg-bone-soft);
-    color: var(--dwg-bone);
-  }
-}
-
-/* Where the wall ends, once the run has gone past it. */
-.plan-wallmark {
-  position: absolute;
-  top: -0.4rem;
-  bottom: -0.4rem;
-  width: 1px;
-  background: var(--alert);
-}
-
-.plan-free {
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  color: var(--dwg-gold);
-}
-
-.plan-free[data-over] {
-  color: var(--alert);
-}
-
-/* ---------------------------------------------------------------------
- * THE SELECTED MODULE
- * ------------------------------------------------------------------ */
-.plan-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 1rem 0 0;
-  border-top: 1px solid var(--dwg-glass-border);
-}
-
-.plan-editor-head {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.plan-editor-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: var(--dwg-gold);
-}
-
-.plan-editor-name {
-  font-size: 0.875rem;
-  color: var(--dwg-bone);
-}
-
-.plan-editor-pos {
-  margin-left: auto;
-  font-size: 0.625rem;
-  letter-spacing: 0.14em;
-  color: var(--dwg-bone-dim);
-}
-
-.plan-editor-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.plan-move {
-  display: flex;
-  gap: 0.4rem;
-}
-
-/* ---------------------------------------------------------------------
- * ADD, AND THE PALETTE BEHIND IT
- * ------------------------------------------------------------------ */
-.plan-add {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1rem;
-  border: 1px dashed var(--dwg-glass-border);
-  border-radius: var(--radius-pill);
-  font-size: 0.8125rem;
-  color: var(--dwg-bone-soft);
-}
-
-.plan-add:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-@media (hover: hover) {
-  .plan-add:not(:disabled):hover {
-    border-color: var(--dwg-gold);
-    color: var(--dwg-gold);
-  }
-}
-
-.plan-palette {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.plan-palette-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0.85rem;
-  border: 1px solid var(--dwg-glass-border);
-  border-radius: 8px;
-  text-align: left;
-  color: var(--dwg-bone-soft);
-}
-
-.plan-palette-item:disabled {
-  opacity: 0.38;
-  cursor: not-allowed;
-}
-
-.plan-palette-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  flex: 0 0 auto;
-}
-
-.plan-palette-name {
-  font-size: 0.875rem;
-  color: var(--dwg-bone);
-}
-
-.plan-palette-w {
-  margin-left: auto;
-  font-size: 0.625rem;
-  letter-spacing: 0.1em;
-  color: var(--dwg-bone-dim);
-}
-
-@media (hover: hover) {
-  .plan-palette-item:not(:disabled):hover {
-    border-color: var(--dwg-gold);
-  }
-
-  .plan-palette-item:not(:disabled):hover .plan-palette-name,
-  .plan-palette-item:not(:disabled):hover .plan-palette-icon {
-    color: var(--dwg-gold);
-  }
-}
-
-/* ---------------------------------------------------------------------
- * BUTTONS
- * ------------------------------------------------------------------ */
-.plan-ghost,
-.plan-solid {
-  padding: 0.55rem 1rem;
-  border-radius: var(--radius-pill);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-}
-
-.plan-ghost {
-  border: 1px solid var(--dwg-glass-border);
-  color: var(--dwg-bone-soft);
-}
-
-.plan-solid {
-  background: var(--dwg-gold);
-  color: var(--dwg-bg);
-}
-
-@media (hover: hover) {
-  .plan-ghost:hover {
-    border-color: var(--dwg-bone-soft);
-    color: var(--dwg-bone);
-  }
-}
-
-/* ---------------------------------------------------------------------
- * THE INLINE CONFIRM — a consequence, not a dialog.
- * ------------------------------------------------------------------ */
-.plan-confirm {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  padding: 0.9rem 1rem;
-  border: 1px solid var(--alert-line);
-  border-radius: 8px;
-  background: var(--alert-wash);
-}
-
-.plan-confirm-copy {
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  color: var(--dwg-bone);
-}
-
-.plan-confirm-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-/* ---------------------------------------------------------------------
- * ISSUES
- * ------------------------------------------------------------------ */
-.plan-issues {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.plan-issue {
-  padding-left: 0.85rem;
-  border-left: 2px solid var(--alert);
-  font-size: 0.75rem;
-  line-height: 1.45;
-  color: var(--alert);
-}
-
-.plan-issue[data-severity="notice"] {
-  border-left-color: var(--dwg-gold-line);
-  color: var(--dwg-bone-dim);
-}
-
-/* ---------------------------------------------------------------------
- * THE UPPER STRIP, AND THE GAP A TALL UNIT LEAVES IN IT
- *
- * The gap is a CELL, not a missing one. A wall run that simply stops
- * over the tall unit looks like a rendering fault; a bay drawn as empty
- * and labelled with the reason is the drawing telling the truth about
- * itself. The label is the SceneNote the elevation prints, so the two
- * cannot disagree.
- * ------------------------------------------------------------------ */
-.plan-chip-upper {
-  min-height: 3rem;
-}
-
-.plan-upper-glyph {
-  font-size: 0.9rem;
-  line-height: 1;
-}
-
-.plan-gap {
-  display: flex;
-  flex: 1 1 auto;
-  min-width: 0;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem;
-  border: 1px dashed var(--dwg-gold-line);
-  border-radius: 4px;
-}
-
-.plan-gap-label {
-  font-size: 0.5rem;
-  line-height: 1.15;
-  letter-spacing: 0.04em;
-  text-align: center;
-  color: var(--dwg-gold);
-  overflow-wrap: anywhere;
-}
-
-/* ---------------------------------------------------------------------
- * THE FOOTNOTE
- * ------------------------------------------------------------------ */
-.plan-footnote {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--dwg-glass-border);
-  font-size: 0.75rem;
-  line-height: 1.5;
-  color: var(--dwg-bone-dim);
-}
-
-/* ---------------------------------------------------------------------
- * REDUCED MOTION
- * ------------------------------------------------------------------ */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .is-loading .intro-overlay,
-  .is-loading body {
-    animation: none !important;
-  }
-}
-
-
-/* ---------------------------------------------------------------------
- * THE FOOTER'S PREFERENCE ROW — language, theme, opening scene.
- * All three moved here when the header became an island.
- * ------------------------------------------------------------------ */
-.footer-prefs {
-  margin-bottom: 2.5rem;
-}
-
-.footer-prefs-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1.25rem;
-  padding: 0.25rem;
-  border: 1px solid var(--line-invert);
-  border-radius: var(--radius-pill);
-  color: var(--invert-fg);
-}
-
-.footer-prefs-rule {
-  display: block;
-  width: 1px;
-  height: 1rem;
-  background: var(--line-invert);
-}
-
-/* =====================================================================
- * THE GALLERY — an exhibition, not a grid.
- * ---------------------------------------------------------------------
- * Two rooms. The INDEX is a corridor of full-bleed chapters, one per
- * gallery, each a cover photograph with the title set into it. A
- * gallery page is an EXHIBIT: a full-viewport opening plate, then the
- * photographs hung in an editorial rhythm — widths and offsets cycled
- * by index, the same authored-table device PARALLAX.items uses —
- * with a monospace figure line under each print.
- *
- * Everything here is laid out in CSS and served in the HTML; the
- * GSAP layer (reveals, parallax, the lightbox) is enhancement on top.
- * ================================================================== */
-
-.gx-mono {
-  font-family:
-    ui-monospace, SFMono-Regular, Menlo, "Liberation Mono", monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-}
-
-/*
- * A gallery EXHIBIT opens on a full-viewport charcoal plate, and so
- * does the home page's PROLOGUE — the header needs its walkthrough
- * colours back over both; the editorial-opening override above this
- * block turns it ink otherwise. Keyed off server-rendered markers
- * (`data-gx-dark` on a gallery <main>, `data-prologue` on the home
- * opening), so it holds without JavaScript; the scrolled state is
- * untouched — by then the page below is paper.
- */
-[data-site-header]:not([data-scrolled]):has(~ main[data-gx-dark]),
-[data-site-header]:not([data-scrolled]):has(~ main [data-prologue]) {
-  --header-fg: var(--bone);
-  --header-fg-dim: color-mix(in srgb, var(--bone) 72%, transparent);
-  --header-accent: var(--brass-lit);
-}
-
-/* ------------------------------------------------------------------ *
- * GALLERY INDEX — a contents page: one hairlined row per gallery.
- * ------------------------------------------------------------------ */
-
-.gxi-row {
-  display: grid;
-  gap: 1.4rem;
-  padding-block: 2.6rem;
-  border-top: 1px solid var(--line);
-}
-
-li:last-child > .gxi-row {
-  border-bottom: 1px solid var(--line);
-}
-
-@media (min-width: 768px) {
-  .gxi-row {
-    grid-template-columns: 5fr 7fr;
+  .menu-bar {
+    display: flex;
     align-items: center;
-    gap: 3rem;
-    padding-block: 3.2rem;
+    justify-content: space-between;
+    padding: 1.25rem 1.25rem;
   }
-}
 
-.gxi-media {
-  position: relative;
-  display: block;
-  max-width: 30rem;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: var(--radius-media);
-  background: color-mix(in srgb, var(--ink) 6%, transparent);
-}
-
-.gxi-copy {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.7rem;
-}
-
-.gxi-num {
-  color: var(--ink-40);
-}
-
-.gxi-title {
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
-  color: var(--ink);
-}
-
-.gxi-desc {
-  max-width: 34rem;
-  font-size: 0.9375rem;
-  line-height: 1.65;
-  color: var(--ink-70);
-}
-
-.gxi-meta {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 0.4rem;
-  color: var(--ink-55);
-}
-
-.gxi-arrow {
-  display: inline-block;
-  transition: transform 0.4s var(--ease-out);
-}
-
-@media (hover: hover) {
-  .gxi-media img {
-    transition: transform 1.2s var(--ease-expo);
+  @media (min-width: 640px) {
+    .menu-bar {
+      padding: 1.5rem 2rem;
+    }
   }
-  .gxi-row:hover .gxi-media img {
-    transform: scale(1.04);
+
+  @media (min-width: 1024px) {
+    .menu-bar {
+      padding: 1.75rem 2.5rem;
+    }
   }
-  .gxi-row:hover .gxi-arrow {
-    transform: translateX(0.3rem);
+
+  /* Each piece rises in its turn once the sheet is up. */
+  .menu-item {
+    opacity: 0;
+    transform: translateY(18px);
   }
-}
 
-/* ------------------------------------------------------------------ *
- * CATALOGUE — contained plates with their stories beside them.
- * ------------------------------------------------------------------ */
-
-/* A hairline that borrows the text colour around it — serves the light
- * masthead and the dark prologue alike. */
-.gx-meta-rule {
-  display: inline-block;
-  width: 2.4rem;
-  height: 1px;
-  background: color-mix(in srgb, currentColor 55%, transparent);
-}
-
-.gxc-plate {
-  display: grid;
-  gap: 1.6rem;
-  padding-block: 3.2rem;
-  border-top: 1px solid var(--line);
-}
-
-/* Phones read plate-then-story. */
-.gxc-media {
-  order: -1;
-  min-width: 0;
-}
-
-@media (min-width: 768px) {
-  .gxc-plate {
-    grid-template-columns: 4fr 7fr;
-    align-items: center;
-    gap: 4rem;
-    padding-block: 4.2rem;
+  .menu[data-open="true"] .menu-item {
+    animation: menu-in 0.7s var(--ease-out) both;
+    animation-delay: calc(0.3s + var(--i, 0) * 0.05s);
   }
-  .gxc-media {
-    order: 0;
-    justify-self: end;
+
+  @keyframes menu-in {
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
-  /* Alternate sides down the page — the book's left and right plates. */
-  .gxc-plate:nth-of-type(even) {
-    grid-template-columns: 7fr 4fr;
-  }
-  .gxc-plate:nth-of-type(even) .gxc-copy {
-    order: 2;
-  }
-  .gxc-plate:nth-of-type(even) .gxc-media {
-    order: 1;
-    justify-self: start;
-  }
-}
 
-.gxc-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-}
-
-.gxc-num {
-  color: var(--ink-40);
-}
-
-.gxc-name {
-  max-width: 18ch;
-  font-size: clamp(1.25rem, 2vw, 1.7rem);
-  color: var(--ink);
-}
-
-.gxc-story {
-  max-width: 30rem;
-  font-size: 0.9375rem;
-  line-height: 1.7;
-  color: var(--ink-70);
-}
-
-/* The plate itself: natural proportion, compact cap, click to enlarge. */
-.gxc-frame {
-  display: block;
-  max-width: 100%;
-  padding: 0;
-  border: 0;
-  background: none;
-  border-radius: var(--radius-media);
-  overflow: hidden;
-  cursor: zoom-in;
-}
-
-.gxc-frame img {
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 62vh;
-}
-
-.gxc-frame:focus-visible {
-  outline: 2px solid var(--clay);
-  outline-offset: 4px;
-}
-
-/* The hand-off — one quiet row, not a plate. */
-.gxc-next {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  max-width: 64rem;
-  margin-inline: auto;
-  padding-block: 2.2rem;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.gxc-next-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-
-.gxc-next-title {
-  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
-  color: var(--ink);
-}
-
-.gxc-next-thumb {
-  position: relative;
-  display: none;
-  width: 11rem;
-  aspect-ratio: 4 / 3;
-  flex: none;
-  overflow: hidden;
-  border-radius: var(--radius-media);
-}
-
-@media (min-width: 640px) {
-  .gxc-next-thumb {
+  .menu-focus {
     display: block;
+    font-size: clamp(2.2rem, 5vw, 4.5rem);
+    line-height: 1.14;
+    transition:
+      opacity 0.35s var(--ease-out),
+      filter 0.35s var(--ease-out),
+      color 0.3s var(--ease-out);
   }
-}
 
-@media (hover: hover) {
-  .gxc-next-thumb img {
-    transition: transform 1.2s var(--ease-expo);
+  .menu-link {
+    display: block;
+    font-size: clamp(1.35rem, 2vw, 1.85rem);
+    line-height: 1.45;
+    transition:
+      opacity 0.35s var(--ease-out),
+      filter 0.35s var(--ease-out),
+      color 0.3s var(--ease-out);
   }
-  .gxc-next:hover .gxc-next-thumb img {
-    transform: scale(1.05);
+
+  @media (hover: hover) {
+    .menu-group:hover .menu-focus:not(:hover),
+    .menu-group:hover .menu-link:not(:hover) {
+      opacity: 0.4;
+    }
+    .menu-focus:hover,
+    .menu-link:hover {
+      color: var(--color-grass);
+    }
   }
-}
 
-/* ------------------------------------------------------------------ *
- * LIGHTBOX — the one dark room left in the gallery.
- * ------------------------------------------------------------------ */
-
-.gx-lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 3.5rem 1rem;
-  background: color-mix(in srgb, var(--coal-2) 96%, transparent);
-  color: var(--bone);
-}
-
-@media (min-width: 640px) {
-  .gx-lightbox {
-    padding: 4.5rem 5rem;
+  /* The link you chose stays; the others blur away as the page turns. */
+  .menu[data-leaving="true"] .menu-focus:not(.is-target),
+  .menu[data-leaving="true"] .menu-link:not(.is-target) {
+    opacity: 0.15;
+    filter: blur(6px);
   }
-}
 
-.gx-lightbox-stage {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-}
-
-.gx-lightbox-stage img {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-}
-
-.gx-lightbox-btn {
-  position: absolute;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 2.75rem;
-  min-height: 2.75rem;
-  padding: 0.4rem 0.9rem;
-  border: 1px solid color-mix(in srgb, var(--bone) 28%, transparent);
-  border-radius: var(--radius-pill);
-  color: var(--bone);
-  background: color-mix(in srgb, var(--coal-2) 55%, transparent);
-  transition:
-    border-color 0.3s ease,
-    background-color 0.3s ease;
-}
-
-.gx-lightbox-btn:hover {
-  border-color: color-mix(in srgb, var(--bone) 55%, transparent);
-}
-
-.gx-lightbox-close {
-  top: 1rem;
-  right: 1rem;
-}
-
-.gx-lightbox-prev {
-  left: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.gx-lightbox-next {
-  right: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.gx-lightbox-counter {
-  position: absolute;
-  top: 1.6rem;
-  left: 1.25rem;
-  color: color-mix(in srgb, var(--bone) 62%, transparent);
-}
-
-.gx-lightbox-caption {
-  position: absolute;
-  bottom: 1rem;
-  inset-inline: 1.25rem;
-  text-align: center;
-  font-size: 0.8125rem;
-  color: color-mix(in srgb, var(--bone) 70%, transparent);
-}
-
-/* =====================================================================
- * THE PROLOGUE — one shot, told slowly.
- * ---------------------------------------------------------------------
- * A full-bleed photograph; a short line and a monospace fix over it;
- * the workshop's name at poster size rising over the drift; a paper
- * veil that hands the page to the manifesto. The rest state is the
- * complete poster — shot, line and title all composed here — so
- * reduced-motion and no-JS visitors read a finished still.
- * ================================================================== */
-
-[data-prologue] {
-  position: relative;
-  background: var(--charcoal);
-}
-
-.pro-pin {
-  position: relative;
-  height: 100svh;
-  min-height: 40rem;
-  overflow: hidden;
-}
-
-.pro-shot {
-  position: absolute;
-  inset: -9% 0;
-  will-change: transform;
-}
-
-/* Standing legibility scrim… */
-.pro-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    color-mix(in srgb, var(--charcoal) 78%, transparent) 0%,
-    color-mix(in srgb, var(--charcoal) 26%, transparent) 42%,
-    color-mix(in srgb, var(--charcoal) 34%, transparent) 100%
-  );
-  pointer-events: none;
-}
-
-/* …and the layer the timeline deepens as the title arrives. */
-.pro-dim {
-  position: absolute;
-  inset: 0;
-  background: var(--charcoal);
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* The line — centred in the upper half, the way the reference floats
- * its one sentence over the shot. */
-.pro-line {
-  position: absolute;
-  inset-inline: 0;
-  top: 26svh;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.4rem;
-  padding-inline: 1.5rem;
-  text-align: center;
-  color: var(--bone);
-}
-
-.pro-line-text {
-  max-width: 24ch;
-  font-size: clamp(1.7rem, 3.8vw, 3.2rem);
-  line-height: 1.15;
-}
-
-.pro-place {
-  display: flex;
-  align-items: center;
-  gap: 1.1rem;
-  color: color-mix(in srgb, var(--bone) 62%, transparent);
-}
-
-/* The name — poster serif, bottom-left, its sub-line tracked wide in
- * the accent the way the wordmark wears it. */
-.pro-title {
-  position: absolute;
-  left: 4vw;
-  bottom: 7svh;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  color: var(--bone);
-}
-
-.pro-title-main {
-  font-size: clamp(4rem, 16vw, 14rem);
-  letter-spacing: 0.06em;
-  line-height: 0.9;
-}
-
-.pro-title-sub {
-  font-size: clamp(0.8rem, 1.6vw, 1.2rem);
-  letter-spacing: 0.55em;
-  padding-left: 0.5rem;
-  color: var(--brass-lit);
-}
-
-/* The paper veil — sand rising from the floor of the frame to meet the
- * manifesto's ground. */
-.pro-veil {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  background: linear-gradient(
-    to top,
-    var(--sand) 34%,
-    color-mix(in srgb, var(--sand) 55%, transparent) 62%,
-    transparent 100%
-  );
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-.pro-skip {
-  position: absolute;
-  right: 1.25rem;
-  bottom: 1.25rem;
-  z-index: 5;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.7rem 1.1rem;
-  border: 1px solid color-mix(in srgb, var(--bone) 30%, transparent);
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--coal-2) 45%, transparent);
-  color: var(--bone);
-  transition: border-color 0.3s ease;
-}
-
-.pro-skip:hover {
-  border-color: color-mix(in srgb, var(--bone) 60%, transparent);
-}
-
-.pro-cue {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  z-index: 4;
-  width: 1px;
-  height: 4rem;
-  background: color-mix(in srgb, var(--bone) 45%, transparent);
-  transform-origin: top;
-}
-
-/* =====================================================================
- * THE ROOMS — gallery doors floating over one photograph.
- * ================================================================== */
-
-.rooms {
-  background: var(--charcoal);
-}
-
-.rooms-backdrop {
-  position: absolute;
-  inset: 0;
-}
-
-.rooms-backdrop-inner {
-  position: absolute;
-  inset: -8% 0;
-}
-
-/* The wall must stay a wall: heavy scrim so the cards read as hung. */
-.rooms-backdrop::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: color-mix(in srgb, var(--charcoal) 78%, transparent);
-}
-
-.rooms-eyebrow {
-  color: color-mix(in srgb, var(--bone) 60%, transparent);
-}
-
-.room-card {
-  position: relative;
-  display: block;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: var(--radius-media);
-}
-
-.room-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    color-mix(in srgb, var(--charcoal) 74%, transparent) 0%,
-    color-mix(in srgb, var(--charcoal) 26%, transparent) 46%,
-    color-mix(in srgb, var(--charcoal) 30%, transparent) 100%
-  );
-  transition: background-color 0.5s ease;
-}
-
-.room-card-copy {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.6rem;
-  padding: 1.6rem;
-  text-align: center;
-  color: var(--bone);
-}
-
-.room-card-name {
-  font-size: clamp(1.5rem, 2.6vw, 2.3rem);
-}
-
-.room-card-line {
-  max-width: 24rem;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: color-mix(in srgb, var(--bone) 76%, transparent);
-}
-
-.room-card-meta {
-  margin-top: 0.5rem;
-  color: color-mix(in srgb, var(--bone) 62%, transparent);
-}
-
-@media (hover: hover) {
-  .room-card img {
-    transition: transform 1.4s var(--ease-expo);
+  /* -------------------------------------------------------------------
+   * PAGE TRANSITION — each page rises in.
+   *
+   * `backwards`, never `both`: a filling animation leaves an (identity)
+   * transform on the wrapper for good, and a transformed ancestor turns
+   * every position: fixed thing inside the page — the pinned strip, the
+   * hover preview, the catalogue viewer — into something fixed to the
+   * wrapper instead of the viewport.
+   * ---------------------------------------------------------------- */
+  .page-enter {
+    animation: page-in 0.7s var(--ease-out) backwards;
   }
-  .room-card:hover img {
-    transform: scale(1.05);
+
+  @keyframes page-in {
+    from {
+      opacity: 0;
+      transform: translateY(22px);
+    }
   }
-}
 
-/* =====================================================================
- * THE FOCUS RAIL — Combo 11, the expanding accordion carousel.
- * ---------------------------------------------------------------------
- * One wide, sharp panel holding the floor; the rest waiting as blurred
- * slivers. CSS owns every RESTING state (via [data-active]) so the
- * served HTML is already the finished composition — panel one wide and
- * captioned, the others narrow and quiet — and GSAP only ever plays
- * the journey between two states it can hand back to these rules.
- * The blur is a second, tiny-source image layer crossfaded by opacity;
- * no filter is ever animated.
- * ================================================================== */
-
-.focus {
-  display: flex;
-  flex-direction: column;
-  min-height: 100svh;
-  padding-top: 5rem;
-}
-
-@media (min-width: 640px) {
-  .focus {
-    padding-top: 7rem;
+  /* -------------------------------------------------------------------
+   * HERO — the headline on cream, the grid on sand.
+   * ---------------------------------------------------------------- */
+  .hero {
+    display: grid;
+    min-height: 100svh;
+    background: var(--color-cream);
   }
-}
 
-.focus-head {
-  margin-inline: auto;
-  width: 100%;
-  max-width: 88rem;
-  padding-inline: 1.5rem;
-  margin-bottom: 2.5rem;
-}
-
-@media (min-width: 640px) {
-  .focus-head {
-    padding-inline: 2.5rem;
+  @media (min-width: 1024px) {
+    .hero {
+      grid-template-columns: 1fr 1fr;
+    }
   }
-}
 
-.focus-viewport {
-  position: relative;
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  padding: 0 0.75rem 3.4rem;
-}
-
-.focus-track {
-  display: flex;
-  gap: 10px;
-  height: min(66svh, 42rem);
-  min-height: 22rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.focus-panel {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-media);
-  background: color-mix(in srgb, var(--ink) 8%, transparent);
-}
-
-/* Resting widths — the no-JS truth the tweens depart from and return
- * to. Flex does the sliver arithmetic; the active basis mirrors the
- * script's 45%. */
-@media (min-width: 768px) {
-  .focus-panel {
-    flex: 1 1 0%;
+  .hero-l {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 3rem;
+    padding: 6.5rem 1.25rem 2rem;
   }
-  .focus-panel[data-active] {
-    flex: 0 0 45%;
-  }
-}
 
-/* Phones: a swipe deck, one project per view, sharp only. */
-@media (max-width: 767px) {
-  .focus-track {
+  @media (min-width: 640px) {
+    .hero-l {
+      padding: 7rem 2rem 2.25rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-l {
+      padding: 7.5rem 2.5rem 2.5rem;
+    }
+  }
+
+  .hero-title {
+    max-width: 12ch;
+    font-size: clamp(2.5rem, 5.6vw, 5.5rem);
+    color: var(--color-ink-2);
+    opacity: 0;
+    animation: rise-in 1s var(--ease-out) 0.15s forwards;
+  }
+
+  .hero-note {
+    opacity: 0;
+    animation: rise-in 1s var(--ease-out) 0.6s forwards;
+  }
+
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .hero-r {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-sand);
+  }
+
+  /* Phone: one scrolling row of tiles. */
+  .hgrid {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1.25rem;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
     scrollbar-width: none;
   }
-  .focus-track::-webkit-scrollbar {
+
+  .hgrid::-webkit-scrollbar {
     display: none;
   }
-  .focus-panel {
-    flex: none;
-    width: calc(100vw - 1.5rem);
-    scroll-snap-align: center;
-  }
-}
 
-.focus-img {
-  position: absolute;
-  inset: 0;
-}
-
-/* Layer opacities at rest; the transition tweens between them. */
-.focus-img-sharp {
-  opacity: 0;
-  transition: none;
-}
-
-.focus-panel[data-active] .focus-img-sharp {
-  opacity: 1;
-}
-
-.focus-img-blur {
-  opacity: 1;
-}
-
-.focus-panel[data-active] .focus-img-blur {
-  opacity: 0;
-}
-
-/* Phones never blur — the sharp layer always shows. */
-@media (max-width: 767px) {
-  .focus-img-sharp {
-    opacity: 1 !important;
-  }
-  .focus-img-blur {
-    opacity: 0 !important;
-  }
-}
-
-.focus-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    color-mix(in srgb, var(--charcoal) 70%, transparent) 0%,
-    color-mix(in srgb, var(--charcoal) 16%, transparent) 46%,
-    color-mix(in srgb, var(--charcoal) 28%, transparent) 100%
-  );
-  pointer-events: none;
-}
-
-.focus-copy {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 1.5rem;
-  color: var(--bone);
-  pointer-events: none;
-}
-
-@media (min-width: 768px) {
-  .focus-copy {
-    padding: 2.2rem 2.4rem;
-  }
-}
-
-/* Sliver text exists for the crawler and waits at zero for the swap. */
-@media (min-width: 768px) {
-  .focus-panel:not([data-active]) .focus-copy > * {
+  .tile {
+    position: relative;
+    flex: 0 0 58vw;
+    aspect-ratio: 1 / 1.2;
+    overflow: hidden;
+    scroll-snap-align: start;
+    background: var(--color-cream);
     opacity: 0;
+    animation: rise-in 0.9s var(--ease-out) both;
+    animation-delay: calc(0.25s + var(--i, 0) * 0.08s);
   }
-}
 
-/* Serif italic display per the reference — upright for Georgian, which
- * has no italic tradition (same stance as .u-display's ka override). */
-.focus-name {
-  max-width: 14ch;
-  font-size: clamp(1.6rem, 2.9vw, 2.7rem);
-  font-style: italic;
-}
+  .tile img {
+    object-fit: cover;
+    transition: transform 1s var(--ease-out);
+  }
 
-html[lang="ka"] .focus-name {
-  font-style: normal;
-}
+  @media (hover: hover) {
+    .tile:hover img {
+      transform: scale(1.04);
+    }
+  }
 
-.focus-view {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-block: auto;
-  align-self: center;
-}
+  /* A coloured tile that names a chapter. */
+  .tile-color {
+    display: flex;
+    align-items: flex-end;
+    padding: 1.1rem 1.2rem;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    transition: background-color 0.3s var(--ease-out);
+  }
 
-.focus-spark {
-  color: var(--clay);
-  font-size: 0.8rem;
-}
+  /* Desktop: the staggered scatter — two, three, two — bleeding off the
+   * right edge the way it does on the reference. */
+  @media (min-width: 1024px) {
+    .hgrid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 11.2vw));
+      grid-auto-rows: calc(11.2vw * 1.2);
+      gap: 1.1vw;
+      padding: 7.5rem 0 3rem 3.6vw;
+      overflow: visible;
+    }
+    .tile {
+      flex: none;
+      aspect-ratio: auto;
+      width: 100%;
+      height: 100%;
+    }
+    .tile:nth-child(1) {
+      grid-area: 1 / 1;
+    }
+    .tile:nth-child(2) {
+      grid-area: 1 / 2;
+    }
+    .tile:nth-child(3) {
+      grid-area: 2 / 2;
+    }
+    .tile:nth-child(4) {
+      grid-area: 2 / 3;
+    }
+    .tile:nth-child(5) {
+      grid-area: 2 / 4;
+    }
+    .tile:nth-child(6) {
+      grid-area: 3 / 1;
+    }
+    .tile:nth-child(7) {
+      grid-area: 3 / 2;
+    }
+  }
 
-.focus-foot {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
+  /* -------------------------------------------------------------------
+   * STRIP — the chapters as a horizontal run of panels. Desktop pins the
+   * section and scrolling drives the run (FocusStrip.tsx); phones swipe.
+   * ---------------------------------------------------------------- */
+  .strip {
+    position: relative;
+    background: var(--color-paper);
+    /* The run is wider than the page; it is clipped here, never the
+     * page's own width. */
+    overflow-x: clip;
+  }
 
-.focus-meta {
-  flex: none;
-  color: color-mix(in srgb, var(--bone) 68%, transparent);
-}
+  /* A white band above the run: the label, a hint, and a short line that
+   * shows how far along the run is (--p, 0..1, set by FocusStrip.tsx). */
+  .strip-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    height: var(--strip-head);
+    padding: 0 1.25rem 1.25rem;
+  }
 
-.focus-divider {
-  display: block;
-  width: 1px;
-  height: 2.2rem;
-  flex: none;
-  background: color-mix(in srgb, var(--bone) 38%, transparent);
-}
+  @media (min-width: 640px) {
+    .strip-head {
+      padding: 0 2rem 1.5rem;
+    }
+  }
 
-.focus-desc {
-  max-width: 26rem;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: color-mix(in srgb, var(--bone) 82%, transparent);
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+  @media (min-width: 1024px) {
+    .strip-head {
+      padding: 0 2.5rem 1.75rem;
+    }
+  }
 
-/* The hit layer: every panel is its link — hover opens, click travels. */
-.focus-hit {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border: 0;
-  background: none;
-  cursor: pointer;
-}
+  .strip-hint {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--color-mute);
+  }
 
-.focus-hit:focus-visible {
-  outline: 2px solid var(--clay);
-  outline-offset: -4px;
-  border-radius: var(--radius-media);
-}
+  .strip-bar {
+    position: relative;
+    width: 5rem;
+    height: 2px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--color-line);
+  }
 
-/*
- * The cursor-trailing "View project" chip — the reference's floating
- * Learn More. Lives once per rail, positioned by quickTo; only the
- * desktop-motion context ever raises it.
- */
-.focus-float {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding-left: 0.9rem;
-  transform: translate(-50%, -140%);
-  white-space: nowrap;
-  color: var(--bone);
-  text-shadow: 0 1px 14px color-mix(in srgb, var(--coal-2) 65%, transparent);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  will-change: transform;
-}
+  .strip-bar::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 1.5rem;
+    border-radius: 999px;
+    background: var(--color-ink);
+    transform: translateX(calc(var(--p, 0) * 3.5rem));
+  }
 
-/* While the cursor chip is live, the in-panel CTA stands down. */
-.focus-cursor-on .focus-view {
-  display: none;
-}
+  .strip-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
 
-/* Position counter — the phone deck's orientation; the accordion
- * speaks through the cursor instead. */
-.focus-counter {
-  position: absolute;
-  left: 1.4rem;
-  bottom: 0.8rem;
-  color: var(--ink-55);
-}
-
-@media (min-width: 768px) {
-  .focus-counter {
+  .strip-track::-webkit-scrollbar {
     display: none;
   }
-}
 
-/* =====================================================================
- * THE PANORAMA RAIL — Combo 12, the pinned horizontal journey.
- * ---------------------------------------------------------------------
- * The BASE layout below is a vertical page: title block, three cards,
- * quote — each with its scene as a cover image. That is what phones,
- * reduced motion, crawlers and no-JS visitors read. The horizontal,
- * layered composition exists only under .pano-on, a class the GSAP
- * desktop-motion context adds — so the wide tracks can never strand a
- * visitor whose environment cannot drive them. Only transforms move
- * on the scrub; the cards' frost is a translucent SOLID (no backdrop
- * filter — it would repaint every scrubbed frame).
- * ================================================================== */
-
-.pano {
-  position: relative;
-  background: var(--charcoal);
-  color: var(--bone);
-  overflow: hidden;
-}
-
-.pano-bg {
-  display: none;
-}
-
-.pano-track {
-  display: flex;
-  flex-direction: column;
-}
-
-.pano-stop {
-  position: relative;
-  padding: 4.5rem 1.5rem;
-}
-
-.pano-mbg {
-  position: absolute;
-  inset: 0;
-}
-
-.pano-mbg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: color-mix(in srgb, var(--charcoal) 64%, transparent);
-}
-
-.pano-head {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 72svh;
-}
-
-.pano-head > *,
-.pano-quote > * {
-  position: relative;
-  z-index: 1;
-}
-
-.pano-eyebrow {
-  color: color-mix(in srgb, var(--bone) 62%, transparent);
-}
-
-.pano-giant {
-  margin-top: 1rem;
-  max-width: 10ch;
-  font-size: clamp(2.8rem, 11vw, 12.5rem);
-  color: var(--bone);
-  z-index: 0;
-}
-
-.pano-intro {
-  margin-top: 1.6rem;
-  max-width: 24rem;
-  font-size: 0.9375rem;
-  line-height: 1.65;
-  color: color-mix(in srgb, var(--bone) 80%, transparent);
-}
-
-/* The floating card: frosted edge = light border + diffuse shadow on a
- * translucent solid. */
-.pano-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-  width: min(100%, 42rem);
-  margin: 2.5rem auto;
-  padding: 2rem 1.6rem 1.4rem;
-  border: 1px solid color-mix(in srgb, var(--bone) 20%, transparent);
-  border-radius: var(--radius-media);
-  background: color-mix(in srgb, var(--coal-1) 86%, transparent);
-  box-shadow: 0 34px 90px color-mix(in srgb, var(--coal-2) 52%, transparent);
-  overflow: hidden;
-}
-
-.pano-card-title {
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
-}
-
-.pano-card-desc {
-  max-width: 30rem;
-  margin-inline: auto;
-  text-align: center;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: color-mix(in srgb, var(--bone) 80%, transparent);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.pano-card-view {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.55rem;
-}
-
-.pano-card-photo {
-  position: relative;
-  display: block;
-  height: 16rem;
-  margin-inline: -1.6rem;
-  overflow: hidden;
-}
-
-.pano-card-meta {
-  text-align: center;
-  padding-top: 0.4rem;
-  color: color-mix(in srgb, var(--bone) 64%, transparent);
-}
-
-.pano-hit {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-}
-
-.pano-hit:focus-visible {
-  outline: 2px solid var(--clay);
-  outline-offset: -4px;
-  border-radius: var(--radius-media);
-}
-
-.pano-quote {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.6rem;
-  min-height: 64svh;
-  margin: 0;
-  text-align: center;
-}
-
-.pano-quote-mark {
-  font-size: 0.8rem;
-  letter-spacing: 0.5em;
-  color: color-mix(in srgb, var(--bone) 60%, transparent);
-}
-
-.pano-quote-logo {
-  opacity: 0.8;
-}
-
-.pano-quote-text {
-  max-width: 24ch;
-  font-size: clamp(1.7rem, 4vw, 3.4rem);
-  font-style: italic;
-  line-height: 1.2;
-}
-
-html[lang="ka"] .pano-quote-text {
-  font-style: normal;
-}
-
-.pano-quote-attr {
-  color: color-mix(in srgb, var(--bone) 66%, transparent);
-}
-
-.pano-rule {
-  display: none;
-}
-
-/* ------------------------------------------------------------------ *
- * The journey — desktop + motion + JS.
- * ------------------------------------------------------------------ */
-
-.pano-on .pano-pin {
-  position: relative;
-  height: 100svh;
-  min-height: 40rem;
-  overflow: hidden;
-}
-
-.pano-on .pano-bg {
-  display: flex;
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 300vw;
-  height: 100%;
-  will-change: transform;
-}
-
-.pano-scene {
-  position: relative;
-  flex: none;
-  width: 100vw;
-  height: 100%;
-}
-
-.pano-scene::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: color-mix(in srgb, var(--charcoal) 38%, transparent);
-}
-
-.pano-on .pano-track {
-  position: absolute;
-  inset: 0 auto 0 0;
-  flex-direction: row;
-  align-items: center;
-  gap: 15vw;
-  width: 425vw;
-  height: 100%;
-  will-change: transform;
-}
-
-.pano-on .pano-stop {
-  flex: none;
-  margin: 0;
-  padding: 0;
-}
-
-.pano-on .pano-mbg {
-  display: none;
-}
-
-.pano-on .pano-head {
-  width: 100vw;
-  height: 100%;
-  padding-inline: 6vw;
-  min-height: 0;
-}
-
-/* The intro overlaps the giant title from above-right — the paragraph
- * sits ON the type, per the reference. */
-.pano-on .pano-intro {
-  align-self: flex-end;
-  margin-top: -3.2em;
-  text-align: right;
-  z-index: 1;
-}
-
-.pano-on .pano-card {
-  width: 55vw;
-  max-width: none;
-  height: 80vh;
-  max-height: 44rem;
-  margin: 0;
-  padding: 2.4rem 2.2rem 1.6rem;
-}
-
-.pano-on .pano-card-photo {
-  height: auto;
-  flex: 1 1 55%;
-  min-height: 45%;
-  margin-inline: -2.2rem;
-  margin-top: 0.4rem;
-}
-
-.pano-on .pano-quote {
-  width: 100vw;
-  height: 100%;
-  min-height: 0;
-  padding-inline: 6vw;
-}
-
-.pano-on .pano-rule {
-  display: block;
-  position: absolute;
-  bottom: 1.2rem;
-  left: 6vw;
-  right: 6vw;
-  height: 2px;
-  background: color-mix(in srgb, var(--bone) 42%, transparent);
-  transform-origin: left;
-  z-index: 2;
-}
-
-/* =====================================================================
- * THE WALL — SideGallery's two modes, one DOM.
- * ---------------------------------------------------------------------
- * Default (phones, reduced motion, no JS): a native horizontal
- * scroller with proximity snap and no visible scrollbar — the swipe
- * carousel. With `.wall-on` (desktop + motion + JS, added by the GSAP
- * context): overflow is released and the track rides a transform under
- * a pinned section instead. Nothing is duplicated, nothing hidden.
- * ================================================================== */
-
-.wall-scroller {
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
-}
-
-.wall-scroller::-webkit-scrollbar {
-  display: none;
-}
-
-.wall-panel {
-  scroll-snap-align: center;
-}
-
-.wall-on .wall-scroller {
-  overflow: visible;
-  scroll-snap-type: none;
-}
-
-/* The walk's progress hairline — exists only in the pinned mode. */
-.wall-rule {
-  display: none;
-}
-
-.wall-on .wall-rule {
-  display: block;
-  position: absolute;
-  left: var(--space-gutter);
-  right: var(--space-gutter);
-  bottom: 2.5rem;
-  height: 1px;
-  background: color-mix(in srgb, var(--bone) 38%, transparent);
-  transform: scaleX(0);
-  transform-origin: left center;
-}
-
-/* The walk's odometer — big ghost figures, pinned mode only. */
-.wall-count {
-  display: none;
-}
-
-.wall-on .wall-count {
-  display: block;
-  position: absolute;
-  left: var(--space-gutter);
-  bottom: 3.25rem;
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  letter-spacing: 0.08em;
-  color: color-mix(in srgb, var(--bone) 85%, transparent);
-}
-
-.wall-count-total {
-  font-size: 0.55em;
-  color: color-mix(in srgb, var(--bone) 40%, transparent);
-}
-
-/* =====================================================================
- * THE REEL — ServicesReel's two modes, one DOM.
- * ---------------------------------------------------------------------
- * Default (no JS, reduced motion, crawlers): an ordinary vertical
- * section — video poster, meta line, title, the four services as a
- * plain list, then the statement and the link. With `.reel-on` (added
- * by the GSAP context): the same elements become absolutely-composed
- * layers over the RUNNING footage under one pinned scrub — the title
- * panel from the right, the stepped card slider, the light close
- * sweeping up. Nothing is duplicated, nothing hidden from the server
- * HTML.
- * ================================================================== */
-
-
-.reel-on .reel-pin {
-  min-height: 100svh;
-  overflow: clip;
-}
-
-.reel-video-wrap {
-  position: relative;
-}
-
-.reel-on .reel-video-wrap {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-
-.reel-video {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-}
-
-.reel-on .reel-video {
-  height: 100%;
-  aspect-ratio: auto;
-}
-
-/* Standing scrim so type always reads over the footage. */
-.reel-scrim {
-  display: none;
-}
-
-.reel-on .reel-scrim {
-  display: block;
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--charcoal) 28%, transparent),
-    color-mix(in srgb, var(--charcoal) 55%, transparent)
-  );
-}
-
-
-/* ---------------------------------------------------------------------
- * BEAT I — the meta line and the title, type straight on the film.
- * ------------------------------------------------------------------ */
-.reel-meta {
-  display: block;
-  padding: 3rem var(--space-gutter) 0;
-  opacity: 0.6;
-}
-
-.reel-on .reel-meta {
-  position: absolute;
-  z-index: 2;
-  left: var(--space-gutter);
-  bottom: calc(50% + clamp(3.5rem, 11vh, 7rem));
-  max-width: 34ch;
-  padding: 0;
-  opacity: 0.7;
-  color: var(--bone);
-}
-
-.reel-title {
-  padding: 1rem var(--space-gutter) 0;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  line-height: 1;
-}
-
-.reel-on .reel-title {
-  position: absolute;
-  z-index: 2;
-  left: var(--space-gutter);
-  right: var(--space-gutter);
-  top: 50%;
-  margin: -0.5em 0 0;
-  padding: 0;
-  font-size: clamp(3rem, 9vw, 8rem);
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
-}
-
-/* ---------------------------------------------------------------------
- * BEAT II — the four terms.
- * Fallback: the stage is a plain block and the slides stack as a list.
- * ------------------------------------------------------------------ */
-.reel-stage {
-  position: relative;
-  padding: 2rem var(--space-gutter) 3rem;
-}
-
-.reel-on .reel-stage {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  padding: 0;
-  pointer-events: none;
-}
-
-.reel-slide {
-  padding: 2rem 0;
-  border-top: 1px solid color-mix(in srgb, var(--bone) 18%, transparent);
-}
-
-/* Full-height flex column centring, NOT a translateY(-50%) transform:
- * GSAP animates this element's transform, and a tween would overwrite
- * the centring the moment the scrub touched it. */
-.reel-on .reel-slide {
-  position: absolute;
-  left: var(--space-gutter);
-  right: var(--space-gutter);
-  top: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0;
-  border: none;
-}
-
-.reel-slide-term {
-  font-size: clamp(1.25rem, 3.2vh, 1.75rem);
-}
-
-.reel-on .reel-slide-term {
-  font-size: clamp(2.4rem, 7vw, 6rem);
-  line-height: 1.05;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
-}
-
-.reel-slide-line {
-  margin-top: 0.75rem;
-  max-width: 44ch;
-  font-size: 0.9rem;
-  line-height: 1.65;
-  opacity: 0.75;
-}
-
-.reel-on .reel-slide-line {
-  margin-top: clamp(1.25rem, 3.5vh, 2.25rem);
-  max-width: 40ch;
-  font-size: clamp(0.95rem, 1.9vh, 1.05rem);
-  opacity: 0.85;
-}
-
-/* The dash rail and counter — pinned mode only. They hold the same
- * spot near the bottom while the words swap above them. */
-.reel-dashes,
-.reel-count {
-  display: none;
-}
-
-.reel-on .reel-dashes {
-  display: flex;
-  position: absolute;
-  left: var(--space-gutter);
-  bottom: clamp(5rem, 12vh, 7.5rem);
-  width: min(24rem, 50vw);
-  gap: 0.75rem;
-}
-
-.reel-dash {
-  height: 1px;
-  flex: 1;
-  background: color-mix(in srgb, var(--bone) 60%, transparent);
-  transform: scaleX(0);
-  transform-origin: left center;
-}
-
-.reel-on .reel-count {
-  display: flex;
-  position: absolute;
-  left: var(--space-gutter);
-  bottom: clamp(2.5rem, 6vh, 4rem);
-  width: min(24rem, 50vw);
-  justify-content: space-between;
-  align-items: baseline;
-  color: var(--bone);
-}
-
-/* ---------------------------------------------------------------------
- * BEAT III — the close, type on film.
- * ------------------------------------------------------------------ */
-.reel-close {
-  padding: 3rem var(--space-gutter) 4rem;
-}
-
-/* Same flex centring as the slides, for the same transform reason. */
-.reel-on .reel-close {
-  position: absolute;
-  z-index: 4;
-  left: var(--space-gutter);
-  right: var(--space-gutter);
-  top: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 0;
-}
-
-/* Phones: the terms and the close keep the gutters; only the type
- * steps down, which the clamps already do. */
-
-/* =====================================================================
- * THE VOYAGE — the journey construction that closes the home page.
- * ---------------------------------------------------------------------
- * Modelled on the reference's flight-map sequence: a drift band of ghost
- * route-codes, a coordinates header, then a dark canvas where a drawn
- * route travels from the workshop to the visitor's home, calling at the
- * questions everyone asks. The route itself is an SVG path built at
- * runtime through the measured waypoint dots (Voyage.tsx); everything
- * here is the material it is drawn in.
- * ================================================================== */
-
-/* The small tracked monospace label — the voyage's craft-data voice. */
-.vg-mono {
-  font-family: var(--font-mono);
-  font-size: 0.625rem;
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
-  line-height: 1.6;
-}
-
-/* ---------------------------------------------------------------------
- * The drift band. The backdrop bleeds past the frame so its parallax
- * travel never shows an edge — same trick as the rooms backdrop.
- * ------------------------------------------------------------------ */
-.vg-drift-backdrop {
-  position: absolute;
-  inset: -12% 0;
-}
-
-.vg-drift-scrim {
-  position: absolute;
-  inset: 0;
-  background: color-mix(in srgb, var(--coal-0) 34%, transparent);
-}
-
-/* The ghost route-codes. Decorative texture, not copy — bone at a
- * transparency where the letters read as atmosphere over the image.
- * Each glyph is its own span (word gaps are explicit spacer spans), so
- * the scroll can drift them apart at PARALLAX.items' cycled speeds. */
-.vg-ghost {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-sans);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1;
-  font-size: clamp(3.6rem, 15vw, 14rem);
-  color: color-mix(in srgb, var(--bone) 66%, transparent);
-  white-space: nowrap;
-  pointer-events: none;
-  user-select: none;
-}
-
-/* ---------------------------------------------------------------------
- * The coordinates header: a dashed rule with surveyor's end ticks, the
- * two coordinate labels hanging from its ends.
- * ------------------------------------------------------------------ */
-.vg-dash {
-  position: relative;
-  border-top: 1px dashed var(--line-strong);
-}
-
-.vg-dash::before,
-.vg-dash::after {
-  content: "";
-  position: absolute;
-  top: -3px;
-  width: 1px;
-  height: 7px;
-  background: var(--line-strong);
-}
-
-.vg-dash::before {
-  left: 0;
-}
-
-.vg-dash::after {
-  right: 0;
-}
-
-/* ---------------------------------------------------------------------
- * The map canvas. Sits inside data-surface="dark", so every token below
- * already resolves to its dark value in both themes.
- * ------------------------------------------------------------------ */
-.vg-map-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.vg-path {
-  fill: none;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-}
-
-/* The whole route, faint — the flight plan. */
-.vg-path--base {
-  stroke: var(--line-strong);
-}
-
-/* The travelled part, drawn over it by scroll. */
-.vg-path--draw {
-  stroke: var(--clay);
-}
-
-/* The traveller: a filled head with two radar rings breathing off it. */
-.vg-plane-core {
-  fill: var(--clay);
-}
-
-.vg-plane-ring {
-  fill: none;
-  stroke: var(--clay);
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .vg-plane-ring {
-    animation: vg-ping 2.6s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  .panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 86vw;
+    height: 78svh;
+    scroll-snap-align: start;
+    /* One panel per flick. */
+    scroll-snap-stop: always;
+    color: var(--panel-ink, var(--color-paper));
   }
 
-  .vg-plane-ring--late {
-    animation-delay: 1.3s;
+  .strip-end {
+    display: none;
   }
-}
 
-@keyframes vg-ping {
-  0% {
-    transform: scale(0.35);
-    opacity: 0.7;
+  @media (min-width: 768px) {
+    .panel {
+      flex: 0 0 44vw;
+      height: calc(100svh - var(--strip-head));
+    }
   }
-  70% {
-    opacity: 0.12;
+
+  /* Pinned (desktop, fine pointer, motion allowed — FocusStrip.tsx sets
+   * the class): the track is no longer a scroller; the scroll moves it. */
+  .strip.is-pinned .strip-track {
+    overflow: visible;
+    scroll-snap-type: none;
+    will-change: transform;
   }
-  100% {
-    transform: scale(1.5);
+
+  /* Room for the last panel to come fully into view. */
+  .strip.is-pinned .strip-end {
+    display: block;
+    flex: 0 0 56vw;
+  }
+
+  .panel-img {
+    position: relative;
+    display: block;
+    height: 56%;
+    overflow: hidden;
+    background: var(--color-sand);
+  }
+
+  .panel-img img {
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .panel-img:hover img {
+      transform: scale(1.04);
+    }
+  }
+
+  .panel-body {
+    position: relative;
+    flex: 1;
+    padding: 1.5rem 1.25rem;
+    background: var(--panel, var(--color-ink));
+  }
+
+  @media (min-width: 640px) {
+    .panel-body {
+      padding: 2rem 2.4rem;
+    }
+  }
+
+  .panel-links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem 1.5rem;
+    max-width: 30rem;
+    padding-right: 4rem;
+  }
+
+  .panel-plus {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.25rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    opacity: 0.85;
+  }
+
+  @media (min-width: 640px) {
+    .panel-plus {
+      top: 2rem;
+      right: 2.4rem;
+    }
+  }
+
+  .panel-foot {
+    position: absolute;
+    inset: auto 1.25rem 1.4rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+
+  @media (min-width: 640px) {
+    .panel-foot {
+      inset: auto 2.4rem 2rem;
+    }
+  }
+
+  .panel-title {
+    font-size: clamp(2rem, 3.6vw, 3.8rem);
+    line-height: 1;
+  }
+
+  .panel-count {
+    margin-top: 0.6rem;
+    font-size: 0.8125rem;
+    opacity: 0.85;
+  }
+
+  .panel-tag {
+    display: -webkit-box;
+    max-width: 11rem;
+    overflow: hidden;
+    text-align: right;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    opacity: 0.9;
+    /* A tagline, not the chapter page: six lines at most, so a long
+     * description never climbs into the links above. */
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+  }
+
+  /* Georgian runs long: a wider, smaller measure. */
+  :lang(ka) .panel-tag {
+    max-width: 14rem;
+    font-size: 0.75rem;
+  }
+
+  /* -------------------------------------------------------------------
+   * STATEMENT
+   * ---------------------------------------------------------------- */
+  .statement {
+    padding: var(--gap-y) 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .statement {
+      padding: var(--gap-y) 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .statement {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 3rem;
+      padding: var(--gap-y) 2.5rem;
+    }
+  }
+
+  /* -------------------------------------------------------------------
+   * LATEST WORK — rows, and a picture that follows the pointer.
+   * ---------------------------------------------------------------- */
+  .latest {
+    padding: 0 1.25rem var(--gap-y);
+  }
+
+  @media (min-width: 640px) {
+    .latest {
+      padding: 0 2rem var(--gap-y);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .latest {
+      padding: 0 2.5rem var(--gap-y);
+    }
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.4rem 1.5rem;
+    align-items: center;
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--color-line);
+    color: inherit;
+    transition: color 0.3s var(--ease-out);
+  }
+
+  .row:last-of-type {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .row-title {
+    font-size: 1.0625rem;
+    font-weight: 500;
+  }
+
+  .row-text {
+    grid-column: 1 / -1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--color-mute);
+    font-size: 0.9375rem;
+  }
+
+  .row-meta {
+    font-size: 0.8125rem;
+    color: var(--color-mute);
+  }
+
+  @media (min-width: 1024px) {
+    .row {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) 8rem auto;
+      padding: 1.5rem 0;
+    }
+    .row-text {
+      grid-column: auto;
+    }
+    .row-meta {
+      text-align: right;
+    }
+  }
+
+  @media (hover: hover) {
+    .row:hover .row-title {
+      color: var(--color-orange);
+    }
+  }
+
+  .preview {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 40;
+    width: min(26vw, 22rem);
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    pointer-events: none;
+    clip-path: polygon(0 0, 100% 0, 100% 86%, 86% 100%, 0 100%);
     opacity: 0;
+    transition: opacity 0.35s var(--ease-out);
+    will-change: transform;
   }
-}
 
-/* A waypoint's dot. Not animated by GSAP — the route logic toggles
- * `is-passed` and these transitions answer it. */
-.vg-node {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--ink-40);
-  background: var(--surface);
-  transition:
-    background-color 0.45s var(--ease-out),
-    border-color 0.45s var(--ease-out),
-    box-shadow 0.45s var(--ease-out),
-    transform 0.45s var(--ease-out);
-}
-
-.vg-node.is-passed {
-  background: var(--clay);
-  border-color: var(--clay);
-  transform: scale(1.2);
-  box-shadow: 0 0 0 5px color-mix(in srgb, var(--clay) 18%, transparent);
-}
-
-/* ---------------------------------------------------------------------
- * A waypoint's ignition. The route logic stamps `is-passed` on the row
- * when the traveller arrives; these transitions are the answer — the
- * index turns clay and a short rule is drawn under it. Not GSAP-driven,
- * so the CSS transitions are safe by the ScrollFX house rule.
- * ------------------------------------------------------------------ */
-.vg-wp-index {
-  color: var(--ink-40);
-  transition: color 0.5s var(--ease-out);
-}
-
-[data-vg-row].is-passed .vg-wp-index {
-  color: var(--clay);
-}
-
-.vg-wp-rule {
-  display: block;
-  width: 2.5rem;
-  height: var(--rule-weight);
-  margin-top: 0.65rem;
-  background: var(--clay);
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 0.7s var(--ease-expo) 0.08s;
-}
-
-[data-vg-row].is-passed .vg-wp-rule {
-  transform: scaleX(1);
-}
-
-/* The dark canvas's panels — stats, and the "prefer to talk" card. */
-.vg-card {
-  border: 1px solid var(--line);
-  border-radius: var(--radius-card);
-  background: var(--surface-raised);
-  padding: 1.75rem;
-}
-
-@media (min-width: 640px) {
-  .vg-card {
-    padding: 2.25rem;
+  .preview img {
+    object-fit: cover;
   }
-}
 
-/* The faint geographic watermark, an ocean label's job. */
-.vg-watermark {
-  position: absolute;
-  pointer-events: none;
-  user-select: none;
-  font-family: var(--font-mono);
-  font-size: clamp(1.4rem, 3vw, 2.4rem);
-  text-transform: uppercase;
-  letter-spacing: 0.6em;
-  color: color-mix(in srgb, var(--fg) 9%, transparent);
-  white-space: nowrap;
-}
+  @media (hover: none), (max-width: 1023px) {
+    .preview {
+      display: none;
+    }
+  }
 
-/* ---------------------------------------------------------------------
- * The closing plate's scrim — over a photograph, so it is the media
- * recipe: always dark, whatever the theme.
- * ------------------------------------------------------------------ */
-.vgc-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    color-mix(in srgb, var(--coal-0) 52%, transparent),
-    color-mix(in srgb, var(--coal-0) 38%, transparent) 45%,
-    color-mix(in srgb, var(--coal-0) 56%, transparent)
-  );
+  /* -------------------------------------------------------------------
+   * PAGE HEADER — the band that opens an inner page: title bottom-left,
+   * picture right.
+   * ---------------------------------------------------------------- */
+  .ph {
+    display: grid;
+    min-height: 72svh;
+    background: var(--color-cream);
+  }
+
+  @media (min-width: 1024px) {
+    .ph {
+      grid-template-columns: 1fr 1fr;
+    }
+    .ph-solo {
+      grid-template-columns: 1fr;
+      min-height: 56svh;
+    }
+  }
+
+  .ph-copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 3rem;
+    padding: 6.5rem 1.25rem 2rem;
+  }
+
+  @media (min-width: 640px) {
+    .ph-copy {
+      padding: 7rem 2rem 2.25rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .ph-copy {
+      padding: 7.5rem 2.5rem 2.5rem;
+    }
+  }
+
+  .ph-title {
+    font-size: clamp(2.6rem, 6vw, 5.5rem);
+  }
+
+  .ph-img {
+    position: relative;
+    min-height: 46svh;
+    background: var(--color-sand);
+  }
+
+  .ph-img img {
+    object-fit: cover;
+  }
+
+  /* -------------------------------------------------------------------
+   * CATALOGUE — columns of pages.
+   * ---------------------------------------------------------------- */
+  .masonry {
+    columns: 2;
+    column-gap: 0.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .masonry {
+      columns: 3;
+      column-gap: 0.75rem;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .masonry {
+      columns: 4;
+    }
+  }
+
+  .masonry > li {
+    break-inside: avoid;
+    margin-bottom: 0.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .masonry > li {
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  .mtile {
+    position: relative;
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    background: var(--color-sand);
+    cursor: zoom-in;
+  }
+
+  .mtile img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 1s var(--ease-out);
+  }
+
+  .mtile-label {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 2.5rem 0.9rem 0.8rem;
+    background: linear-gradient(to top, rgb(0 0 0 / 0.55), transparent);
+    color: var(--color-paper);
+    font-size: 0.8125rem;
+    text-align: left;
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .mtile:hover img {
+      transform: scale(1.03);
+    }
+    .mtile:hover .mtile-label,
+    .mtile:focus-visible .mtile-label {
+      opacity: 1;
+    }
+  }
+
+  .tab {
+    display: block;
+    padding: 1rem 0;
+    color: var(--color-mute);
+    font-size: 0.9375rem;
+    white-space: nowrap;
+    transition: color 0.3s var(--ease-out);
+  }
+
+  .tab:hover {
+    color: var(--color-ink);
+  }
+
+  .tab[aria-current="page"] {
+    color: var(--color-ink);
+    box-shadow: inset 0 -2px 0 var(--color-orange);
+  }
+
+  .no-bar {
+    scrollbar-width: none;
+  }
+
+  .no-bar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* -------------------------------------------------------------------
+   * VIEWER — one page at a time: picture on black, words on white.
+   * ---------------------------------------------------------------- */
+  .viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    background: var(--color-ink);
+    animation: fade-in 0.4s var(--ease-out) both;
+  }
+
+  @media (min-width: 1024px) {
+    .viewer {
+      grid-template-rows: none;
+      grid-template-columns: minmax(0, 1fr) minmax(22rem, 32%);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  .viewer-photo {
+    position: relative;
+    touch-action: pan-y;
+    overflow: hidden;
+  }
+
+  .turn {
+    animation: turn-next 0.5s var(--ease-out);
+  }
+
+  .turn[data-dir="prev"] {
+    animation-name: turn-prev;
+  }
+
+  @keyframes turn-next {
+    from {
+      opacity: 0;
+      transform: translateX(3%);
+    }
+  }
+
+  @keyframes turn-prev {
+    from {
+      opacity: 0;
+      transform: translateX(-3%);
+    }
+  }
+
+  /* -------------------------------------------------------------------
+   * CONTACT SHEET — a native <dialog>.
+   * ---------------------------------------------------------------- */
+  .sheet {
+    margin: auto 0 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 92svh;
+    padding: 0;
+    border: 0;
+    border-radius: 1rem 1rem 0 0;
+    background: var(--color-paper);
+    color: var(--color-ink);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.4s var(--ease-out),
+      transform 0.45s var(--ease-out),
+      overlay 0.45s allow-discrete,
+      display 0.45s allow-discrete;
+  }
+
+  .sheet::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .sheet {
+      margin: 0 0 0 auto;
+      width: 30rem;
+      height: 100svh;
+      max-height: 100svh;
+      border-radius: 0;
+    }
+  }
+
+  .sheet::backdrop {
+    background: rgb(8 8 8 / 0.55);
+    transition:
+      background-color 0.4s var(--ease-out),
+      overlay 0.45s allow-discrete,
+      display 0.45s allow-discrete;
+  }
+
+  @starting-style {
+    .sheet[open] {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    .sheet[open]::backdrop {
+      background: rgb(8 8 8 / 0);
+    }
+  }
+
+  @media (min-width: 768px) {
+    @starting-style {
+      .sheet[open] {
+        transform: translateX(40px);
+      }
+    }
+  }
+
+  .field {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--color-line);
+    background: transparent;
+    font-size: 1rem; /* 16px: no iOS zoom on focus */
+    transition: border-color 0.25s var(--ease-out);
+  }
+
+  .field:focus {
+    outline: none;
+    border-bottom-color: var(--color-ink);
+  }
+
+  .field[aria-invalid="true"] {
+    border-bottom-color: #c0392b;
+  }
+
+  /* -------------------------------------------------------------------
+   * REDUCED MOTION — fades only, nothing travels.
+   * ---------------------------------------------------------------- */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
+      transition-duration: 0.2s !important;
+    }
+    .hero-title,
+    .hero-note,
+    .tile,
+    .menu-item {
+      opacity: 1;
+      transform: none;
+    }
+    .preview {
+      display: none;
+    }
+  }
 }
