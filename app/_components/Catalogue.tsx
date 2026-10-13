@@ -4,9 +4,14 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useGSAP } from "@gsap/react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CatalogueViewer from "@/app/_components/CatalogueViewer";
 import { track } from "@/lib/analytics";
 import type { CataloguePage } from "@/lib/catalogue";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 /*
  * THE CATALOGUE GRID — columns of every page.
@@ -37,6 +42,34 @@ export default function Catalogue({
       : null;
   const [open, setOpen] = useState<number | null>(initial);
   const pushed = useRef(false);
+  const grid = useRef<HTMLUListElement>(null);
+
+  /* Tiles rise into place as they scroll in (Combo 4). Only tiles still
+   * below the fold are hidden first, so nothing on screen ever blinks,
+   * and the server HTML shows every photograph without JS. */
+  useGSAP(
+    () => {
+      const media = gsap.matchMedia();
+      media.add("(prefers-reduced-motion: no-preference)", () => {
+        const tiles = gsap.utils
+          .toArray<HTMLElement>(".masonry > li", grid.current)
+          .filter((tile) => tile.getBoundingClientRect().top > window.innerHeight);
+        if (tiles.length === 0) return;
+        gsap.set(tiles, { opacity: 0, y: 48, scale: 0.96 });
+        ScrollTrigger.batch(tiles, {
+          start: "top 98%",
+          once: true,
+          onEnter: (batch) =>
+            gsap.to(batch, {
+              opacity: 1, y: 0, scale: 1, duration: 0.9, ease: "power3.out",
+              stagger: 0.08, overwrite: true, clearProps: "transform",
+            }),
+        });
+      });
+      return () => media.revert();
+    },
+    { scope: grid },
+  );
 
   const show = useCallback(
     (index: number) => {
@@ -77,12 +110,12 @@ export default function Catalogue({
   }, []);
 
   if (pages.length === 0) {
-    return <p className="py-16 text-mute">{t("empty")}</p>;
+    return <p className="catalogue-empty">{t("empty")}</p>;
   }
 
   return (
     <>
-      <ul className="masonry">
+      <ul className="masonry" ref={grid}>
         {pages.map((page, i) => (
           <li key={page.id}>
             <button

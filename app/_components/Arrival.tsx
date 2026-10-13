@@ -195,19 +195,24 @@ export default function Arrival() {
           <span className="arrival-edition">{t("edition")}</span>
         </div>
 
-        <div className="arrival-wordmark" aria-label={SITE.name}>
-          <div className="arrival-letters" aria-hidden="true">
-            {SITE.wordmark.split("").map((letter, i) => (
-              <span className="arrival-letter" key={i}>{letter}</span>
-            ))}
+        {/* One column, so the lead always sits below the wordmark. They used
+            to be placed separately (the wordmark scaled with the width, the lead
+            with the height) and collided on wide, short screens. */}
+        <div className="arrival-head">
+          <div className="arrival-wordmark" aria-label={SITE.name}>
+            <div className="arrival-letters" aria-hidden="true">
+              {SITE.wordmark.split("").map((letter, i) => (
+                <span className="arrival-letter" key={i}>{letter}</span>
+              ))}
+            </div>
+            <span className="arrival-group" aria-hidden="true">{SITE.wordmarkSub}</span>
           </div>
-          <span className="arrival-group" aria-hidden="true">{SITE.wordmarkSub}</span>
-        </div>
 
-        <div className="arrival-lead">
-          <span className="arrival-lead-rule" aria-hidden="true" />
-          <h2 id="arrival-heading">{t("title")}</h2>
-          <p>{t("intro")}</p>
+          <div className="arrival-lead">
+            <span className="arrival-lead-rule" aria-hidden="true" />
+            <h2 id="arrival-heading">{t("title")}</h2>
+            <p>{t("intro")}</p>
+          </div>
         </div>
 
         <div className="arrival-portal">

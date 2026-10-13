@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useGSAP } from "@gsap/react";
@@ -160,10 +161,14 @@ export default function HomeFilm({ variant }: { variant: keyof typeof films }) {
 
   return (
     <section ref={section} id={variant === "walkthrough" ? "interior-film" : "people"}
-      className="home-film" data-variant={variant}
+      className="home-film" data-variant={variant} data-unavailable={unavailable || undefined}
       aria-labelledby={heading}>
       <div className="film-stage" ref={stage}>
         <div className="film-frame">
+          {/* A photograph under the film: the frame is never empty while the
+              video loads, if autoplay is declined, or if the file fails. */}
+          <Image className="film-still" src={film.poster} alt={t(variant === "walkthrough" ? "film.description" : "ownerAlt")}
+            fill sizes="100vw" />
           <video ref={video} id={variant + "-video"} className="film-video" controls muted loop playsInline
             preload="none" poster={film.poster} aria-label={t(variant === "walkthrough" ? "film.description" : "ownerAlt")}
             onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}

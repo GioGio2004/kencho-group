@@ -35,25 +35,23 @@ export default async function CatalogueShell({
   ];
   const shareBase = `${SITE.url}/${locale}/gallery${active ? `/${active}` : ""}`;
 
+  /* The landing page's palette: the title on its forest black, the
+   * photographs on black, and the forest again in the footer below. */
   return (
-    <main>
-      <header className="px-5 pt-28 pb-8 sm:px-8 lg:px-10 lg:pt-36">
-        <p className="u-meta text-mute">
+    <main className="catalogue-page">
+      <header className="catalogue-head px-5 pt-28 pb-12 sm:px-8 lg:px-10 lg:pt-40 lg:pb-16">
+        <p className="catalogue-meta">
+          <span className="catalogue-rule" aria-hidden="true" />
           {SITE.name} · {t("count", { count: pages.length })}
         </p>
-        <h1 className="u-display mt-4 text-[clamp(2.6rem,6vw,5.5rem)]">{title}</h1>
-        <div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,40rem)_1fr] lg:items-end lg:gap-16">
-          <p className="max-w-[40rem] text-[1rem] leading-relaxed text-ink-2 sm:text-[1.0625rem]">{lede}</p>
-          <p className="border-l-2 border-orange pl-4 text-[0.9375rem] leading-relaxed text-ink-2 lg:max-w-[26rem] lg:justify-self-end">
-            {t("designerNote")}
-          </p>
+        <h1 className="u-display catalogue-title">{title}</h1>
+        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,40rem)_1fr] lg:items-end lg:gap-16">
+          <p className="catalogue-lede">{lede}</p>
+          <p className="catalogue-note lg:justify-self-end">{t("designerNote")}</p>
         </div>
       </header>
 
-      <nav
-        aria-label={t("chapters")}
-        className="catalogue-tabs sticky z-40 border-y border-line bg-paper/95 backdrop-blur-sm"
-      >
+      <nav aria-label={t("chapters")} className="catalogue-tabs sticky z-40">
         <ul className="no-bar flex gap-7 overflow-x-auto px-5 sm:px-8 lg:px-10">
           {tabs.map((tab) => (
             <li key={tab.href} className="shrink-0">
@@ -65,7 +63,7 @@ export default async function CatalogueShell({
         </ul>
       </nav>
 
-      <div className="px-2.5 pt-4 pb-20 sm:px-8 sm:pt-8 sm:pb-28 lg:px-10">
+      <div className="catalogue-stage px-2.5 pt-4 pb-20 sm:px-8 sm:pt-8 sm:pb-28 lg:px-10">
         <Catalogue key={active ?? "all"} pages={pages} shareBase={shareBase} />
       </div>
     </main>

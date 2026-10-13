@@ -763,6 +763,11 @@
   .contact-panel .home-eyebrow {
     margin-bottom: 1.25rem;
   }
+  .contact-rule {
+    width: 24px;
+    height: 1px;
+    background: #c29370;
+  }
   .contact-intro {
     margin-top: 1.25rem;
     font-size: 0.9375rem;
@@ -796,8 +801,106 @@
     line-height: 1.8;
     color: #666158;
   }
+  /* CATALOGUE — the landing page's palette: the title on its forest
+   * black (with a breath of the deep green), the photographs on black. */
+  .catalogue-page {
+    background: #0c0d0b;
+    color: #f2eee5;
+  }
+  .catalogue-head {
+    background:
+      radial-gradient(80% 120% at 100% 0%, rgb(39 78 59 / 0.34), transparent 64%),
+      #191b18;
+  }
+  .catalogue-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.6875rem;
+    line-height: 1.6;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #a9ab9f;
+  }
+  :lang(ka) .catalogue-meta {
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+  .catalogue-rule {
+    width: 32px;
+    height: 1px;
+    background: #c29370;
+  }
+  .catalogue-title {
+    margin-top: 1.25rem;
+    font-size: clamp(3rem, 7.5vw, 7.5rem);
+    letter-spacing: -0.05em;
+    line-height: 0.95;
+  }
+  :lang(ka) .catalogue-title {
+    font-size: clamp(2.3rem, 5.5vw, 5.5rem);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  .catalogue-lede {
+    max-width: 40rem;
+    font-size: clamp(1rem, 1.2vw, 1.125rem);
+    line-height: 1.75;
+    color: #c9c8bd;
+  }
+  .catalogue-note {
+    max-width: 26rem;
+    padding-left: 1rem;
+    border-left: 1px solid #c29370;
+    font-size: 0.875rem;
+    line-height: 1.75;
+    color: #a9ab9f;
+  }
   .catalogue-tabs {
     top: 88px;
+    border-block: 1px solid rgb(242 238 229 / 0.1);
+    background: rgb(12 13 11 / 0.9);
+    backdrop-filter: blur(12px);
+  }
+  .catalogue-page .tab {
+    color: #8f9186;
+  }
+  .catalogue-page .tab:hover {
+    color: #f2eee5;
+  }
+  .catalogue-page .tab[aria-current="page"] {
+    color: #f2eee5;
+    box-shadow: inset 0 -2px 0 #c6a77b;
+  }
+  .catalogue-page .mtile {
+    border-radius: 2px;
+    background: #1a1c19;
+  }
+  .catalogue-page .mtile img {
+    transition: transform 1.2s var(--ease-soft);
+  }
+  .catalogue-page .mtile-label {
+    padding: 3rem 1rem 0.9rem;
+    background: linear-gradient(to top, rgb(12 13 11 / 0.8), transparent);
+    color: #f2eee5;
+  }
+  .catalogue-empty {
+    padding-block: 4rem;
+    color: #a9ab9f;
+  }
+  body:has(.catalogue-page) .site-header {
+    color: #f2eee5;
+    background: rgb(25 27 24 / 0.86);
+    border-bottom-color: rgb(242 238 229 / 0.1);
+  }
+  body:has(.catalogue-page) .site-header .header-contact {
+    color: #f2eee5;
+    background: transparent;
+    border: 1px solid rgb(242 238 229 / 0.3);
+  }
+  body:has(.catalogue-page) .site-header .header-contact:hover {
+    background: #f2eee5;
+    color: #191b18;
   }
   .gallery-viewer {
     inset: 0;
@@ -808,19 +911,57 @@
     max-width: 100%;
     height: 100svh;
     max-height: 100svh;
-    background: #f3f1ec;
-    color: #111;
+    background: #191b18;
+    color: #f2eee5;
     overflow: hidden;
   }
+  .gallery-viewer::backdrop {
+    background: #0c0d0b;
+  }
+  /* The landing page's entrance: the room fades in, the photograph wipes
+   * open from its inner edge and settles, the words rise in turn.
+   * fill-mode backwards only: nothing is left transformed afterwards. */
   .gallery-viewer[open] {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    animation: gallery-enter 0.5s var(--ease-soft);
+    animation: gallery-enter 0.6s var(--ease-soft) backwards;
   }
   @keyframes gallery-enter {
     from {
       opacity: 0;
-      transform: translateY(12px);
+    }
+  }
+  .gallery-viewer[open] .gallery-detail {
+    animation: gallery-wipe 1.15s cubic-bezier(0.76, 0, 0.24, 1) 0.05s backwards;
+  }
+  .gallery-viewer[open] .gallery-slide img {
+    animation: gallery-settle 1.6s var(--ease-soft) 0.05s backwards;
+  }
+  .gallery-viewer[open] .gallery-topline,
+  .gallery-viewer[open] .gallery-overview-photo,
+  .gallery-viewer[open] .gallery-info {
+    animation: gallery-rise 0.95s var(--ease-soft) backwards;
+  }
+  .gallery-viewer[open] .gallery-overview-photo {
+    animation-delay: 0.12s;
+  }
+  .gallery-viewer[open] .gallery-info {
+    animation-delay: 0.24s;
+  }
+  @keyframes gallery-wipe {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+  }
+  @keyframes gallery-settle {
+    from {
+      transform: scale(1.14);
+    }
+  }
+  @keyframes gallery-rise {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
     }
   }
   .gallery-overview {
@@ -836,7 +977,8 @@
     gap: 1rem;
     font-size: 0.6875rem;
     line-height: 1.5;
-    color: #666158;
+    letter-spacing: 0.08em;
+    color: #a9ab9f;
     padding-right: 2rem;
   }
   .gallery-overview-photo {
@@ -867,7 +1009,7 @@
     letter-spacing: -0.025em;
   }
   .gallery-info p {
-    color: #5d5b55;
+    color: #bfc0b5;
     font-size: 0.8125rem;
     line-height: 1.7;
     margin-top: 0.75rem;
@@ -880,16 +1022,20 @@
     gap: 1rem;
     padding: 0.75rem 1rem;
     min-height: 48px;
-    background: #111;
-    color: #fff;
+    background: #f2eee5;
+    color: #191b18;
     font-size: 0.8125rem;
     border-radius: 4px;
+    transition: background-color 0.3s var(--ease-out);
+  }
+  .gallery-enquire:hover {
+    background: #dfc5a2;
   }
   .gallery-detail {
     position: relative;
     min-height: 0;
     overflow: hidden;
-    background: #e4e0d7;
+    background: #0c0d0b;
     touch-action: pan-y;
   }
   .gallery-track {
@@ -922,9 +1068,18 @@
     display: grid;
     place-items: center;
     border-radius: 50%;
-    color: #111;
-    background: #faf9f6;
-    border: 1px solid rgb(17 17 17 / 0.1);
+    color: #f2eee5;
+    background: rgb(25 27 24 / 0.72);
+    border: 1px solid rgb(242 238 229 / 0.18);
+    transition:
+      background-color 0.3s var(--ease-out),
+      transform 0.6s var(--ease-soft);
+  }
+  @media (hover: hover) {
+    .gallery-close:hover {
+      background: #191b18;
+      transform: rotate(90deg);
+    }
   }
   .gallery-controls {
     position: absolute;
@@ -940,9 +1095,14 @@
     display: grid;
     place-items: center;
     border-radius: 50%;
-    background: #faf9f6;
-    color: #111;
+    background: rgb(25 27 24 / 0.72);
+    border: 1px solid rgb(242 238 229 / 0.18);
+    color: #f2eee5;
     font-size: 1.3rem;
+    transition: background-color 0.3s var(--ease-out);
+  }
+  .gallery-controls button:not(:disabled):hover {
+    background: #191b18;
   }
   .gallery-controls button:disabled {
     opacity: 0.45;
@@ -953,7 +1113,9 @@
     top: 1.5rem;
     left: 1.5rem;
     z-index: 3;
-    background: #faf9f6;
+    background: rgb(25 27 24 / 0.72);
+    border: 1px solid rgb(242 238 229 / 0.18);
+    color: #f2eee5;
     padding: 0.7rem 1rem;
     border-radius: 3px;
     font-size: 0.75rem;
@@ -969,8 +1131,8 @@
     width: 84px;
     height: 84px;
     border-radius: 50%;
-    background: #faf9f6;
-    color: #111;
+    background: #f2eee5;
+    color: #191b18;
     font-size: 0.75rem;
     pointer-events: none;
     opacity: 0;
