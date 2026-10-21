@@ -1,43 +1,106 @@
-import { Inter, Inter_Tight, Noto_Sans_Georgian } from "next/font/google";
+import {
+  Bodoni_Moda,
+  Cormorant_Garamond,
+  Inter_Tight,
+  Noto_Sans_Georgian,
+  Noto_Serif_Georgian,
+  Pinyon_Script,
+  Plus_Jakarta_Sans,
+} from "next/font/google";
 import type { Locale } from "@/i18n/routing";
 
 /*
- * One grotesk voice, in the weights the design uses: regular for
- * everything LPAS-like (titles at 400–500), bold for the noho-style
- * headline. Inter Tight carries Latin and Cyrillic; Georgian has no
- * case and its own letterforms, so it gets Noto Sans Georgian for both
- * display and body. Only the active locale's variables are attached to
- * <html>; globals.css resolves the fonts through a var() fallback chain.
+ * ERA-RESIDENCE 1:1 TYPOGRAPHY SYSTEM:
+ * - --font-bodoni: Bodoni_Moda (High-contrast Didone serif, vertically elongated
+ *   with transform: scaleY(1.35) via .font-era-display)
+ * - --font-script: Pinyon_Script (weight 400) for oversized calligraphic accents
+ * - --font-sans: Plus_Jakarta_Sans (weights 400, 500, 600) for micro-copy & HUD
  */
+
+export const bodoniModa = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-bodoni",
+});
+
+export const cormorantGaramond = Cormorant_Garamond({
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+  variable: "--font-display-en",
+});
+
+export const pinyonScript = Pinyon_Script({
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  variable: "--font-script",
+});
+
+export const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin", "cyrillic-ext"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+  variable: "--font-body-en",
+});
 
 const interTight = Inter_Tight({
   subsets: ["latin", "cyrillic"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-display-en",
+  variable: "--font-brand-en",
 });
 
-const inter = Inter({
-  subsets: ["latin", "cyrillic"],
-  display: "swap",
-  variable: "--font-body-en",
-});
+/** The Latin wordmark uses its high-contrast editorial lettering in every language. */
+export const brandFontClass = `${bodoniModa.variable} ${cormorantGaramond.variable} ${pinyonScript.variable} ${plusJakartaSans.variable} ${interTight.variable}`;
 
-/** The Latin wordmark uses its original lettering in every language. */
-export const brandFontClass = interTight.variable;
-
-const notoSansGeorgian = Noto_Sans_Georgian({
+const notoSerifGeorgian = Noto_Serif_Georgian({
   subsets: ["georgian", "latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
   variable: "--font-display-ka",
 });
 
+const notoSansGeorgian = Noto_Sans_Georgian({
+  subsets: ["georgian", "latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-body-ka",
+});
+
 export const LOCALE_FONTS: Record<Locale, { variables: string[] }> = {
-  en: { variables: [interTight.variable, inter.variable] },
-  ru: { variables: [interTight.variable, inter.variable] },
-  // Georgian: the same family for display and body.
-  ka: { variables: [notoSansGeorgian.variable] },
+  en: {
+    variables: [
+      bodoniModa.variable,
+      cormorantGaramond.variable,
+      pinyonScript.variable,
+      plusJakartaSans.variable,
+      interTight.variable,
+    ],
+  },
+  ru: {
+    variables: [
+      bodoniModa.variable,
+      cormorantGaramond.variable,
+      pinyonScript.variable,
+      plusJakartaSans.variable,
+      interTight.variable,
+    ],
+  },
+  ka: {
+    variables: [
+      bodoniModa.variable,
+      notoSerifGeorgian.variable,
+      notoSansGeorgian.variable,
+      cormorantGaramond.variable,
+      pinyonScript.variable,
+      plusJakartaSans.variable,
+      interTight.variable,
+    ],
+  },
 };
 
 export function fontClassesFor(locale: Locale): string {

@@ -24,12 +24,13 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  * one panel per flick. The run is in the HTML either way.
  */
 
-/** Panel colours, in chapter order: orange, black, grass, sand. */
+/** Panel colours, in chapter order: powder sky, ice blue, sand, cream —
+ * all light, with navy ink (the site's light palette, app/globals.css). */
 const PALETTE = [
-  { panel: "#f25c1a", ink: "#ffffff" },
-  { panel: "#111111", ink: "#ffffff" },
-  { panel: "#a8d672", ink: "#111111" },
-  { panel: "#e9e5df", ink: "#111111" },
+  { panel: "#F2ECE3", ink: "#2A2723" },
+  { panel: "#F8F4EE", ink: "#2A2723" },
+  { panel: "#E5E1D6", ink: "#2A2723" },
+  { panel: "#EFECE3", ink: "#2A2723" },
 ];
 
 const PIN_WHEN =

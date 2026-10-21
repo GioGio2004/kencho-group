@@ -6,7 +6,9 @@ import type { Locale } from "@/i18n/routing";
 
 /*
  * THE LANGUAGE SWITCH — Georgian first, Russian second, English third.
- * Available on light navigation and the dark footer.
+ * `light` (navy type) is for every surface on the all-light site: the
+ * header, the menu and the powder-sky footer. The default ivory variant
+ * is only for laying the switch over photography.
  *
  * Endonyms: each language is named in itself, so these labels are the
  * same in every locale and are NOT message copy.
@@ -58,7 +60,7 @@ export default function LocaleSwitch({
               light
                 ? active
                   ? "text-ink"
-                  : "text-ink/65 hover:text-ink"
+                  : "text-ink/70 hover:text-ink"
                 : active
                   ? "text-paper"
                   : "text-paper/70 hover:text-paper"

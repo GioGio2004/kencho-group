@@ -47,6 +47,9 @@ export default async function Footer({
                 <Link href="/about">{n("about")}</Link>
               </li>
               <li>
+                <Link href="/faq">{n("faq")}</Link>
+              </li>
+              <li>
                 <Link href="/contact">{n("contact")}</Link>
               </li>
             </ul>
@@ -81,7 +84,7 @@ export default async function Footer({
         </div>
         <div className="footer-bottom">
           <p>{t("rights", { year: SITE.year })}</p>
-          <LocaleSwitch />
+          <LocaleSwitch light />
         </div>
       </div>
     </footer>

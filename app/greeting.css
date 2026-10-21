@@ -1,71 +1,175 @@
 @layer components {
   .greeting-screen {
-    position: fixed; inset: 0; z-index: 200;
-    display: none; place-items: center;
-    height: 100dvh; width: 100%;
-    background: #191b18; color: #f2eee5;
-    overflow: clip; outline: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    place-items: center;
+    height: 100dvh;
+    width: 100%;
+    background:
+      radial-gradient(65% 80% at 50% 45%, rgb(242 236 227 / 0.62), transparent 76%),
+      var(--color-paper);
+    color: var(--color-ink);
+    overflow: clip;
+    outline: none;
     clip-path: inset(0% 0% 0% 0%);
   }
-  html[data-greeting] { overflow: hidden; }
-  html[data-greeting] .greeting-screen { display: grid; }
+
+  /* ERA-inspired 1px chamfered architectural viewport frame */
+  .greeting-screen::before {
+    content: "";
+    position: absolute;
+    inset: 18px;
+    pointer-events: none;
+    border: 1px solid rgb(42 39 35 / 0.14);
+    clip-path: polygon(
+      14px 0,
+      calc(100% - 14px) 0,
+      100% 14px,
+      100% calc(100% - 14px),
+      calc(100% - 14px) 100%,
+      14px 100%,
+      0 calc(100% - 14px),
+      0 14px
+    );
+  }
+
+  html[data-greeting] {
+    overflow: hidden;
+  }
+  html[data-greeting] .greeting-screen {
+    display: grid;
+  }
   html[data-greeting="pending"] [data-site-content],
-  html[data-greeting="playing"] [data-site-content] { visibility: hidden; }
+  html[data-greeting="playing"] [data-site-content] {
+    visibility: hidden;
+  }
   html[data-greeting="leaving"] .greeting-screen {
     clip-path: inset(0% 0% 100% 0%);
-    transition: clip-path .7s cubic-bezier(.76, 0, .24, 1);
+    transition: clip-path 0.7s cubic-bezier(0.76, 0, 0.24, 1);
     pointer-events: none;
   }
-  .greeting-brand { width: fit-content; margin-top: -2svh; text-align: center; }
-  .greeting-wordmark {
-    display: flex; justify-content: center;
-    font-family: var(--font-display-en), Arial, sans-serif;
-    font-size: clamp(4.5rem, 10vw, 9rem);
-    font-weight: 600; letter-spacing: -.055em; line-height: 1;
+  .greeting-brand {
+    width: fit-content;
+    margin-top: -2svh;
+    text-align: center;
   }
-  .greeting-letter { display: block; position: relative; padding-block: .12em; }
+  .greeting-wordmark {
+    display: flex;
+    justify-content: center;
+    font-family: var(--font-display-en), Georgia, serif;
+    font-size: clamp(4.2rem, 10vw, 9.2rem);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 0.96;
+  }
+  .greeting-letter {
+    display: block;
+    position: relative;
+    padding-block: 0.12em;
+  }
   .greeting-outline {
-    display: block; color: transparent;
-    -webkit-text-stroke: .65px #f2eee5; opacity: .22;
+    display: block;
+    color: transparent;
+    -webkit-text-stroke: 0.7px var(--color-ink);
+    opacity: 0.26;
   }
   .greeting-fill {
-    position: absolute; inset: .12em 0;
+    position: absolute;
+    inset: 0.12em 0;
     clip-path: inset(100% 0% 0% 0%);
   }
   .greeting-rule {
-    height: 1px; width: calc(100% - .5rem); margin: .4rem auto 0;
-    background: #b79d7b; transform: scaleX(0); transform-origin: left center;
+    height: 1px;
+    width: calc(100% - 0.5rem);
+    margin: 0.45rem auto 0;
+    background: #c6a77b;
+    transform: scaleX(0);
+    transform-origin: left center;
   }
   .greeting-group {
-    display: flex; justify-content: center; gap: 1.1em;
-    margin-top: 1.35rem; padding-left: .1em;
-    font-family: var(--font-display-en), Arial, sans-serif;
-    font-size: clamp(.625rem, .85vw, .8125rem); line-height: 1.4;
+    display: flex;
+    justify-content: center;
+    gap: 1.25em;
+    margin-top: 1.35rem;
+    padding-left: 0.1em;
+    font-family: var(--font-sans), Arial, sans-serif;
+    font-size: clamp(0.625rem, 0.8vw, 0.75rem);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
   }
-  .greeting-group-letter { display: block; opacity: .2; }
+  .greeting-group-letter {
+    display: block;
+    opacity: 0.22;
+  }
   .greeting-footer {
-    position: absolute; inset: auto 4vw max(24px, env(safe-area-inset-bottom));
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 1rem; padding-top: .75rem;
-    border-top: 1px solid rgb(242 238 229 / .14);
-    font-size: .6875rem; letter-spacing: .04em; line-height: 1.6;
+    position: absolute;
+    inset: auto 4vw max(28px, env(safe-area-inset-bottom));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgb(42 39 35 / 0.15);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.6;
   }
-  .greeting-footer p { color: #adae9f; }
+  .greeting-footer p {
+    color: var(--color-ink-soft);
+  }
   .greeting-footer button {
-    display: inline-flex; gap: 1.5rem; align-items: center; justify-content: space-between;
-    min-height: 44px; padding-inline: .25rem; cursor: pointer;
+    display: inline-flex;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+    padding-inline: 0.25rem;
+    cursor: pointer;
+    text-transform: uppercase;
   }
-  .greeting-footer button:hover { color: #dfc5a2; }
-  .greeting-footer button:focus-visible { outline: 1px solid #c6a77b; outline-offset: 5px; }
-  :lang(ka) .greeting-footer { letter-spacing: 0; }
+  .greeting-footer button:hover {
+    color: var(--color-bronze);
+  }
+  .greeting-footer button:focus-visible {
+    outline: 1px solid var(--color-ink);
+    outline-offset: 5px;
+  }
+  :lang(ka) .greeting-footer,
+  :lang(ka) .greeting-footer button {
+    letter-spacing: 0;
+    text-transform: none;
+  }
   @media (max-width: 767px) {
-    .greeting-wordmark { font-size: clamp(3.9rem, 15.5vw, 6.5rem); }
-    .greeting-group { margin-top: 1.15rem; gap: 1em; }
-    .greeting-footer { inset-inline: 6vw; font-size: .5625rem; gap: 1.5rem; }
-    .greeting-footer p { max-width: 24ch; }
-    .greeting-footer button { gap: .75rem; white-space: nowrap; }
+    .greeting-screen::before {
+      inset: 10px;
+    }
+    .greeting-wordmark {
+      font-size: clamp(3.6rem, 15vw, 6.2rem);
+    }
+    .greeting-group {
+      margin-top: 1.15rem;
+      gap: 1em;
+    }
+    .greeting-footer {
+      inset-inline: 6vw;
+      font-size: 0.5625rem;
+      gap: 1.5rem;
+    }
+    .greeting-footer p {
+      max-width: 24ch;
+    }
+    .greeting-footer button {
+      gap: 0.75rem;
+      white-space: nowrap;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
-    html[data-greeting="leaving"] .greeting-screen { transition: none; }
+    html[data-greeting="leaving"] .greeting-screen {
+      transition: none;
+    }
   }
 }

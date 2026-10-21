@@ -35,8 +35,9 @@ export default async function CatalogueShell({
   ];
   const shareBase = `${SITE.url}/${locale}/gallery${active ? `/${active}` : ""}`;
 
-  /* The landing page's palette: the title on its forest black, the
-   * photographs on black, and the forest again in the footer below. */
+  /* The site's light palette: the title on a powder-sky band, the
+   * photographs on alabaster with ice-blue placeholders, and the sky
+   * again in the footer below. */
   return (
     <main className="catalogue-page">
       <header className="catalogue-head px-5 pt-28 pb-12 sm:px-8 lg:px-10 lg:pt-40 lg:pb-16">

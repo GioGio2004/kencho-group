@@ -2,14 +2,23 @@
  * PALETTE — the few colours needed where CSS cannot reach: the share
  * card (drawn by Satori, no CSSOM) and the browser-chrome colour.
  * KEEP IN SYNC with the @theme tokens at the top of app/globals.css.
+ * All light: no dark surface colours exist in the system.
  */
 export const PALETTE = {
-  paper: "#ffffff",
-  cream: "#f3f1ec",
-  ink: "#111111",
-  orange: "#b34d2c",
+  paper: "#FFFFFF",
+  linen: "#F2ECE3",
+  linenDeep: "#E6DCCD",
+  sky: "#F2ECE3",
+  ice: "#F8F4EE",
+  cream: "#EFECE3",
+  mineral: "#F2ECE3",
+  ink: "#2A2723",
+  ivory: "#FFFFFF",
+  orange: "#B58E58",
+  brass: "#B58E58",
+  gold: "#B39359",
   /** Ink at 60%, the share card's second line. */
-  inkSoft: "rgba(17, 17, 17, 0.6)",
+  inkSoft: "rgba(42, 39, 35, 0.62)",
 } as const;
 
 /*

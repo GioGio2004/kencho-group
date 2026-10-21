@@ -2,17 +2,6 @@
  * STRUCTURED DATA
  * ---------------------------------------------------------------------
  * One rule governs everything here: SCHEMA DESCRIBES THE PAGE IT IS ON.
- *
- * The site used to emit its FAQPage from the shared locale layout, which
- * meant every route carried it — including the planner, which has no
- * questions and no answers anywhere in its markup. Google treats that as
- * structured data that does not match the page and can drop the rich
- * result for the page that DOES have the FAQ. So the business belongs to
- * the site and stays in the layout; the FAQ belongs to the home page and
- * lives there.
- *
- * Everything is emitted as a string, because <script type="ld+json">
- * takes raw JSON rather than a React child.
  * ================================================================== */
 
 import { getTranslations } from "next-intl/server";
@@ -20,12 +9,8 @@ import type { Locale } from "@/i18n/routing";
 import { IMAGES, src } from "@/lib/images";
 import { SITE } from "@/lib/site";
 
-/* Keep in sync with FaqList's ids — the schema must describe exactly the
- * questions the page shows (the complete ones; the rest of the old set
- * still carried [FILL] placeholders and were dropped from the copy). */
 export const FAQ_IDS = ["pricing", "timeline", "materials", "commercial"] as const;
 
-/** The four things the workshop sells, in the order the page lists them. */
 const SERVICE_IDS = [
   "kitchens",
   "wardrobes",
@@ -35,12 +20,8 @@ const SERVICE_IDS = [
 
 /**
  * The company. Site-wide and true on every route, so this one is the
- * layout's.
- *
- * `hasOfferCatalog` is new: a FurnitureStore with no stated offerings
- * tells a search engine what the business IS but nothing about what it
- * DOES, and "kitchens / wardrobes / panelling / commercial fit-outs" is
- * exactly the vocabulary a Tbilisi search uses.
+ * layout's. Includes GeoCoordinates, hasMap, openingHoursSpecification,
+ * and OfferCatalog for Tbilisi Local Pack SEO.
  */
 export async function businessLd(locale: Locale): Promise<string> {
   const t = await getTranslations({ locale, namespace: "services" });
@@ -51,20 +32,28 @@ export async function businessLd(locale: Locale): Promise<string> {
     "@id": `${SITE.url}/#business`,
     name: SITE.name,
     url: `${SITE.url}/${locale}`,
-    // Absolute, not the site-relative path src() now returns — JSON-LD
-    // is read outside the page, where a relative URL points nowhere.
     image: `${SITE.url}${src(IMAGES.heroMain)}`,
     telephone: SITE.phone,
     email: SITE.email,
+    hasMap: SITE.mapsUrl,
     address: {
       "@type": "PostalAddress",
       streetAddress: SITE.address.street,
       addressLocality: SITE.address.city,
       addressCountry: SITE.address.country,
     },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: SITE.geo.latitude,
+      longitude: SITE.geo.longitude,
+    },
+    openingHoursSpecification: SITE.openingHours.map((spec) => ({
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: spec.days,
+      opens: spec.opens,
+      closes: spec.closes,
+    })),
     areaServed: { "@type": "City", name: SITE.address.city },
-    // Only the accounts that exist — TODO placeholders in lib/site.ts
-    // must not ship as claimed profiles.
     sameAs: Object.values(SITE.socials).filter((url) => !url.includes("TODO")),
     hasOfferCatalog: {
       "@type": "OfferCatalog",
@@ -82,7 +71,7 @@ export async function businessLd(locale: Locale): Promise<string> {
   });
 }
 
-/** The questions — home page only, because that is where they are. */
+/** The questions — emitted on /faq where the full FAQ list lives. */
 export async function faqLd(locale: Locale): Promise<string> {
   const t = await getTranslations({ locale, namespace: "faq" });
 
@@ -97,21 +86,10 @@ export async function faqLd(locale: Locale): Promise<string> {
   });
 }
 
-/**
- * A trail for any route below the home page. Two levels is all this site
- * has, and a breadcrumb is what stops a search result for the planner
- * showing a bare URL under its title.
- */
 export async function breadcrumbLd(
   locale: Locale,
   leaf: { name: string; path: string },
 ): Promise<string> {
-  /*
-   * `crumbHome`, not `nav.home`. The nav string is "Back to top" in
-   * English — a scroll affordance for the header link — and it was
-   * shipping as the position-1 label of the breadcrumb Google renders.
-   * ka and ru happened to read correctly; English did not.
-   */
   const t = await getTranslations({ locale, namespace: "nav" });
 
   return JSON.stringify({
@@ -134,11 +112,6 @@ export async function breadcrumbLd(
   });
 }
 
-/**
- * The trail for a single gallery — three levels, because a gallery page
- * sits below the gallery index. The two-level breadcrumbLd above stays
- * as it is; every other route really is one level below home.
- */
 export async function galleryBreadcrumbLd(
   locale: Locale,
   gallery: { name: string; slug: string },
@@ -171,12 +144,6 @@ export async function galleryBreadcrumbLd(
   });
 }
 
-/**
- * A gallery as a work rather than a page: the photographs, when it was
- * made, and that the business above is its author. This is what lets an
- * image search or an AI answer attribute the work instead of just
- * finding the file.
- */
 export function creativeWorkLd(
   locale: Locale,
   gallery: {

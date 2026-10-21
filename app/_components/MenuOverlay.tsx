@@ -80,6 +80,7 @@ export default function MenuOverlay({
               { href: "/", label: n("home") },
               { href: "/gallery", label: n("catalogue") },
               { href: "/about", label: n("about") },
+              { href: "/faq", label: n("faq") },
               { href: "/contact", label: n("contact") },
             ].map((l) => (
               <li key={l.href}>

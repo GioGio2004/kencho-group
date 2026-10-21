@@ -6,34 +6,169 @@
 @import "./greeting.css";
 
 /*
- * KENCHO GROUP — white, black, orange, grass green.
+ * KENCHO GROUP — Architectural Editorial Luxury Tokens (Linen system).
+ * An all-light, airy system: white, linen and gold, no dark surfaces.
  *
- * One grotesk voice. White pages with black components; a cream and a
- * sand for the hero's two halves; orange for the action that matters
- * and green for the one that says "talk to us". Nothing ornamental.
+ * - White (Default page canvas): #FFFFFF  (--color-paper)
+ * - Linen (Primary soft surfaces — footer, menu, sheets, panels, bands,
+ *   the colour the opening melts into): #F2ECE3  (--color-linen; the
+ *   older names --color-sky / --color-mineral / --color-grass alias it)
+ * - Deep Linen (hover and accent bands on linen): #E6DCCD
+ *   (--color-linen-deep)
+ * - Pale Linen (Secondary tint — cards, placeholders): #F8F4EE
+ *   (--color-ice)
+ * - Warm Charcoal Ink (All text, borders, SVG lines; never pure black):
+ *   #2A2723 (--color-ink; muted text --color-ink-soft, AA on white and linen)
+ * - Warm Brass / Oak Accent (rules and decoration, not small text): #B58E58
+ * - Muted Gold (the one accent: hairlines, index numerals, the menu's
+ *   marks; decoration only, never body text): #B39359  (--color-gold)
  *
- * Motion: one easing for everything that reveals (--ease-out, 0.3s on
- * hovers, 0.6–0.8s on pages and panels), and transform/opacity only.
+ * --color-ivory is kept only for text laid over photography.
  */
 @theme {
-  --color-paper: #ffffff;
-  --color-cream: #f3f1ec;
-  --color-sand: #e9e5df;
-  --color-ink: #111111;
-  --color-ink-2: #3a3a3a;
-  --color-mute: #6f6f6f;
-  --color-orange: #b34d2c;
-  --color-grass: #a8d672;
-  --color-line: rgb(17 17 17 / 0.12);
+  --color-paper: #FFFFFF;
+  --color-linen: #F2ECE3;
+  --color-linen-deep: #E6DCCD;
+  --color-sky: #F2ECE3;
+  --color-ice: #F8F4EE;
+  --color-cream: #EFECE3;
+  --color-sand: #E5E1D6;
+  /* Aliases of --color-linen, kept for existing class names. */
+  --color-mineral: #F2ECE3;
+  --color-grass: #F2ECE3;
+  --color-ink: #2A2723;
+  --color-ink-2: #3A3631;
+  --color-ink-soft: rgb(42 39 35 / 0.7);
+  --color-mute: #6F6A63;
+  --color-ivory: #FFFFFF;
+  --color-orange: #B58E58;
+  --color-brass: #B58E58;
+  /* Deep oak: the brass family where it must read as small text or a
+   * hover colour on linen. */
+  --color-bronze: #74452A;
+  --color-gold: #B39359;
+  --color-line: rgb(42 39 35 / 0.14);
 
-  --ease-out: cubic-bezier(0, 0, 0.13, 0.99);
+  --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
-/* Per-locale fonts (lib/fonts.ts). Georgian uses one family for both. */
+/* Per-locale fonts (lib/fonts.ts): Bodoni Moda, Pinyon Script, Plus Jakarta Sans. */
 @theme inline {
-  --font-display: var(--font-display-ka, var(--font-display-en, ui-sans-serif));
-  --font-sans: var(--font-display-ka, var(--font-body-en, ui-sans-serif));
+  --font-display: var(--font-bodoni, var(--font-display-ka, var(--font-display-en, Georgia, serif)));
+  --font-script: var(--font-script, cursive);
+  --font-sans: var(--font-body-ka, var(--font-body-en, ui-sans-serif, system-ui));
+  --font-brand: var(--font-brand-en, ui-sans-serif, system-ui);
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 24s linear infinite;
+}
+
+/* Landing opening: KENCHO GROUP spelled letter by letter on white. Pure
+   CSS so it starts with the first paint (no flash before hydration) and
+   ends with no transform left behind (fill-mode: backwards). */
+@keyframes kg-letter-rise {
+  from {
+    transform: translateY(112%);
+  }
+}
+
+@keyframes kg-rule-draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes kg-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes kg-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.kg-letter {
+  display: inline-block;
+  animation: kg-letter-rise 1.4s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(0.4s + var(--i) * 0.085s);
+}
+
+.kg-rule {
+  transform-origin: center;
+  animation: kg-rule-draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) 1.5s backwards;
+}
+
+.kg-meta {
+  animation: kg-fade-up 1.2s cubic-bezier(0.22, 1, 0.36, 1) 1.9s backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kg-letter,
+  .kg-rule,
+  .kg-meta {
+    animation: kg-fade 0.3s ease-out backwards;
+  }
+}
+
+.font-era-display {
+  font-family: var(--font-bodoni), var(--font-display-en), Georgia, serif;
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.88;
+  transform: scaleY(1.35);
+  transform-origin: center;
+  display: inline-block;
+}
+
+.font-display-tall {
+  font-family: var(--font-bodoni), var(--font-display-en), Georgia, serif;
+  text-transform: uppercase;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.88;
+  transform: scaleY(1.35);
+  transform-origin: center;
+  display: inline-block;
+}
+
+:lang(ka) .font-era-display,
+:lang(ka) .font-display-tall {
+  letter-spacing: -0.01em;
+  transform: scaleY(1.18);
+}
+
+.font-era-script,
+.font-script-accent {
+  font-family: var(--font-script), cursive;
+  font-weight: 400;
+}
+
+/* When the ERA-choreographed landing page is mounted, suppress legacy chrome
+   and Next.js dev overlays so FixedHudFrame is the exclusive HUD overlay. */
+body:has(.era-landing) .site-header,
+body:has(.era-landing) .rail,
+body:has(.era-landing) .greeting,
+nextjs-portal,
+[data-nextjs-toast],
+[data-nextjs-dialog-overlay] {
+  display: none !important;
 }
 
 @layer components {
@@ -41,16 +176,12 @@
    * BASE
    * ---------------------------------------------------------------- */
   html {
-    /* The breath between the home page's sections, and the white band
-     * that heads the strip (its panels fill the rest of the viewport). */
     --gap-y: 6.5rem;
     --strip-head: 5.5rem;
-    /* The fixed header's height (landing.css .site-header). */
     --header-h: 88px;
     -webkit-text-size-adjust: 100%;
     background: var(--color-paper);
     scroll-padding-top: 6rem;
-    /* No browser scrollbar: the rail (ScrollRail.tsx) stands in for it. */
     scrollbar-width: none;
   }
 
@@ -90,51 +221,46 @@
     font-family: var(--font-sans), system-ui, sans-serif;
     font-synthesis-weight: none;
     -webkit-tap-highlight-color: transparent;
-    /* Nothing wide (the strip's run of panels) may scroll the page
-     * sideways. `clip`, not `hidden`: it is not a scroll container, so
-     * sticky and fixed children are unaffected. */
     overflow-x: clip;
   }
 
   ::selection {
-    background: var(--color-orange);
-    color: var(--color-paper);
+    background: var(--color-sky);
+    color: var(--color-ink);
   }
 
+  /* Navy, not brass: brass falls under 3:1 against paper and sky. */
   :focus-visible {
-    outline: 2px solid #b34d2c;
+    outline: 2px solid var(--color-ink);
     outline-offset: 3px;
   }
 
-  /* The menu is open: the page behind it stands still. */
   html.menu-open {
     overflow: hidden;
   }
 
   /* TYPE */
   .u-display {
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
+    font-family: var(--font-display), Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.024em;
+    line-height: 0.98;
     text-wrap: balance;
   }
 
   .u-bold {
-    font-family: var(--font-display), system-ui, sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.035em;
-    line-height: 0.98;
+    font-family: var(--font-display), Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 0.95;
     text-wrap: balance;
   }
 
   :lang(ka) .u-bold {
     letter-spacing: -0.01em;
-    line-height: 1.08;
+    line-height: 1.1;
   }
 
-  /* Georgian words run long: the headline takes a wider measure at a
-   * smaller size, and the coloured tiles' words shrink to fit. */
   :lang(ka) .hero-title {
     max-width: 15ch;
     font-size: clamp(2rem, 4.3vw, 4.2rem);
@@ -146,24 +272,32 @@
   }
 
   :lang(ka) .u-display {
-    letter-spacing: 0;
+    letter-spacing: -0.008em;
+    line-height: 1.14;
   }
 
   .u-meta {
-    font-size: 0.8125rem;
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     line-height: 1.5;
   }
 
-  /* The wordmark — a white pill, the twin of the black Menu pill, so it
-   * reads over anything it crosses. */
+  :lang(ka) .u-meta {
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
   .logo {
     display: inline-flex;
     align-items: center;
     padding: 0.5rem 0.75rem;
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
     background: var(--color-paper);
     color: var(--color-ink);
-    font-family: var(--font-display), system-ui, sans-serif;
+    font-family: var(--font-display), Georgia, serif;
     font-weight: 600;
     font-size: 0.9375rem;
     line-height: 1;
@@ -171,11 +305,10 @@
     transition: background-color 0.3s var(--ease-out);
   }
 
-  /* On the menu's own glass it is just the word. */
   .logo-plain {
     padding: 0;
     background: transparent;
-    color: var(--color-paper);
+    color: var(--color-ink);
     font-size: 1.05rem;
   }
 
@@ -187,9 +320,9 @@
     align-items: center;
     gap: 0.65rem;
     padding: 0.5rem 0.75rem 0.5rem 0.95rem;
-    border-radius: 0.5rem;
-    background: var(--color-ink);
-    color: var(--color-paper);
+    border-radius: 0.25rem;
+    background: var(--color-sky);
+    color: var(--color-ink);
     font-size: 0.8125rem;
     line-height: 1;
     cursor: pointer;
@@ -206,7 +339,7 @@
   @media (hover: hover) {
     .pill:hover {
       background: var(--color-orange);
-      color: var(--color-paper);
+      color: var(--color-ink);
     }
   }
 
@@ -216,34 +349,47 @@
     justify-content: center;
     gap: 0.6rem;
     min-height: 3.1rem;
-    padding: 0 1.4rem;
-    border-radius: 0.75rem;
-    font-size: 0.9375rem;
+    padding: 0 1.5rem;
+    border-radius: 2px;
+    font-size: 0.8125rem;
     font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     white-space: normal;
     transition:
-      background-color 0.3s var(--ease-out),
-      color 0.3s var(--ease-out),
-      border-color 0.3s var(--ease-out),
-      transform 0.3s var(--ease-out);
+      background-color 0.35s var(--ease-out),
+      color 0.35s var(--ease-out),
+      border-color 0.35s var(--ease-out),
+      transform 0.35s var(--ease-out);
+  }
+
+  :lang(ka) .btn {
+    letter-spacing: 0.01em;
+    text-transform: none;
+    font-size: 0.875rem;
   }
 
   .btn:active {
     transform: scale(0.98);
   }
 
+  /* The primary button: a powder-sky fill with a navy hairline ring (an
+   * inset shadow, so the button keeps its size) that also holds it on
+   * sky sections. */
   .btn-ink {
-    background: var(--color-ink);
-    color: var(--color-paper);
+    background: var(--color-sky);
+    color: var(--color-ink);
+    box-shadow: inset 0 0 0 1px var(--color-ink);
   }
 
   .btn-orange {
-    background: var(--color-orange);
-    color: var(--color-paper);
+    background: var(--color-sky);
+    color: var(--color-ink);
+    border: 1px solid var(--color-ink);
   }
 
   .btn-grass {
-    background: var(--color-grass);
+    background: var(--color-mineral);
     color: var(--color-ink);
   }
 
@@ -254,20 +400,21 @@
 
   @media (hover: hover) {
     .btn-ink:hover {
-      background: var(--color-ink-2);
+      background: var(--color-ice);
     }
     .btn-orange:hover {
-      background: #d94c12;
+      background: var(--color-orange);
+      border-color: var(--color-orange);
+      color: var(--color-ink);
     }
     .btn-grass:hover {
-      background: #97cc5c;
+      background: var(--color-ice);
     }
     .btn-line:hover {
       border-color: var(--color-ink);
     }
   }
 
-  /* A circle holding an arrow or a plus. */
   .circle {
     display: inline-grid;
     place-items: center;
@@ -295,12 +442,10 @@
     .circle:hover {
       background: var(--color-orange);
       border-color: var(--color-orange);
-      color: var(--color-paper);
+      color: var(--color-ink);
     }
   }
 
-  /* A link with a chevron, ruled underneath — the panel links. It steps
-   * right on hover. */
   .chev {
     display: flex;
     align-items: center;
@@ -324,7 +469,6 @@
     }
   }
 
-  /* Underline that draws on hover. */
   .u-link {
     background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
     transition: background-size 0.4s var(--ease-out);
@@ -368,8 +512,7 @@
 
   /* -------------------------------------------------------------------
    * RAIL — the page's own scrollbar (ScrollRail.tsx): a hairline down
-   * the right edge with an orange thumb, visible while the page moves
-   * and for a moment after, then gone. Draggable with a fine pointer.
+   * the right edge with a warm brass thumb, visible while the page moves.
    * ---------------------------------------------------------------- */
   .rail {
     position: fixed;
@@ -379,14 +522,13 @@
     z-index: 50;
     width: 2px;
     border-radius: 999px;
-    background: rgb(127 127 127 / 0.28);
+    background: rgb(42 39 35 / 0.16);
     opacity: 0;
     transition: opacity 0.5s var(--ease-out) 0.2s;
     cursor: pointer;
     touch-action: none;
   }
 
-  /* A hand-sized hit area around a 2px line. */
   .rail::before {
     content: "";
     position: absolute;
@@ -412,7 +554,7 @@
     width: 100%;
     height: 20%;
     border-radius: 999px;
-    background: var(--color-orange);
+    background: var(--color-brass);
     transform-origin: center;
     transition: transform 0.1s linear;
     will-change: transform;
@@ -420,7 +562,7 @@
 
   .rail:hover .rail-thumb,
   .rail.is-drag .rail-thumb {
-    box-shadow: 0 0 0 1px var(--color-orange);
+    box-shadow: 0 0 0 1px var(--color-brass);
   }
 
   .rail.is-drag .rail-thumb {
@@ -433,7 +575,6 @@
     }
   }
 
-  /* On phones it only reads; the finger scrolls the page itself. */
   @media (pointer: coarse) {
     .rail {
       pointer-events: none;
@@ -441,7 +582,7 @@
   }
 
   /* -------------------------------------------------------------------
-   * MENU — black glass, sliding up from the bottom.
+   * MENU — powder-sky glass, sliding up from the bottom.
    * ---------------------------------------------------------------- */
   .menu {
     position: fixed;
@@ -449,8 +590,8 @@
     z-index: 70;
     display: flex;
     flex-direction: column;
-    color: var(--color-paper);
-    background: rgb(8 8 8 / 0.74);
+    color: var(--color-ink);
+    background: rgb(242 236 227 / 0.92);
     -webkit-backdrop-filter: blur(26px) saturate(1.3);
     backdrop-filter: blur(26px) saturate(1.3);
     transform: translateY(100%);
@@ -469,7 +610,7 @@
 
   @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .menu {
-      background: rgb(8 8 8 / 0.96);
+      background: rgb(242 236 227 / 0.98);
     }
   }
 
@@ -492,7 +633,6 @@
     }
   }
 
-  /* Each piece rises in its turn once the sheet is up. */
   .menu-item {
     opacity: 0;
     transform: translateY(18px);
@@ -537,11 +677,10 @@
     }
     .menu-focus:hover,
     .menu-link:hover {
-      color: var(--color-grass);
+      color: var(--color-bronze);
     }
   }
 
-  /* The link you chose stays; the others blur away as the page turns. */
   .menu[data-leaving="true"] .menu-focus:not(.is-target),
   .menu[data-leaving="true"] .menu-link:not(.is-target) {
     opacity: 0.15;
@@ -550,12 +689,6 @@
 
   /* -------------------------------------------------------------------
    * PAGE TRANSITION — each page rises in.
-   *
-   * `backwards`, never `both`: a filling animation leaves an (identity)
-   * transform on the wrapper for good, and a transformed ancestor turns
-   * every position: fixed thing inside the page — the pinned strip, the
-   * hover preview, the catalogue viewer — into something fixed to the
-   * wrapper instead of the viewport.
    * ---------------------------------------------------------------- */
   .page-enter {
     animation: page-in 0.7s var(--ease-out) backwards;
@@ -569,7 +702,7 @@
   }
 
   /* -------------------------------------------------------------------
-   * HERO — the headline on cream, the grid on sand.
+   * HERO — legacy grid fallback classes
    * ---------------------------------------------------------------- */
   .hero {
     display: grid;
@@ -633,7 +766,6 @@
     background: var(--color-sand);
   }
 
-  /* Phone: one scrolling row of tiles. */
   .hgrid {
     display: flex;
     gap: 0.75rem;
@@ -671,7 +803,6 @@
     }
   }
 
-  /* A coloured tile that names a chapter. */
   .tile-color {
     display: flex;
     align-items: flex-end;
@@ -682,8 +813,6 @@
     transition: background-color 0.3s var(--ease-out);
   }
 
-  /* Desktop: the staggered scatter — two, three, two — bleeding off the
-   * right edge the way it does on the reference. */
   @media (min-width: 1024px) {
     .hgrid {
       display: grid;
@@ -699,43 +828,24 @@
       width: 100%;
       height: 100%;
     }
-    .tile:nth-child(1) {
-      grid-area: 1 / 1;
-    }
-    .tile:nth-child(2) {
-      grid-area: 1 / 2;
-    }
-    .tile:nth-child(3) {
-      grid-area: 2 / 2;
-    }
-    .tile:nth-child(4) {
-      grid-area: 2 / 3;
-    }
-    .tile:nth-child(5) {
-      grid-area: 2 / 4;
-    }
-    .tile:nth-child(6) {
-      grid-area: 3 / 1;
-    }
-    .tile:nth-child(7) {
-      grid-area: 3 / 2;
-    }
+    .tile:nth-child(1) { grid-area: 1 / 1; }
+    .tile:nth-child(2) { grid-area: 1 / 2; }
+    .tile:nth-child(3) { grid-area: 2 / 2; }
+    .tile:nth-child(4) { grid-area: 2 / 3; }
+    .tile:nth-child(5) { grid-area: 2 / 4; }
+    .tile:nth-child(6) { grid-area: 3 / 1; }
+    .tile:nth-child(7) { grid-area: 3 / 2; }
   }
 
   /* -------------------------------------------------------------------
-   * STRIP — the chapters as a horizontal run of panels. Desktop pins the
-   * section and scrolling drives the run (FocusStrip.tsx); phones swipe.
+   * STRIP — legacy horizontal run
    * ---------------------------------------------------------------- */
   .strip {
     position: relative;
     background: var(--color-paper);
-    /* The run is wider than the page; it is clipped here, never the
-     * page's own width. */
     overflow-x: clip;
   }
 
-  /* A white band above the run: the label, a hint, and a short line that
-   * shows how far along the run is (--p, 0..1, set by FocusStrip.tsx). */
   .strip-head {
     display: flex;
     align-items: flex-end;
@@ -802,9 +912,8 @@
     flex: 0 0 86vw;
     height: 78svh;
     scroll-snap-align: start;
-    /* One panel per flick. */
     scroll-snap-stop: always;
-    color: var(--panel-ink, var(--color-paper));
+    color: var(--panel-ink, var(--color-ink));
   }
 
   .strip-end {
@@ -818,15 +927,12 @@
     }
   }
 
-  /* Pinned (desktop, fine pointer, motion allowed — FocusStrip.tsx sets
-   * the class): the track is no longer a scroller; the scroll moves it. */
   .strip.is-pinned .strip-track {
     overflow: visible;
     scroll-snap-type: none;
     will-change: transform;
   }
 
-  /* Room for the last panel to come fully into view. */
   .strip.is-pinned .strip-end {
     display: block;
     flex: 0 0 56vw;
@@ -855,7 +961,7 @@
     position: relative;
     flex: 1;
     padding: 1.5rem 1.25rem;
-    background: var(--panel, var(--color-ink));
+    background: var(--panel, var(--color-sky));
   }
 
   @media (min-width: 640px) {
@@ -922,20 +1028,17 @@
     font-size: 0.8125rem;
     line-height: 1.45;
     opacity: 0.9;
-    /* A tagline, not the chapter page: six lines at most, so a long
-     * description never climbs into the links above. */
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 6;
   }
 
-  /* Georgian runs long: a wider, smaller measure. */
   :lang(ka) .panel-tag {
     max-width: 14rem;
     font-size: 0.75rem;
   }
 
   /* -------------------------------------------------------------------
-   * STATEMENT
+   * STATEMENT & LATEST WORK
    * ---------------------------------------------------------------- */
   .statement {
     padding: var(--gap-y) 1.25rem;
@@ -956,9 +1059,6 @@
     }
   }
 
-  /* -------------------------------------------------------------------
-   * LATEST WORK — rows, and a picture that follows the pointer.
-   * ---------------------------------------------------------------- */
   .latest {
     padding: 0 1.25rem var(--gap-y);
   }
@@ -1054,13 +1154,14 @@
   }
 
   /* -------------------------------------------------------------------
-   * PAGE HEADER — the band that opens an inner page: title bottom-left,
-   * picture right.
+   * PAGE HEADER — the band that opens an inner page (/about, /faq, /contact).
+   * Styled with ERA's warm limestone surface and fine architectural rule.
    * ---------------------------------------------------------------- */
   .ph {
     display: grid;
-    min-height: 72svh;
+    min-height: 70svh;
     background: var(--color-cream);
+    border-bottom: 1px solid var(--color-line);
   }
 
   @media (min-width: 1024px) {
@@ -1069,7 +1170,7 @@
     }
     .ph-solo {
       grid-template-columns: 1fr;
-      min-height: 56svh;
+      min-height: 54svh;
     }
   }
 
@@ -1078,29 +1179,39 @@
     flex-direction: column;
     justify-content: space-between;
     gap: 3rem;
-    padding: 6.5rem 1.25rem 2rem;
+    padding: 7.5rem 1.25rem 2.5rem;
   }
 
   @media (min-width: 640px) {
     .ph-copy {
-      padding: 7rem 2rem 2.25rem;
+      padding: 8rem 2rem 3rem;
     }
   }
 
   @media (min-width: 1024px) {
     .ph-copy {
-      padding: 7.5rem 2.5rem 2.5rem;
+      padding: 8.5rem clamp(2.5rem, 4vw, 4.5rem) 3.5rem;
     }
   }
 
   .ph-title {
-    font-size: clamp(2.6rem, 6vw, 5.5rem);
+    font-size: clamp(3rem, 6.4vw, 6.2rem);
+    line-height: 0.94;
+    letter-spacing: -0.028em;
+    color: var(--color-ink);
+  }
+
+  :lang(ka) .ph-title {
+    font-size: clamp(2.3rem, 5vw, 4.6rem);
+    line-height: 1.14;
+    letter-spacing: -0.01em;
   }
 
   .ph-img {
     position: relative;
     min-height: 46svh;
     background: var(--color-sand);
+    overflow: hidden;
   }
 
   .ph-img img {
@@ -1144,7 +1255,7 @@
     display: block;
     width: 100%;
     overflow: hidden;
-    border-radius: 0.5rem;
+    border-radius: 2px;
     background: var(--color-sand);
     cursor: zoom-in;
   }
@@ -1160,8 +1271,9 @@
     position: absolute;
     inset: auto 0 0;
     padding: 2.5rem 0.9rem 0.8rem;
-    background: linear-gradient(to top, rgb(0 0 0 / 0.55), transparent);
-    color: var(--color-paper);
+    /* A light navy veil over the photograph, only so the ivory label reads. */
+    background: linear-gradient(to top, rgb(42 39 35 / 0.62), transparent);
+    color: var(--color-ivory);
     font-size: 0.8125rem;
     text-align: left;
     opacity: 0;
@@ -1182,9 +1294,17 @@
     display: block;
     padding: 1rem 0;
     color: var(--color-mute);
-    font-size: 0.9375rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     white-space: nowrap;
     transition: color 0.3s var(--ease-out);
+  }
+
+  :lang(ka) .tab {
+    letter-spacing: 0.01em;
+    text-transform: none;
+    font-size: 0.875rem;
   }
 
   .tab:hover {
@@ -1193,7 +1313,7 @@
 
   .tab[aria-current="page"] {
     color: var(--color-ink);
-    box-shadow: inset 0 -2px 0 var(--color-orange);
+    box-shadow: inset 0 -2px 0 var(--color-brass);
   }
 
   .no-bar {
@@ -1205,7 +1325,7 @@
   }
 
   /* -------------------------------------------------------------------
-   * VIEWER — one page at a time: picture on black, words on white.
+   * VIEWER — one page at a time: picture on ice blue, words on paper.
    * ---------------------------------------------------------------- */
   .viewer {
     position: fixed;
@@ -1213,7 +1333,8 @@
     z-index: 80;
     display: grid;
     grid-template-rows: minmax(0, 1fr) auto;
-    background: var(--color-ink);
+    background: var(--color-ice);
+    color: var(--color-ink);
     animation: fade-in 0.4s var(--ease-out) both;
   }
 
@@ -1259,10 +1380,8 @@
   }
 
   /* -------------------------------------------------------------------
-   * CONTACT SHEET — a native <dialog> the size of the viewport, holding
-   * a scrim and a panel that GSAP moves (ContactProvider.tsx). The panel
-   * wears the landing page's forest black: a bottom sheet on phones, a
-   * full-height side panel from 768px.
+   * CONTACT SHEET — a powder-sky panel with navy typography and brushed
+   * brass rules, over a pale alabaster veil.
    * ---------------------------------------------------------------- */
   .sheet {
     position: fixed;
@@ -1285,7 +1404,7 @@
   .sheet-scrim {
     position: absolute;
     inset: 0;
-    background: rgb(10 12 9 / 0.64);
+    background: rgb(255 255 255 / 0.62);
   }
 
   .sheet-panel {
@@ -1297,9 +1416,9 @@
     scrollbar-width: none;
     padding: 0.9rem 1.5rem max(2rem, env(safe-area-inset-bottom));
     border-radius: 1rem 1rem 0 0;
-    background: #191b18;
-    color: #f2eee5;
-    box-shadow: 0 -24px 80px rgb(0 0 0 / 0.35);
+    background: var(--color-sky);
+    color: var(--color-ink);
+    box-shadow: 0 -24px 80px rgb(42 39 35 / 0.14);
   }
 
   .sheet-panel::-webkit-scrollbar {
@@ -1315,7 +1434,7 @@
     width: 2.5rem;
     height: 4px;
     border-radius: 99px;
-    background: rgb(242 238 229 / 0.2);
+    background: rgb(42 39 35 / 0.2);
   }
 
   .sheet-close {
@@ -1328,8 +1447,8 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    border: 1px solid rgb(242 238 229 / 0.16);
-    color: #f2eee5;
+    border: 1px solid rgb(42 39 35 / 0.2);
+    color: var(--color-ink);
     transition:
       background-color 0.3s var(--ease-out),
       border-color 0.3s var(--ease-out),
@@ -1338,8 +1457,8 @@
 
   @media (hover: hover) {
     .sheet-close:hover {
-      background: rgb(242 238 229 / 0.08);
-      border-color: rgb(242 238 229 / 0.4);
+      background: var(--color-ice);
+      border-color: rgb(42 39 35 / 0.45);
       transform: rotate(90deg);
     }
   }
@@ -1349,49 +1468,50 @@
   }
 
   .sheet .home-eyebrow {
-    color: #a9ab9f;
+    color: var(--color-ink-soft);
   }
 
   .sheet .contact-intro {
-    color: #bfc0b5;
+    color: var(--color-ink-soft);
   }
 
   .sheet .contact-about {
-    border-left: 2px solid #c6a77b;
-    background: rgb(242 238 229 / 0.06);
-    color: #e3ded3;
+    border-left: 2px solid var(--color-brass);
+    background: var(--color-ice);
+    color: var(--color-ink);
   }
 
   .sheet .contact-whatsapp,
   .sheet .contact-call {
     min-height: 3.5rem;
-    border-radius: 4px;
+    border-radius: 2px;
   }
 
   .sheet .contact-whatsapp {
-    background: #274e3b;
-    color: #f2eee5;
+    background: var(--color-paper);
+    color: var(--color-ink);
   }
 
   .sheet .contact-call {
-    border-color: rgb(242 238 229 / 0.24);
-    color: #f2eee5;
+    border-color: rgb(42 39 35 / 0.24);
+    color: var(--color-ink);
   }
 
   @media (hover: hover) {
     .sheet .contact-whatsapp:hover {
-      background: #2f5d46;
+      background: var(--color-ice);
+      color: var(--color-ink);
     }
     .sheet .contact-call:hover {
-      background: #f2eee5;
-      border-color: #f2eee5;
-      color: #191b18;
+      background: var(--color-ice);
+      border-color: var(--color-ink);
+      color: var(--color-ink);
     }
   }
 
   .sheet .contact-prepare {
-    border-top-color: rgb(242 238 229 / 0.12);
-    color: #a9ab9f;
+    border-top-color: rgb(42 39 35 / 0.16);
+    color: var(--color-ink-soft);
   }
 
   @media (min-width: 768px) {
@@ -1403,8 +1523,8 @@
       max-height: none;
       padding: clamp(2rem, 6svh, 4rem) clamp(2rem, 3.2vw, 3.25rem);
       border-radius: 0;
-      border-left: 1px solid rgb(242 238 229 / 0.08);
-      box-shadow: -40px 0 120px rgb(0 0 0 / 0.35);
+      border-left: 1px solid rgb(42 39 35 / 0.12);
+      box-shadow: -40px 0 120px rgb(42 39 35 / 0.14);
     }
     .sheet-grip {
       display: none;
@@ -1413,8 +1533,6 @@
       top: 1.75rem;
       right: 1.75rem;
     }
-    /* The note rests at the foot of the panel, like the landing page's
-     * footer line, and the space above it is left open. */
     .sheet .contact-panel {
       display: flex;
       flex: 1;
@@ -1433,7 +1551,7 @@
     border: 0;
     border-bottom: 1px solid var(--color-line);
     background: transparent;
-    font-size: 1rem; /* 16px: no iOS zoom on focus */
+    font-size: 1rem;
     transition: border-color 0.25s var(--ease-out);
   }
 

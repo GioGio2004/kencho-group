@@ -1,9 +1,13 @@
 @layer components {
+  /* An alabaster stage with a powder-sky glow; navy type throughout. Over
+   * the photographs a pale alabaster veil keeps the navy captions legible. */
   .home-arrival {
-    --arrival-paper: #f2eee5;
-    --arrival-copper: #c29370;
-    color: var(--arrival-paper);
-    background: #191b18;
+    --arrival-ink: var(--color-ink);
+    --arrival-copper: #c6a77b;
+    color: var(--arrival-ink);
+    background:
+      radial-gradient(75% 90% at 50% 32%, rgb(242 236 227 / 0.62), transparent 72%),
+      var(--color-paper);
     position: relative;
     isolation: isolate;
   }
@@ -16,21 +20,44 @@
     height: 100svh;
     overflow: clip;
     perspective: 1600px;
-    background: #191b18;
+    background:
+      radial-gradient(75% 90% at 50% 32%, rgb(242 236 227 / 0.62), transparent 72%),
+      var(--color-paper);
   }
+
+  /* ERA-inspired 1px chamfered architectural frame around the opening stage */
+  .arrival-frame {
+    position: absolute;
+    inset: calc(var(--header-h) + 8px) 2vw 12px;
+    z-index: 1;
+    pointer-events: none;
+    border: 1px solid rgb(42 39 35 / 0.14);
+    clip-path: polygon(
+      14px 0,
+      calc(100% - 14px) 0,
+      100% 14px,
+      100% calc(100% - 14px),
+      calc(100% - 14px) 100%,
+      14px 100%,
+      0 calc(100% - 14px),
+      0 14px
+    );
+  }
+
   .arrival-topline {
     position: absolute;
     inset: calc(var(--header-h) + 24px) 4vw auto;
+    z-index: 2;
     display: flex;
     justify-content: space-between;
     gap: 1rem;
     font-size: 0.625rem;
-    letter-spacing: 0.13em;
+    font-weight: 500;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #c2c3b9;
+    color: var(--color-ink-soft);
   }
-  /* The wordmark and the lead share one column: the lead rests at the
-   * bottom (margin-top: auto) but can never ride up into the letters. */
+
   .arrival-head {
     position: absolute;
     inset: 16% 4vw 22%;
@@ -47,12 +74,11 @@
     align-items: center;
     justify-content: space-between;
     overflow: hidden;
-    font-family: var(--font-display-en), Arial, sans-serif;
-    font-weight: 500;
-    /* Capped by the height too, or a wide, short screen runs out of room. */
-    font-size: min(20.2vw, 32svh);
-    line-height: 0.89;
-    letter-spacing: -0.065em;
+    font-family: var(--font-display-en), Georgia, serif;
+    font-weight: 400;
+    font-size: min(19.6vw, 31svh);
+    line-height: 0.88;
+    letter-spacing: -0.04em;
     perspective: 800px;
   }
   .arrival-letter {
@@ -62,9 +88,12 @@
     display: block;
     padding-top: 1.1rem;
     padding-right: 0.25rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.75em;
+    font-family: var(--font-sans), Arial, sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.78em;
     text-align: left;
+    color: var(--color-ink-soft);
   }
   .arrival-lead {
     position: relative;
@@ -75,25 +104,28 @@
   }
   .arrival-lead-rule {
     display: block;
-    width: 32px;
+    width: 36px;
     height: 1px;
     background: var(--arrival-copper);
     margin-bottom: 1.4rem;
   }
   .home .arrival-lead h2 {
-    font-size: clamp(1.8rem, min(3.1vw, 5.2svh), 3.6rem);
-    line-height: 1.09;
+    font-family: var(--font-display), Georgia, serif;
+    font-size: clamp(1.9rem, min(3.2vw, 5.2svh), 3.7rem);
+    line-height: 1.02;
     font-weight: 400;
-    letter-spacing: -0.035em;
-    max-width: 10ch;
+    letter-spacing: -0.024em;
+    max-width: 11ch;
   }
   .arrival-lead > p {
     max-width: 25ch;
-    color: #bfc0b5;
+    color: var(--color-ink-soft);
     font-size: 0.75rem;
     line-height: 1.8;
-    margin-top: 1.5rem;
+    margin-top: 1.4rem;
   }
+
+  /* ERA-inspired Architectural Arch Portal that expands to full-bleed on scroll */
   .arrival-portal {
     position: absolute;
     left: 32%;
@@ -101,11 +133,17 @@
     width: 64%;
     height: 43%;
     overflow: hidden;
-    transform: rotate(-2deg) rotateY(-6deg);
+    border-radius: 220px 220px 4px 4px;
+    transform: rotate(-1.5deg) rotateY(-5deg);
     transform-origin: center center;
-    background: #413f35;
-    box-shadow: 0 24px 80px rgb(0 0 0 / 0.18);
+    background: var(--color-ice);
+    box-shadow:
+      0 0 0 1px rgb(42 39 35 / 0.16),
+      0 0 0 9px var(--color-paper),
+      0 0 0 10px rgb(42 39 35 / 0.08),
+      0 28px 90px rgb(42 39 35 / 0.14);
   }
+
   .arrival-entrance,
   .arrival-parallax,
   .arrival-scene {
@@ -119,7 +157,7 @@
   .arrival-scene {
     overflow: hidden;
     perspective: 1400px;
-    background: #413f35;
+    background: var(--color-ice);
   }
   .arrival-scene:not(:first-child) {
     opacity: 0;
@@ -139,14 +177,122 @@
     opacity: 0;
     pointer-events: none;
     background:
-      linear-gradient(90deg, rgb(12 15 10 / 0.62), rgb(12 15 10 / 0.12) 60%, transparent),
-      linear-gradient(180deg, rgb(12 15 10 / 0.36), transparent 30%, rgb(12 15 10 / 0.1) 48%, rgb(12 15 10 / 0.85));
+      linear-gradient(90deg, rgb(255 255 255 / 0.8), rgb(255 255 255 / 0.18) 60%, transparent),
+      linear-gradient(180deg, rgb(255 255 255 / 0.4), transparent 30%, rgb(255 255 255 / 0.12) 48%, rgb(255 255 255 / 0.88));
   }
+
+  /* Interactive ERA-style pulsing furniture hotspots (⊙) */
+  .arrival-hotspots {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .arrival-hotspot {
+    position: absolute;
+    left: var(--hx, 50%);
+    top: var(--hy, 50%);
+    transform: translate(-50%, -50%);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    pointer-events: auto;
+    cursor: pointer;
+    color: var(--arrival-ink);
+  }
+  .arrival-hotspot-ring {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid rgb(42 39 35 / 0.4);
+    background: rgb(242 236 227 / 0.72);
+    backdrop-filter: blur(6px);
+    transition:
+      transform 0.35s var(--ease-out),
+      border-color 0.35s var(--ease-out),
+      background-color 0.35s var(--ease-out);
+  }
+  .arrival-hotspot-ring::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 1px solid rgb(255 255 255 / 0.7);
+    animation: hotspot-pulse 2.8s var(--ease-out) infinite;
+  }
+  .arrival-hotspot-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--arrival-ink);
+    transition: background-color 0.3s;
+  }
+  .arrival-hotspot-card {
+    padding: 0.45rem 0.75rem;
+    border-radius: 2px;
+    border: 1px solid rgb(42 39 35 / 0.16);
+    background: rgb(242 236 227 / 0.92);
+    backdrop-filter: blur(10px);
+    font-family: var(--font-sans), sans-serif;
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition:
+      opacity 0.3s var(--ease-out),
+      transform 0.3s var(--ease-out);
+  }
+  :lang(ka) .arrival-hotspot-card {
+    letter-spacing: 0.02em;
+    text-transform: none;
+    font-size: 0.6875rem;
+  }
+  .arrival-hotspot:hover .arrival-hotspot-ring,
+  .arrival-hotspot:focus-visible .arrival-hotspot-ring,
+  .arrival-hotspot[data-open="true"] .arrival-hotspot-ring {
+    transform: scale(1.1);
+    border-color: var(--color-bronze);
+    background: rgb(248 244 238 / 0.92);
+  }
+  .arrival-hotspot:hover .arrival-hotspot-dot,
+  .arrival-hotspot:focus-visible .arrival-hotspot-dot,
+  .arrival-hotspot[data-open="true"] .arrival-hotspot-dot {
+    background: var(--color-bronze);
+  }
+  .arrival-hotspot:hover .arrival-hotspot-card,
+  .arrival-hotspot:focus-visible .arrival-hotspot-card,
+  .arrival-hotspot[data-open="true"] .arrival-hotspot-card {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  @keyframes hotspot-pulse {
+    0% {
+      transform: scale(0.88);
+      opacity: 0.75;
+    }
+    70% {
+      transform: scale(1.22);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1.22);
+      opacity: 0;
+    }
+  }
+
   .arrival-captions {
     position: absolute;
     left: 4vw;
     right: 4vw;
     bottom: 17%;
+    z-index: 3;
   }
   .arrival-caption {
     position: absolute;
@@ -156,16 +302,17 @@
   }
   .arrival-caption-label {
     font-size: 0.65rem;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
-    margin-bottom: 1.2rem;
-    color: var(--arrival-paper);
+    letter-spacing: 0.16em;
+    margin-bottom: 1.1rem;
+    color: var(--color-bronze);
   }
   .arrival-caption-title {
-    font-family: var(--font-display), sans-serif;
-    font-size: clamp(2.8rem, 5.7vw, 6.8rem);
-    line-height: 1.04;
-    letter-spacing: -0.045em;
+    font-family: var(--font-display), Georgia, serif;
+    font-size: clamp(2.8rem, 5.8vw, 6.8rem);
+    line-height: 0.96;
+    letter-spacing: -0.028em;
     max-width: 15ch;
     text-wrap: balance;
   }
@@ -174,7 +321,7 @@
     max-width: 41ch;
     font-size: 0.875rem;
     line-height: 1.7;
-    color: #e3ded3;
+    color: rgb(42 39 35 / 0.82);
   }
   .arrival-footer {
     position: absolute;
@@ -185,9 +332,15 @@
     justify-content: space-between;
     gap: 1.5rem;
     padding-top: 1rem;
-    border-top: 1px solid rgb(242 238 229 / 0.24);
-    font-size: 0.7rem;
+    border-top: 1px solid rgb(42 39 35 / 0.2);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     line-height: 1.5;
+  }
+  :lang(ka) .arrival-footer {
+    letter-spacing: 0.01em;
+    text-transform: none;
   }
   .arrival-scroll,
   .arrival-explore {
@@ -232,7 +385,7 @@
     line-height: 1.5;
   }
   .arrival-count-total {
-    color: #bfc0b5;
+    color: var(--color-ink-soft);
   }
   .arrival-chapter {
     display: grid;
@@ -245,14 +398,14 @@
   .arrival-chapter-track {
     display: block;
     height: 2px;
-    background: rgb(242 238 229 / 0.3);
+    background: rgb(42 39 35 / 0.2);
     overflow: hidden;
   }
   .arrival-chapter-fill {
     display: block;
     width: 100%;
     height: 100%;
-    background: var(--arrival-paper);
+    background: var(--arrival-ink);
     transform: scaleX(0);
     transform-origin: left center;
   }
@@ -268,7 +421,7 @@
     place-items: center;
     width: 58px;
     height: 58px;
-    border: 1px solid rgb(242 238 229 / 0.5);
+    border: 1px solid rgb(42 39 35 / 0.4);
     border-radius: 50%;
     font-size: 1.4rem;
     opacity: 0;
@@ -278,38 +431,25 @@
   .home-arrival + .home-hero {
     padding-top: var(--section-space);
   }
-  body:has(.home-arrival[data-in-view="true"]) .site-header {
-    color: #f2eee5;
-    background: rgb(25 27 24 / 0.78);
-    border-bottom-color: rgb(242 238 229 / 0.12);
-  }
-  body:has(.home-arrival[data-in-view="true"]) .site-header .header-contact {
-    color: #f2eee5;
-    background: transparent;
-    border: 1px solid rgb(242 238 229 / 0.3);
-  }
-  body:has(.home-arrival[data-in-view="true"]) .site-header .header-contact:hover {
-    background: #f2eee5;
-    color: #191b18;
-  }
+  /* The stage is light now, so the header keeps its default alabaster
+   * glass over it (the old dark-header override is gone). */
   :lang(ka) .arrival-topline,
   :lang(ka) .arrival-caption-label {
     letter-spacing: 0.01em;
+    text-transform: none;
   }
   :lang(ka) .home .arrival-lead h2 {
     font-size: clamp(1.5rem, min(2.65vw, 4.6svh), 3rem);
     letter-spacing: -0.01em;
-    line-height: 1.3;
+    line-height: 1.25;
     max-width: 14ch;
   }
   :lang(ka) .arrival-caption-title {
     font-size: clamp(2.3rem, 4.6vw, 5.7rem);
     letter-spacing: -0.015em;
-    line-height: 1.25;
+    line-height: 1.2;
     max-width: 18ch;
   }
-  /* Georgian runs a line or two longer: on short screens the lead keeps
-   * its headline and drops the small line, rather than reach the footer. */
   @media (max-height: 820px) and (min-width: 768px) {
     :lang(ka) .arrival-lead > p { display: none; }
   }
@@ -321,22 +461,24 @@
     .arrival-topline { inset-block-start: calc(var(--header-h) + 22px); }
     .arrival-head { inset-block: 21% 20%; }
     .arrival-lead { width: 28vw; }
-    .arrival-portal { top: 44%; left: 35%; width: 61%; height: 40%; }
+    .arrival-portal { top: 44%; left: 35%; width: 61%; height: 40%; border-radius: 170px 170px 4px 4px; }
     .arrival-count { margin-right: 0.4rem; }
   }
   @media (max-width: 767px) {
     .home-arrival[data-motion="true"] { height: 290svh; }
+    .arrival-frame { inset: calc(var(--header-h) + 6px) 3vw 10px; }
     .arrival-topline { inset: calc(var(--header-h) + 18px) 6vw auto; font-size: 0.5625rem; }
     .arrival-edition { display: none; }
     .arrival-head { inset: 19% 5.5vw auto; }
-    .arrival-letters { font-size: 19.6vw; }
+    .arrival-letters { font-size: 19vw; }
     .arrival-group { font-size: 0.5625rem; padding-top: 0.8rem; letter-spacing: 0.6em; text-align: right; }
     .arrival-lead { width: auto; margin: clamp(1rem, 3svh, 1.75rem) 0 0 0.5vw; padding-top: 0; }
     .arrival-lead-rule { display: none; }
     .home .arrival-lead h2 { font-size: clamp(1.5rem, 6.5vw, 2.2rem); max-width: 20ch; }
     :lang(ka) .home .arrival-lead h2 { font-size: clamp(1.3rem, 5.4vw, 1.8rem); max-width: 25ch; }
     .arrival-lead > p { display: none; }
-    .arrival-portal { top: 44%; left: 6%; width: 88%; height: 36%; transform: rotate(-2deg) rotateY(-3deg); }
+    .arrival-portal { top: 44%; left: 6%; width: 88%; height: 36%; border-radius: 140px 140px 4px 4px; transform: rotate(-1.5deg) rotateY(-3deg); }
+    .arrival-hotspots { display: none; }
     .arrival-photo { object-position: 53% 50%; }
     .arrival-scene:nth-child(2) .arrival-photo { object-position: 58% 50%; }
     .arrival-captions { left: 6vw; right: 6vw; bottom: 22%; }
@@ -349,7 +491,7 @@
     .arrival-chapters { margin-left: auto; }
     .arrival-count { display: none; }
     .arrival-chapter { min-width: 35px; padding-inline: 3px; }
-    .arrival-explore { flex-basis: 100%; justify-content: space-between; border-top: 1px solid rgb(242 238 229 / 0.12); }
+    .arrival-explore { flex-basis: 100%; justify-content: space-between; border-top: 1px solid rgb(42 39 35 / 0.12); }
     .arrival-continue { width: 44px; height: 44px; right: 6vw; bottom: 19%; }
   }
   @media (max-height: 650px) and (min-width: 768px) {
@@ -370,7 +512,7 @@
   @media (max-height: 600px) and (max-width: 767px) {
     .arrival-topline { display: none; }
     .arrival-head { inset-block-start: calc(var(--header-h) + 15px); }
-    .arrival-letters { font-size: min(19.6vw, 15svh); }
+    .arrival-letters { font-size: min(19vw, 15svh); }
     .arrival-group { display: none; }
     .home .arrival-lead h2 { font-size: 1.2rem; }
     :lang(ka) .home .arrival-lead h2 { font-size: 1.1rem; }
@@ -381,20 +523,11 @@
     .arrival-caption-line { font-size: 0.7rem; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .arrival-portal { transform: none; }
+    .arrival-portal { transform: none; border-radius: 4px; }
     .arrival-explore > span { transition: none; }
+    .arrival-hotspot-ring::before { animation: none; }
   }
 }
 
-/* LocaleSwitch uses Tailwind text utilities, so its contextual colours belong
-   in the same layer. The header stays legible over the photographs. */
-@layer utilities {
-  body:has(.home-arrival[data-in-view="true"]) .site-header .locale-option,
-  body:has(.catalogue-page) .site-header .locale-option {
-    color: #c2c3b9;
-  }
-  body:has(.home-arrival[data-in-view="true"]) .site-header .locale-option[aria-current],
-  body:has(.catalogue-page) .site-header .locale-option[aria-current] {
-    color: #f2eee5;
-  }
-}
+/* No contextual LocaleSwitch colours: every header surface is light, so
+   the switch's own navy (light) variant applies everywhere. */

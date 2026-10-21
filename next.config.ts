@@ -4,6 +4,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  devIndicators: false,
   /*
    * Build stamp, inlined at compile time (config `env` values always
    * are). The sitemap uses it as <lastmod> for the hand-written routes:
@@ -19,8 +20,11 @@ const nextConfig: NextConfig = {
   images: {
     // Gallery photos are served from Convex file storage; "**" because
     // deployment hosts carry a region segment (e.g. name.eu-west-1).
-    remotePatterns: [{ protocol: "https", hostname: "**.convex.cloud" }],
-    qualities: [50, 75],
+    remotePatterns: [
+      { protocol: "https", hostname: "**.convex.cloud" },
+      { protocol: "https", hostname: "images.unsplash.com" },
+    ],
+    qualities: [50, 75, 85, 90],
   },
   /*
    * Routes retired by the catalogue rebuild (2026-10). They were in the

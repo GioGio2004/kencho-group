@@ -232,6 +232,9 @@
   },
   "menu": {
     "menu": "Menu",
+    "gallery": "Gallery",
+    "about": "About us",
+    "contacts": "Contacts",
     "close": "Close",
     "focus": "Our focus",
     "explore": "Explore our",

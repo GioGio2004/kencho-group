@@ -6,7 +6,7 @@ import { Analytics } from "@vercel/analytics/next";
 import AnalyticsScripts from "@/app/_components/AnalyticsScripts";
 import ContactProvider from "@/app/_components/ContactProvider";
 import Footer from "@/app/_components/Footer";
-import MenuOverlay from "@/app/_components/MenuOverlay";
+import MegaMenu from "@/app/_components/MegaMenu";
 import MenuProvider from "@/app/_components/MenuProvider";
 import ScrollRail from "@/app/_components/ScrollRail";
 import SiteHeader from "@/app/_components/SiteHeader";
@@ -132,7 +132,7 @@ export default async function LocaleLayout({
                 <SmoothScroll />
                 <ScrollRail />
                 <SiteHeader />
-                <MenuOverlay chapters={chapterLinks} />
+                <MegaMenu />
                 <div id="main-content" tabIndex={-1}>{children}</div>
                 <Footer locale={locale as Locale} chapters={chapterLinks} />
               </div>
