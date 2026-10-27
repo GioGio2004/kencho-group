@@ -1,11 +1,13 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -17,33 +19,6 @@ interface HotspotItem {
   y: string;
 }
 
-const HOTSPOTS: HotspotItem[] = [
-  {
-    id: "millimetre",
-    title: "BUILT TO THE MILLIMETRE",
-    description:
-      "We have no standard sizes. We start from your walls, ceilings, and habits so the furniture adapts to the space, never the other way around.",
-    x: "38%",
-    y: "66%",
-  },
-  {
-    id: "timber-stone",
-    title: "EUROPEAN TIMBER & STONE",
-    description:
-      "Crafted from premium European MDF, solid oak veneers, and precision hardware selected to age beautifully over decades.",
-    x: "58%",
-    y: "46%",
-  },
-  {
-    id: "one-workshop",
-    title: "ONE TEAM, ONE WORKSHOP",
-    description:
-      "Measured on site, drawn in 3D, manufactured at Guram Panjikidze St 1, and installed by our own hands.",
-    x: "82%",
-    y: "54%",
-  },
-];
-
 const FALLBACK_DAY =
   "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=85";
 const FALLBACK_NIGHT =
@@ -53,6 +28,31 @@ const FALLBACK_NIGHT =
 const NAME_WORDS = ["KENCHO", "GROUP"];
 
 export default function HeroSection() {
+  const t = useTranslations("home.era.hero");
+  const HOTSPOTS: HotspotItem[] = [
+    {
+      id: "millimetre",
+      title: t("hotspotMeasureTitle"),
+      description: t("hotspotMeasureDescription"),
+      x: "38%",
+      y: "66%",
+    },
+    {
+      id: "timber-stone",
+      title: t("hotspotMaterialsTitle"),
+      description: t("hotspotMaterialsDescription"),
+      x: "58%",
+      y: "46%",
+    },
+    {
+      id: "one-workshop",
+      title: t("hotspotWorkshopTitle"),
+      description: t("hotspotWorkshopDescription"),
+      x: "82%",
+      y: "54%",
+    },
+  ];
+
   const sectionRef = useRef<HTMLElement>(null);
   const curtainRef = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLDivElement>(null);
@@ -65,6 +65,12 @@ export default function HeroSection() {
   const [isNightMode, setIsNightMode] = useState(false);
   // Keep all hotspot cards closed by default
   const [activeHotspot, setActiveHotspot] = useState<string | null>(null);
+  // Keep every panel mounted, while retaining the original exit-before-enter sequence.
+  const [presentHotspot, setPresentHotspot] = useState<string | null>(null);
+  const selectHotspot = (id: string | null) => {
+    setActiveHotspot(id);
+    if (presentHotspot === null) setPresentHotspot(id);
+  };
   const [daySrc, setDaySrc] = useState("/images/hero-kitchen-day.jpg");
   const [nightSrc, setNightSrc] = useState("/images/hero-kitchen-night.jpg");
 
@@ -188,12 +194,10 @@ export default function HeroSection() {
     { scope: sectionRef }
   );
 
-  const selectedHotspot = HOTSPOTS.find((h) => h.id === activeHotspot) ?? null;
-
   return (
     <section
       ref={sectionRef}
-      aria-label="Kencho Group — bespoke furniture and millwork in Tbilisi"
+      aria-label={t("h1")}
       className="relative w-full h-[340vh] bg-[#F2ECE3] text-[#2A2723]"
     >
       {/* Sticky Viewport Stage (100vw x 100vh, soft blue #F2ECE3 behind the white) */}
@@ -217,12 +221,12 @@ export default function HeroSection() {
 
         <div
           ref={nameRef}
-          className="absolute inset-0 z-20 flex flex-col items-center justify-center px-6 select-none will-change-transform"
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center px-6 select-none pointer-events-none will-change-transform"
         >
           <h1 className="text-center text-[#2A2723]">
             <span className="sr-only">
-              Kencho Group — bespoke furniture and millwork in Tbilisi
-            </span>
+              {t("h1")}
+            </span>{" "}
             <span
               aria-hidden="true"
               className="font-era-display text-[19vw] md:text-[9vw]"
@@ -233,7 +237,7 @@ export default function HeroSection() {
                   {word.split("").map((ch, c) => (
                     <span
                       key={c}
-                      className="inline-block overflow-hidden align-top py-[0.06em]"
+                      className="era-letter-mask inline-block overflow-hidden align-top"
                     >
                       <span
                         className="kg-letter"
@@ -247,6 +251,7 @@ export default function HeroSection() {
                       </span>
                     </span>
                   ))}
+                  {" "}
                 </span>
               ))}
             </span>
@@ -262,7 +267,7 @@ export default function HeroSection() {
             className="kg-meta mt-5 text-[9px] md:text-[10px] tracking-[0.34em] uppercase text-[#2A2723]/70"
             style={{ fontFamily: "var(--font-sans)" }}
           >
-            Bespoke furniture · Tbilisi
+            {t("tagline")}
           </p>
         </div>
 
@@ -285,14 +290,14 @@ export default function HeroSection() {
                 !isNightMode ? "text-[#FFFFFF]" : "text-[#FFFFFF]/55"
               }`}
             >
-              BY DAY
+              {t("day")}
             </button>
 
             <button
               type="button"
               role="switch"
               aria-checked={isNightMode}
-              aria-label="Toggle day or night lighting"
+              aria-label={t("lightingToggle")}
               onClick={() => setIsNightMode((prev) => !prev)}
               className="relative w-14 h-4 flex items-center cursor-pointer"
             >
@@ -314,7 +319,7 @@ export default function HeroSection() {
                 isNightMode ? "text-[#FFFFFF]" : "text-[#FFFFFF]/55"
               }`}
             >
-              BY NIGHT
+              {t("night")}
             </button>
           </div>
         </div>
@@ -338,7 +343,7 @@ export default function HeroSection() {
           {/* Day Architectural Kitchen Image */}
           <Image
             src={daySrc}
-            alt="Sunlit oak and travertine bespoke kitchen by Kencho Group in Tbilisi"
+            alt={t("dayAlt")}
             fill
             priority
             sizes="100vw"
@@ -351,7 +356,7 @@ export default function HeroSection() {
           {/* Night Architectural Kitchen Image */}
           <Image
             src={nightSrc}
-            alt="Recessed cabinet LED lighting in a bespoke walnut kitchen by Kencho Group"
+            alt={t("nightAlt")}
             fill
             sizes="100vw"
             onError={() => setNightSrc(FALLBACK_NIGHT)}
@@ -370,7 +375,13 @@ export default function HeroSection() {
           <div
             ref={roomInteractiveLayerRef}
             className="absolute inset-0 z-20 opacity-0 pointer-events-none"
-            aria-label="Interactive kitchen craftsmanship hotspots"
+            aria-label={t("hotspotsLabel")}
+            onClick={(event) => {
+              if (event.target === event.currentTarget) selectHotspot(null);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") selectHotspot(null);
+            }}
           >
             {/* 3 Minimal Pulsing Circular ( o ) Hotspot Markers */}
             {HOTSPOTS.map((spot) => {
@@ -384,11 +395,14 @@ export default function HeroSection() {
                   <button
                     type="button"
                     onClick={() =>
-                      setActiveHotspot(isSelected ? null : spot.id)
+                      selectHotspot(isSelected ? null : spot.id)
                     }
-                    onMouseEnter={() => setActiveHotspot(spot.id)}
-                    aria-label={`Inspect ${spot.title}`}
+                    onPointerEnter={(event) => {
+                      if (event.pointerType === "mouse") selectHotspot(spot.id);
+                    }}
+                    aria-label={t("inspect", { title: spot.title })}
                     aria-expanded={isSelected}
+                    aria-controls={`hero-hotspot-${spot.id}`}
                     className="group relative flex items-center justify-center w-10 h-10 rounded-full border border-[#FFFFFF]/85 bg-[#FFFFFF]/10 backdrop-blur-[2px] transition-transform duration-500 hover:scale-125 cursor-pointer"
                   >
                     <span className="absolute inset-0 rounded-full border border-[#FFFFFF]/45 motion-safe:animate-ping" />
@@ -399,33 +413,45 @@ export default function HeroSection() {
             })}
 
             {/* Vertical #FFFFFF Editorial Sheet (Closed by Default, Opens on Hover/Click) */}
-            <AnimatePresence mode="wait">
-              {selectedHotspot && (
-                <motion.div
-                  key={selectedHotspot.id}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  onMouseLeave={() => setActiveHotspot(null)}
-                  className="absolute left-8 bottom-24 sm:left-24 sm:bottom-24 z-30 bg-[#FFFFFF] p-8 max-w-xs text-[#2A2723] shadow-xl"
+            {HOTSPOTS.map((spot) => (
+              <motion.div
+                key={spot.id}
+                id={`hero-hotspot-${spot.id}`}
+                data-hero-hotspot={spot.id}
+                aria-hidden={activeHotspot !== spot.id}
+                initial="hidden"
+                animate={
+                  presentHotspot === spot.id
+                    ? activeHotspot === spot.id ? "enter" : "exit"
+                    : "hidden"
+                }
+                variants={{
+                  hidden: { opacity: 0, y: 14, visibility: "hidden", transition: { duration: 0 } },
+                  enter: { opacity: 1, y: 0, visibility: "visible" },
+                  exit: { opacity: 0, y: 10, transitionEnd: { visibility: "hidden" } },
+                }}
+                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                onAnimationComplete={(phase) => {
+                  if (phase === "exit") setPresentHotspot(activeHotspot);
+                }}
+                style={{ pointerEvents: "none" }}
+                className="absolute left-8 bottom-24 sm:left-24 sm:bottom-24 z-30 bg-[#FFFFFF] p-8 max-w-xs text-[#2A2723] shadow-xl"
+              >
+                <h2
+                  className="font-era-display text-2xl sm:text-[28px] text-[#2A2723] mb-5"
+                  style={{ lineHeight: 1.1 }}
                 >
-                  <h2
-                    className="font-era-display text-2xl sm:text-[28px] text-[#2A2723] mb-5"
-                    style={{ lineHeight: 1.1 }}
-                  >
-                    {selectedHotspot.title}
-                  </h2>
+                  {spot.title}
+                </h2>
 
-                  <p
-                    className="text-xs leading-relaxed text-[#2A2723]/80"
-                    style={{ fontFamily: "var(--font-sans)" }}
-                  >
-                    {selectedHotspot.description}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                <p
+                  className="text-xs leading-relaxed text-[#2A2723]/80"
+                  style={{ fontFamily: "var(--font-sans)" }}
+                >
+                  {spot.description}
+                </p>
+              </motion.div>
+            ))}
 
             {/* Bottom-Right Reflection Area: Floating Pull-Quote (clear of the menu trigger) */}
             <div
@@ -437,8 +463,7 @@ export default function HeroSection() {
                 className="font-era-display text-3xl text-[#FFFFFF] drop-shadow-md"
                 style={{ lineHeight: 1.28 }}
               >
-                “INSTEAD OF STANDARD TEMPLATES, ONE TEAM MEASURES, DRAWS, AND
-                BUILDS EVERY MILLIMETRE.”
+                {t("quote")}
               </p>
             </div>
           </div>

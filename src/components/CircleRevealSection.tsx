@@ -1,12 +1,15 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,52 +21,60 @@ interface RoomSlide {
   leadTime: string;
   image: string;
   alt: string;
+  slug: string;
+  link: string;
 }
 
-const ROOMS: RoomSlide[] = [
-  {
-    index: "01",
-    code: "01 / KITCHENS",
-    title: "PRECISION MILLWORK",
-    description:
-      "The heart of the flat, built to the millimetre. Integrated appliances, natural European oak veneers, and seamless stone joins crafted in our Tbilisi workshop.",
-    leadTime: "LEAD TIME: 3–5 WEEKS",
-    image: "/furniture/walnut-island-kitchen-tbilisi-kencho-group.webp",
-    alt: "Bespoke walnut and stone island kitchen by Kencho Group in Tbilisi",
-  },
-  {
-    index: "02",
-    code: "02 / WARDROBES & STORAGE",
-    title: "ARCHITECTURAL STORAGE",
-    description:
-      "Walk-in wardrobes, fluted bronze glass closets, and floor-to-ceiling hidden storage systems scribed directly to your walls.",
-    leadTime: "LEAD TIME: 2–4 WEEKS",
-    image: "/furniture/bronze-mirror-wardrobe-tbilisi-kencho-group.webp",
-    alt: "Custom bronze mirror and fluted glass wardrobe room in Tbilisi",
-  },
-  {
-    index: "03",
-    code: "03 / WALL PANELING & DETAILS",
-    title: "TACTILE TIMBER CLADDING",
-    description:
-      "Architectural wood cladding, acoustic fluted slats, and seamless shelving that give a living space its quiet warmth and proportion.",
-    leadTime: "LEAD TIME: 2–3 WEEKS",
-    image: "/furniture/fluted-oak-panel-detail-tbilisi-kencho-group.webp",
-    alt: "Architectural fluted oak wall paneling and bespoke shelving in Tbilisi",
-  },
-  {
-    index: "04",
-    code: "04 / COMMERCIAL FIT-OUTS",
-    title: "BESPOKE COMMERCIAL SPACES",
-    description:
-      "Offices, cafés, and boutique lobbies — complete turnkey architectural millwork from 3D shop drawings to opening day.",
-    leadTime: "LEAD TIME: 4–6 WEEKS",
-    image: "/furniture/commercial-lobby-lounge-tbilisi-kencho-group.webp",
-    alt: "Commercial lobby and boutique café interior millwork by Kencho Group",
-  },
-];
-
 export default function CircleRevealSection() {
+  const t = useTranslations("home.era.collection");
+  const reducedMotion = useReducedMotion();
+  const ROOMS: RoomSlide[] = [
+    {
+      index: "01",
+      code: t("kitchensCode"),
+      title: t("kitchensTitle"),
+      description: t("kitchensDescription"),
+      leadTime: t("kitchensTime"),
+      image: "/furniture/walnut-island-kitchen-tbilisi-kencho-group.webp",
+      alt: t("kitchensAlt"),
+      slug: "kitchens",
+      link: t("kitchensLink"),
+    },
+    {
+      index: "02",
+      code: t("wardrobesCode"),
+      title: t("wardrobesTitle"),
+      description: t("wardrobesDescription"),
+      leadTime: t("wardrobesTime"),
+      image: "/furniture/bronze-mirror-wardrobe-tbilisi-kencho-group.webp",
+      alt: t("wardrobesAlt"),
+      slug: "wardrobes-storage",
+      link: t("wardrobesLink"),
+    },
+    {
+      index: "03",
+      code: t("panelingCode"),
+      title: t("panelingTitle"),
+      description: t("panelingDescription"),
+      leadTime: t("panelingTime"),
+      image: "/furniture/fluted-oak-panel-detail-tbilisi-kencho-group.webp",
+      alt: t("panelingAlt"),
+      slug: "home-interiors",
+      link: t("panelingLink"),
+    },
+    {
+      index: "04",
+      code: t("commercialCode"),
+      title: t("commercialTitle"),
+      description: t("commercialDescription"),
+      leadTime: t("commercialTime"),
+      image: "/furniture/commercial-lobby-lounge-tbilisi-kencho-group.webp",
+      alt: t("commercialAlt"),
+      slug: "commercial-spaces",
+      link: t("commercialLink"),
+    },
+  ];
+
   const sectionRef = useRef<HTMLElement>(null);
   const maskContainerRef = useRef<HTMLDivElement>(null);
   const introArcRef = useRef<HTMLDivElement>(null);
@@ -71,6 +82,7 @@ export default function CircleRevealSection() {
   const waveTitleRef = useRef<HTMLDivElement>(null);
 
   const [activeIdx, setActiveIdx] = useState(0);
+  const [presentCaption, setPresentCaption] = useState(0);
 
   useGSAP(
     () => {
@@ -90,46 +102,55 @@ export default function CircleRevealSection() {
         return;
       }
 
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: "top bottom",
-          end: "bottom bottom",
-          scrub: 0.75,
-        },
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(maskContainer, { clipPath: "none" });
+        gsap.set(introArc, { opacity: 0 });
+      });
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "bottom bottom",
+            scrub: 0.75,
+          },
+        });
+
+        // Phase 1 (0% to 45%): Expanding circular portal rises from bottom center over the Hero
+        tl.fromTo(
+          maskContainer,
+          {
+            clipPath: "circle(14% at 50% 100%)",
+          },
+          {
+            clipPath: "circle(145% at 50% 50%)",
+            ease: "power2.inOut",
+            duration: 0.55,
+          },
+          0
+        )
+          .fromTo(
+            introArc,
+            { y: 120, opacity: 1 },
+            { y: -80, opacity: 0, ease: "power2.inOut", duration: 0.34 },
+            0.06
+          )
+          .fromTo(
+            carouselStage,
+            { y: 80, opacity: 0 },
+            { y: 0, opacity: 1, ease: "power2.out", duration: 0.45 },
+            0.32
+          )
+          .fromTo(
+            waveTitle,
+            { xPercent: 3 },
+            { xPercent: -3, ease: "none", duration: 0.65 },
+            0.3
+          );
       });
 
-      // Phase 1 (0% to 45%): Expanding circular portal rises from bottom center over the Hero
-      tl.fromTo(
-        maskContainer,
-        {
-          clipPath: "circle(14% at 50% 100%)",
-        },
-        {
-          clipPath: "circle(145% at 50% 50%)",
-          ease: "power2.inOut",
-          duration: 0.55,
-        },
-        0
-      )
-        .fromTo(
-          introArc,
-          { y: 120, opacity: 1 },
-          { y: -80, opacity: 0, ease: "power2.inOut", duration: 0.34 },
-          0.06
-        )
-        .fromTo(
-          carouselStage,
-          { y: 80, opacity: 0 },
-          { y: 0, opacity: 1, ease: "power2.out", duration: 0.45 },
-          0.32
-        )
-        .fromTo(
-          waveTitle,
-          { xPercent: 3 },
-          { xPercent: -3, ease: "none", duration: 0.65 },
-          0.3
-        );
+      return () => mm.revert();
     },
     { scope: sectionRef }
   );
@@ -148,7 +169,7 @@ export default function CircleRevealSection() {
     <section
       id="collection"
       ref={sectionRef}
-      aria-labelledby="precision-millwork-heading"
+      aria-labelledby={`room-heading-${ROOMS[activeIdx].index}`}
       className="relative -mt-[85vh] z-30 h-[240vh] w-full pointer-events-none"
     >
       {/* Sticky Full-Viewport Stage */}
@@ -157,8 +178,7 @@ export default function CircleRevealSection() {
         <div
           ref={maskContainerRef}
           data-hud-tone="ink"
-          style={{ clipPath: "circle(15% at 50% 100%)" }}
-          className="pointer-events-auto relative w-full h-full bg-[#F2ECE3] text-[#2A2723] flex flex-col items-center justify-between py-10 px-6 overflow-hidden will-change-[clip-path]"
+          className="era-collection-shell pointer-events-auto relative w-full h-full bg-[#F2ECE3] text-[#2A2723] flex flex-col items-center justify-between py-10 px-6 overflow-hidden will-change-[clip-path]"
         >
           {/* Rising Arc Header (Visible as circle expands upward, like 0:12-0:15 of Era Residence) */}
           <div
@@ -189,7 +209,7 @@ export default function CircleRevealSection() {
                   startOffset="50%"
                   textAnchor="middle"
                 >
-                  FOUR ROOMS OF WORK • MADE TO MEASURE IN TBILISI
+                  {t("arc")}
                 </textPath>
               </text>
             </svg>
@@ -200,7 +220,7 @@ export default function CircleRevealSection() {
                 className="text-[9.5px] font-semibold tracking-[0.26em] uppercase"
                 style={{ fontFamily: "var(--font-sans)" }}
               >
-                TBS — 41°43′21″ N
+                {t("latitude")}
               </span>
               <svg
                 width="30"
@@ -218,7 +238,7 @@ export default function CircleRevealSection() {
                 className="text-[9.5px] font-semibold tracking-[0.26em] uppercase"
                 style={{ fontFamily: "var(--font-sans)" }}
               >
-                44°46′31″ E
+                {t("longitude")}
               </span>
             </div>
             <div className="w-px h-20 bg-[#2A2723]/30 mt-4" />
@@ -227,33 +247,38 @@ export default function CircleRevealSection() {
           {/* Main Full-Bleed Mist Blue-Sage Stage (Zero Boxes, Zero Tabs) */}
           <div
             ref={carouselStageRef}
-            className="relative z-10 w-full h-full flex flex-col items-center justify-between pt-28 md:pt-14 pb-24 md:pb-2"
+            className="era-collection-stage relative z-10 w-full h-full flex flex-col items-center justify-between pt-28 md:pt-14 pb-24 md:pb-2"
           >
             {/* Didone headline, sized so the longest room title fits one line */}
             <div
               ref={waveTitleRef}
-              className="w-full text-center overflow-visible select-none pt-2 will-change-transform"
+              className="relative w-full text-center overflow-visible select-none pt-2 will-change-transform"
             >
-              <h2
-                id="precision-millwork-heading"
-                className="font-era-display max-w-[88vw] text-[clamp(2rem,4.6vw,5.2rem)] text-[#2A2723] text-balance"
-                style={{ lineHeight: 1 }}
-              >
-                {currentRoom.title}
-              </h2>
+              {ROOMS.map((room, index) => (
+                <h2
+                  key={room.index}
+                  id={`room-heading-${room.index}`}
+                  data-room-heading={room.index}
+                  aria-hidden={activeIdx !== index}
+                  className={`font-era-display max-w-[88vw] text-[clamp(2rem,4.6vw,5.2rem)] text-[#2A2723] text-balance ${activeIdx === index ? "" : "absolute inset-x-0 top-2 invisible pointer-events-none"}`}
+                  style={{ lineHeight: 1 }}
+                >
+                  {room.title}
+                </h2>
+              ))}
             </div>
 
             {/* Center Angled Parallelogram Sliver Image + Minimal Counter */}
             <div className="flex flex-col items-center justify-center my-auto w-full max-w-3xl min-h-0">
               {/* Diagonal Parallelogram Sliver Mask (Era Residence 0:18 style) */}
               {/* Sized by height so title, photo and caption always fit one screen */}
-              <div className="relative h-[min(42vh,440px)] aspect-[4/4.4] overflow-visible flex items-center justify-center">
+              <div className="era-collection-photo relative h-[min(42vh,440px)] aspect-[4/4.4] overflow-visible flex items-center justify-center">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentRoom.code}
-                    initial={{ opacity: 0, x: 28, scale: 0.96 }}
+                    initial={{ opacity: 0, x: reducedMotion ? 0 : 28, scale: reducedMotion ? 1 : 0.96 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
-                    exit={{ opacity: 0, x: -28, scale: 0.96 }}
+                    exit={{ opacity: 0, x: reducedMotion ? 0 : -28, scale: reducedMotion ? 1 : 0.96 }}
                     transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                     style={{
                       clipPath: "polygon(18% 0%, 100% 0%, 82% 100%, 0% 100%)",
@@ -279,7 +304,7 @@ export default function CircleRevealSection() {
                 <button
                   type="button"
                   onClick={handlePrev}
-                  aria-label="Previous room"
+                  aria-label={t("previous")}
                   className="p-1 hover:opacity-55 transition-opacity cursor-pointer"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
@@ -301,7 +326,7 @@ export default function CircleRevealSection() {
                 <button
                   type="button"
                   onClick={handleNext}
-                  aria-label="Next room"
+                  aria-label={t("next")}
                   className="p-1 hover:opacity-55 transition-opacity cursor-pointer"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
@@ -310,30 +335,54 @@ export default function CircleRevealSection() {
             </div>
 
             {/* Bottom Floating Editorial Copy & Micro-Spec (Zero Box) */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentRoom.code}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.35 }}
-                className="flex flex-col items-center text-center max-w-lg mx-auto"
-              >
-                <p
-                  className="text-xs sm:text-[13px] leading-relaxed text-[#2A2723]/80 mb-5"
-                  style={{ fontFamily: "var(--font-sans)" }}
+            {/* Persistent captions preserve the original 0.35s exit, then entrance. */}
+            <div className="relative max-w-lg mx-auto">
+              {ROOMS.map((room, index) => (
+                <motion.div
+                  key={room.index}
+                  data-room-description={room.index}
+                  aria-hidden={activeIdx !== index}
+                  initial="hidden"
+                  animate={
+                    presentCaption === index
+                      ? activeIdx === index ? "enter" : "exit"
+                      : "hidden"
+                  }
+                  variants={{
+                    hidden: { opacity: 0, y: reducedMotion ? 0 : 10, visibility: "hidden", transition: { duration: 0 } },
+                    enter: { opacity: 1, y: 0, visibility: "visible" },
+                    exit: { opacity: 0, y: reducedMotion ? 0 : -8, transitionEnd: { visibility: "hidden" } },
+                  }}
+                  transition={{ duration: 0.35 }}
+                  onAnimationComplete={(phase) => {
+                    if (phase === "exit") setPresentCaption(activeIdx);
+                  }}
+                  className={`flex flex-col items-center text-center max-w-lg mx-auto ${presentCaption === index ? "" : "absolute inset-x-0 top-0 pointer-events-none"}`}
                 >
-                  {currentRoom.description}
-                </p>
+                  <p
+                    className="text-xs sm:text-[13px] leading-relaxed text-[#2A2723]/80 mb-5"
+                    style={{ fontFamily: "var(--font-sans)" }}
+                  >
+                    {room.description}
+                  </p>
 
-                <span
-                  className="text-[9.5px] font-semibold tracking-[0.26em] uppercase text-[#2A2723]"
-                  style={{ fontFamily: "var(--font-sans)" }}
-                >
-                  {currentRoom.code} • {currentRoom.leadTime}
-                </span>
-              </motion.div>
-            </AnimatePresence>
+                  <span
+                    className="text-[9.5px] font-semibold tracking-[0.26em] uppercase text-[#2A2723]"
+                    style={{ fontFamily: "var(--font-sans)" }}
+                  >
+                    {room.code} • {room.leadTime}
+                  </span>
+                  <Link
+                    href={`/gallery/${room.slug}`}
+                    className="mt-3 text-[10px] leading-relaxed tracking-[0.06em] underline underline-offset-4 hover:opacity-65 transition-opacity"
+                    style={{ fontFamily: "var(--font-sans)" }}
+                    tabIndex={activeIdx === index ? 0 : -1}
+                  >
+                    {room.link}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

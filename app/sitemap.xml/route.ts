@@ -102,6 +102,14 @@ export async function GET() {
     slugs = await fetchQuery(galleriesApi.listPublishedSlugs, {});
   } catch (error) {
     console.error("sitemap: could not list galleries from Convex", error);
+    return new Response("Sitemap temporarily unavailable. Please retry later.", {
+      status: 503,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-store, max-age=0",
+        "Retry-After": "300",
+      },
+    });
   }
 
   const galleryEntries = slugs.flatMap(({ slug, createdAt }) =>

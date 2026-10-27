@@ -1,88 +1,26 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { SITE } from "@/lib/site";
+import { Link } from "@/i18n/navigation";
+import ContactLink from "@/app/_components/ContactLink";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const FALLBACK_WARDROBE =
   "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=1400&q=85";
 
-interface MilestoneNode {
-  id: string;
-  title: string;
-  subtitle: string;
-  xPercent: string;
-  yPercent: string;
-  cx: number;
-  cy: number;
-  placeAbove: boolean;
-}
-
-const MILESTONES: MilestoneNode[] = [
-  {
-    id: "01",
-    title: "01. SITE MEASUREMENT",
-    subtitle: "Day 1 — Tbilisi",
-    xPercent: "10%",
-    yPercent: "65%",
-    cx: 120,
-    cy: 156,
-    placeAbove: true,
-  },
-  {
-    id: "02",
-    title: "02. 3D VISUALIZATION",
-    subtitle: "Day 3–5",
-    xPercent: "30%",
-    yPercent: "30%",
-    cx: 360,
-    cy: 72,
-    placeAbove: true,
-  },
-  {
-    id: "03",
-    title: "03. FIXED PRICE CONTRACT",
-    subtitle: "Never changes after approval",
-    xPercent: "50%",
-    yPercent: "70%",
-    cx: 600,
-    cy: 168,
-    placeAbove: false,
-  },
-  {
-    id: "04",
-    title: "04. WORKSHOP PRODUCTION",
-    subtitle: "3–5 Weeks • Guram Panjikidze St 1",
-    xPercent: "70%",
-    yPercent: "26%",
-    cx: 840,
-    cy: 62,
-    placeAbove: true,
-  },
-  {
-    id: "05",
-    title: "05. CLEAN INSTALLATION",
-    subtitle: "1–3 Days • Ready to live in",
-    xPercent: "90%",
-    yPercent: "58%",
-    cx: 1080,
-    cy: 139,
-    placeAbove: false,
-  },
-];
-
 export default function ManifestoMapSection() {
+  const t = useTranslations("home.era.manifesto");
   const sectionRef = useRef<HTMLElement>(null);
   const cornerFramesRef = useRef<HTMLDivElement>(null);
   const manifestoTextRef = useRef<HTMLHeadingElement>(null);
   const staggeredWordsRef = useRef<HTMLDivElement>(null);
-  const wavePathRef = useRef<SVGPathElement>(null);
-  const mapTriggerRef = useRef<HTMLDivElement>(null);
   const magneticBtnRef = useRef<HTMLAnchorElement>(null);
 
   const [wardrobeSrc, setWardrobeSrc] = useState(
@@ -95,97 +33,81 @@ export default function ManifestoMapSection() {
       const cornerFrames = cornerFramesRef.current;
       const manifestoText = manifestoTextRef.current;
       const staggeredWords = staggeredWordsRef.current;
-      const wavePath = wavePathRef.current;
-      const mapTrigger = mapTriggerRef.current;
 
       if (!section) return;
 
-      // Decorative corner elements parallax at 1.3x scroll speed
-      if (cornerFrames) {
-        const corners = cornerFrames.querySelectorAll("[data-corner-parallax]");
-        gsap.fromTo(
-          corners,
-          { y: 90 },
-          {
-            y: -160,
-            ease: "none",
-            scrollTrigger: {
-              trigger: section,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: true,
-            },
-          }
-        );
-      }
-
-      // Manifesto text reveal
-      if (manifestoText) {
-        gsap.fromTo(
-          manifestoText,
-          { y: 45, opacity: 0.2 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: manifestoText,
-              start: "top 85%",
-              end: "top 35%",
-              scrub: 0.6,
-            },
-          }
-        );
-      }
-
-      // Diagonal staggered words horizontal drift (Era "NEW GOLDEN MILE" style)
-      if (staggeredWords) {
-        const rows = staggeredWords.querySelectorAll("[data-drift-word]");
-        rows.forEach((row, idx) => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Decorative corner elements parallax at 1.3x scroll speed
+        if (cornerFrames) {
+          const corners = cornerFrames.querySelectorAll("[data-corner-parallax]");
           gsap.fromTo(
-            row,
-            { xPercent: idx % 2 === 0 ? -8 : 10, opacity: 0.35 },
+            corners,
+            { y: 90 },
             {
-              xPercent: 0,
-              opacity: 1,
-              ease: "power2.out",
+              y: -160,
+              ease: "none",
               scrollTrigger: {
-                trigger: staggeredWords,
+                trigger: section,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: true,
+              },
+            }
+          );
+        }
+
+        // Manifesto text reveal
+        if (manifestoText) {
+          gsap.fromTo(
+            manifestoText,
+            { y: 45, opacity: 0.2 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: manifestoText,
                 start: "top 85%",
-                end: "bottom 40%",
+                end: "top 35%",
                 scrub: 0.6,
               },
             }
           );
-        });
-      }
+        }
 
-      // Horizontal SVG Journey Map stroke-dasharray animated on scroll
-      if (wavePath && mapTrigger) {
-        const length = wavePath.getTotalLength?.() || 1400;
-        gsap.set(wavePath, {
-          strokeDasharray: length,
-          strokeDashoffset: length,
-        });
+        // Diagonal staggered words horizontal drift (Era "NEW GOLDEN MILE" style)
+        if (staggeredWords) {
+          const rows = staggeredWords.querySelectorAll("[data-drift-word]");
+          rows.forEach((row, idx) => {
+            gsap.fromTo(
+              row,
+              { xPercent: idx % 2 === 0 ? -8 : 10, opacity: 0.35 },
+              {
+                xPercent: 0,
+                opacity: 1,
+                ease: "power2.out",
+                scrollTrigger: {
+                  trigger: staggeredWords,
+                  start: "top 85%",
+                  end: "bottom 40%",
+                  scrub: 0.6,
+                },
+              }
+            );
+          });
+        }
+      });
 
-        gsap.to(wavePath, {
-          strokeDashoffset: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: mapTrigger,
-            start: "top 78%",
-            end: "bottom 45%",
-            scrub: 0.7,
-          },
-        });
-      }
+      return () => mm.revert();
     },
     { scope: sectionRef }
   );
 
   // Subtle magnetic hover handler for the Era thin-ring circle CTA
   const handleMagneticMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!window.matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)").matches) return;
     const el = magneticBtnRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
@@ -252,7 +174,7 @@ export default function ManifestoMapSection() {
           className="text-[10px] font-semibold tracking-[0.28em] uppercase text-[#2A2723] mb-10"
           style={{ fontFamily: "var(--font-sans)" }}
         >
-          THE CONCEPT
+          {t("eyebrow")}
         </span>
 
         <h2
@@ -263,17 +185,14 @@ export default function ManifestoMapSection() {
         >
           {/* my-[1.6em]: scaleY(1.35) grows the block ~17% past its box on
               each side, which used to run over the label and paragraph. */}
-          KENCHO GROUP IS A BESPOKE FURNITURE WORKSHOP IN TBILISI. EVERY PIECE
-          IS MEASURED ON SITE, DRAWN IN 3D, AND BUILT UNDER ONE ROOF.
+          {t("heading")}
         </h2>
 
         <p
           className="mt-16 max-w-xs text-xs leading-relaxed text-[#2A2723]/75 text-center"
           style={{ fontFamily: "var(--font-sans)" }}
         >
-          Inspired by architectural precision, our Tbilisi workshop unites 3D
-          engineering, natural European timber, and master installation into a
-          single seamless commission.
+          {t("intro")}
         </p>
 
         {/* Central Geometric Ornament */}
@@ -297,45 +216,46 @@ export default function ManifestoMapSection() {
       {/* 2. Staggered Stepping Display Typography ("NEW GOLDEN MILE" -> "TBILISI WORKSHOP CRAFT") */}
       <div
         ref={staggeredWordsRef}
+        data-manifesto-display
         className="relative z-10 mx-auto max-w-6xl px-6 mb-24 sm:mb-32 flex flex-col items-center"
       >
         <div
           data-drift-word
           className="font-era-display text-[clamp(4rem,10.5vw,9.6rem)] text-[#2A2723] -ml-16 sm:-ml-36"
         >
-          TBILISI
-        </div>
+          {t("city")}
+        </div>{" "}
 
         <div
           data-drift-word
-          className="flex items-center gap-8 sm:gap-16 my-4 sm:my-6"
+          className="flex flex-wrap justify-center items-center gap-x-4 gap-y-6 sm:gap-16 my-4 sm:my-6 max-w-full"
         >
           <span
             className="text-xs sm:text-sm font-normal tracking-[0.55em] uppercase text-[#2A2723]/80"
             style={{ fontFamily: "var(--font-bodoni), Georgia, serif" }}
           >
-            G E O R G I A
-          </span>
+            {t("country")}
+          </span>{" "}
           <span className="font-era-display text-[clamp(4rem,10.5vw,9.6rem)] text-[#2A2723]/85">
-            WORKSHOP
+            {t("workshop")}
           </span>
-        </div>
+        </div>{" "}
 
         <div
           data-drift-word
           className="font-era-display text-[clamp(4rem,10.5vw,9.6rem)] text-[#2A2723]/55 -ml-8 sm:-ml-20"
         >
-          CRAFT
+          {t("craft")}
         </div>
       </div>
 
       {/* 3. Asymmetric Split Editorial Block (Left Flush Portrait + Center Thin Circle CTA + Lower Copy) */}
-      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-end mb-36 sm:mb-48">
+      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-end mb-20 sm:mb-28">
         {/* Far-Left Flush Portrait Image (/images/wardrobe-showcase.jpg) — Zero Frame Box */}
         <div className="lg:col-span-3 relative aspect-[3/4.8] w-64 sm:w-72 lg:w-full overflow-hidden">
           <Image
             src={wardrobeSrc}
-            alt="Bespoke wardrobe and cane millwork showcase crafted by Kencho Group in Tbilisi"
+            alt={t("wardrobeAlt")}
             fill
             sizes="(max-width: 1024px) 288px, 25vw"
             onError={() => setWardrobeSrc(FALLBACK_WARDROBE)}
@@ -347,16 +267,13 @@ export default function ManifestoMapSection() {
         <div className="lg:col-span-5 px-6 sm:px-10 flex flex-col items-start justify-between gap-20">
           {/* Era Residence Thin-Ring Circular Magnetic Button (SEND DRAWINGS ON WHATSAPP) */}
           <div className="self-center lg:self-end lg:mr-8">
-            <a
+            <ContactLink
               ref={magneticBtnRef}
-              href={`${SITE.whatsappBase}?text=${encodeURIComponent(
-                "Hello Kencho Group, I would like to share my interior drawings for a bespoke furniture estimate."
-              )}`}
-              target="_blank"
-              rel="noopener noreferrer"
+              method="whatsapp"
+              message={t("whatsappPrefill")}
               onMouseMove={handleMagneticMove}
               onMouseLeave={handleMagneticLeave}
-              aria-label="Send drawings on WhatsApp"
+              aria-label={t("sendLabel")}
               className="group relative flex items-center justify-center w-52 h-52 sm:w-60 sm:h-60 rounded-full border border-[#2A2723]/12 transition-transform duration-200 ease-out"
             >
               {/* Two thin dark perimeter arc ticks exactly like Era Residence */}
@@ -381,114 +298,52 @@ export default function ManifestoMapSection() {
                 className="text-[10px] font-semibold tracking-[0.18em] uppercase text-[#2A2723] text-center leading-relaxed"
                 style={{ fontFamily: "var(--font-sans)" }}
               >
-                SEND DRAWINGS
-                <br />
-                ON WHATSAPP
+                {t("sendDrawings")}
+                <br />{" "}
+                {t("onWhatsapp")}
               </span>
-            </a>
+            </ContactLink>
           </div>
 
           {/* Bottom Unboxed Editorial Copy */}
           <div className="max-w-md">
             <h3 className="font-era-display text-2xl sm:text-3xl text-[#2A2723] mb-5">
-              NEW STANDARD OF CRAFT
+              {t("craftTitle")}
             </h3>
             <p
               className="text-xs sm:text-[13px] leading-relaxed text-[#2A2723]/75"
               style={{ fontFamily: "var(--font-sans)" }}
             >
-              Whether you arrive with an interior designer&apos;s full CAD
-              package or an empty flat and reference photographs, our workshop
-              builds every cabinet, wardrobe, and architectural wall panel to
-              the exact millimetre.
+              {t("craftDescription")}
             </p>
           </div>
         </div>
 
-        {/* Right: Mixed Typography Headline Leading Into the SVG Wave */}
-        <div className="lg:col-span-4 px-6 sm:px-10 flex flex-col items-end text-right">
+        {/* Right: mixed typography closing the craft story. */}
+        <div data-manifesto-phrase className="lg:col-span-4 px-6 sm:px-10 flex flex-col items-end text-right">
           <span className="font-era-display text-[clamp(2.8rem,5.5vw,5rem)] text-[#2A2723]/75">
-            FROM OUR HANDS
-          </span>
+            {t("fromHands")}
+          </span>{" "}
           <span
             className="font-era-script text-[clamp(3.2rem,6.5vw,5.8rem)] text-[#2A2723] leading-none -my-2"
-            style={{ fontFamily: "var(--font-script), cursive" }}
           >
-            Directly
-          </span>
+            {t("directly")}
+          </span>{" "}
           <span className="font-era-display text-[clamp(2.8rem,5.5vw,5rem)] text-[#2A2723]">
-            TO YOUR HOME
+            {t("toHome")}
           </span>
         </div>
       </div>
 
-      {/* 4. Full-Bleed Horizontal Hand-Drawn SVG Journey Wave (Zero Card Grid, Pure Floating Nodes) */}
-      <div ref={mapTriggerRef} className="relative w-full pt-8 pb-16">
-        <div className="relative w-full h-[260px] sm:h-[300px]">
-          <svg
-            viewBox="0 0 1200 240"
-            preserveAspectRatio="none"
-            className="w-full h-full overflow-visible"
-            aria-label="Kencho Group 5-Step Production Journey Wave"
-          >
-            {/* Subtle dotted reference curve */}
-            <path
-              d="M 0 180 C 120 156, 240 60, 360 72 C 480 84, 510 185, 600 168 C 710 148, 750 48, 840 62 C 940 76, 1010 155, 1200 120"
-              fill="none"
-              stroke="#2A2723"
-              strokeOpacity="0.12"
-              strokeWidth="1"
-              strokeDasharray="3 6"
-            />
-
-            {/* Scroll-animated hand-drawn SVG path */}
-            <path
-              ref={wavePathRef}
-              d="M 0 180 C 120 156, 240 60, 360 72 C 480 84, 510 185, 600 168 C 710 148, 750 48, 840 62 C 940 76, 1010 155, 1200 120"
-              fill="none"
-              stroke="#2A2723"
-              strokeOpacity="0.55"
-              strokeWidth="1.4"
-            />
-
-            {/* 5 Minimal Milestone Dots on the Wave */}
-            {MILESTONES.map((node) => (
-              <circle
-                key={node.id}
-                cx={node.cx}
-                cy={node.cy}
-                r="4"
-                fill="#2A2723"
-              />
-            ))}
-          </svg>
-
-          {/* Floating Uppercase Micro-Typography Positioned Directly at Each Wave Milestone */}
-          {MILESTONES.map((node) => (
-            <div
-              key={node.id}
-              style={{
-                left: node.xPercent,
-                top: node.yPercent,
-              }}
-              className={`absolute -translate-x-1/2 flex flex-col items-center text-center ${
-                node.placeAbove ? "-translate-y-[125%]" : "translate-y-5"
-              }`}
-            >
-              <span
-                className="text-[9.5px] sm:text-[10px] font-semibold tracking-[0.2em] uppercase text-[#2A2723] whitespace-nowrap"
-                style={{ fontFamily: "var(--font-sans)" }}
-              >
-                {node.title}
-              </span>
-              <span
-                className="text-[9px] font-medium tracking-[0.16em] uppercase text-[#2A2723]/60 mt-0.5 whitespace-nowrap"
-                style={{ fontFamily: "var(--font-sans)" }}
-              >
-                {node.subtitle}
-              </span>
-            </div>
-          ))}
+      <div data-project-invitation className="relative z-10 mx-6 grid grid-cols-1 overflow-hidden bg-[#F2ECE3] sm:mx-10 lg:mx-20 lg:grid-cols-2">
+        <div className="relative min-w-0 aspect-[4/3] lg:aspect-auto">
+          <Image src="/furniture/green-island-kitchen-tbilisi-kencho-group.webp" alt={t("projectAlt")} fill sizes="(max-width: 1023px) 100vw, 50vw" className="object-cover" />
+        </div>
+        <div className="flex min-w-0 flex-col items-start justify-center px-7 py-12 sm:p-14 lg:py-20">
+          <p className="mb-7 text-[10px] uppercase tracking-[0.18em]">{t("projectEyebrow")}</p>
+          <h3 className="font-era-display min-w-0 max-w-[min(18ch,100%)] text-[clamp(2rem,3.5vw,3.5rem)] leading-[1.3] [overflow-wrap:anywhere]">{t("projectTitle")}</h3>
+          <p className="mt-8 max-w-[45ch] text-sm leading-relaxed text-[#2A2723]/75">{t("projectText")}</p>
+          <Link href="/about" className="mt-10 border-b border-[#2A2723]/40 pb-2 text-xs leading-relaxed">{t("projectLink")} <span aria-hidden="true">↗</span></Link>
         </div>
       </div>
     </section>

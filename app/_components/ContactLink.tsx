@@ -1,38 +1,51 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import type { ComponentPropsWithRef } from "react";
 import { track } from "@/lib/analytics";
-import { getRefCode } from "@/lib/lead-ref";
+import { getEnquiryAttribution, getRefCode } from "@/lib/lead-ref";
 import { SITE, whatsappUrl } from "@/lib/site";
 
 export default function ContactLink({
   method,
   about = "",
+  message: customMessage,
   className = "",
   children,
+  ...anchorProps
 }: {
   method: "whatsapp" | "phone";
   about?: string;
-  className?: string;
-  children: React.ReactNode;
-}) {
+  message?: string;
+} & Omit<ComponentPropsWithRef<"a">, "href" | "onClick">) {
   const t = useTranslations("common");
-  const message = about
+  const locale = useLocale();
+  const message = customMessage ?? (about
     ? t("photoPrefill", { title: about })
-    : t("whatsappPrefill");
+    : t("whatsappPrefill"));
   return (
     <a
+      {...anchorProps}
+      data-contact-method={method}
       href={method === "phone" ? `tel:${SITE.phoneHref}` : whatsappUrl(message)}
       target={method === "whatsapp" ? "_blank" : undefined}
       rel={method === "whatsapp" ? "noopener noreferrer" : undefined}
       className={className}
       onClick={(event) => {
         const code = getRefCode();
+        const attribution = getEnquiryAttribution(locale);
         if (method === "whatsapp" && code)
           event.currentTarget.href = whatsappUrl(
-            `${message} ${t("codeSuffix", { code })}`,
+            message + t("attributionSuffix", {
+              code,
+              locale,
+              page: attribution.page,
+              source: attribution.utm_source || attribution.source || t("directSource"),
+              referrer: attribution.referrer || t("directSource"),
+              landing: attribution.landing,
+            }),
           );
-        track("Contact", { method, code, page: about || undefined });
+        track("Contact", { method, code, ...attribution, about: about || undefined });
       }}
     >
       {children}

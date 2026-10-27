@@ -3,6 +3,8 @@ import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import CatalogueShell from "@/app/_components/CatalogueShell";
+import CategoryBuyerGuide from "@/app/_components/CategoryBuyerGuide";
+import { hasCategoryGuide } from "@/lib/category-guides";
 import { routing, type Locale } from "@/i18n/routing";
 import { loadChapters, loadGallery, loadPages } from "@/lib/catalogue";
 import { pick } from "@/lib/convex-gallery";
@@ -27,17 +29,20 @@ export async function generateMetadata({
   const gallery = await loadGallery(slug);
   if (gallery === null) return {};
 
-  const title = `${pick(gallery.title, locale as Locale)} | ${SITE.name}`;
+  const guide = hasCategoryGuide(slug)
+    ? await getTranslations({ locale, namespace: `categoryGuides.items.${slug}` })
+    : null;
+  const title = guide ? guide("metaTitle") : `${pick(gallery.title, locale as Locale)} | ${SITE.name}`;
   /*
    * Admin-written descriptions are one sentence and often land under
    * the ~110 characters search tools expect. Pad short ones with a
    * localized brand line from metaGallery.tail (sized so the result
    * stays under 160).
    */
-  const base = pick(gallery.description, locale as Locale);
+  const base = guide ? guide("metaDescription") : pick(gallery.description, locale as Locale);
   const t = await getTranslations({ locale, namespace: "metaGallery" });
   const description =
-    base.length === 0
+    guide ? base : base.length === 0
       ? t("tail")
       : base.length < 110
         ? `${base} ${t("tail")}`
@@ -99,8 +104,11 @@ export default async function ChapterPage({
     loadPages(locale as Locale, gallery.slug),
   ]);
 
-  const title = pick(gallery.title, locale as Locale);
-  const description = pick(gallery.description, locale as Locale);
+  const guide = hasCategoryGuide(slug)
+    ? await getTranslations({ locale, namespace: `categoryGuides.items.${slug}` })
+    : null;
+  const title = guide ? guide("title") : pick(gallery.title, locale as Locale);
+  const description = guide ? guide("lede") : pick(gallery.description, locale as Locale);
 
   const [breadcrumb, work] = [
     await galleryBreadcrumbLd(locale as Locale, {
@@ -133,7 +141,9 @@ export default async function ChapterPage({
         active={gallery.slug}
         title={title}
         lede={description}
-      />
+      >
+        {hasCategoryGuide(slug) && <CategoryBuyerGuide locale={locale as Locale} slug={slug} />}
+      </CatalogueShell>
     </>
   );
 }

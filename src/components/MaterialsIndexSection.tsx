@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { useRef, useState, type KeyboardEvent } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
@@ -17,50 +19,6 @@ interface Material {
   alt: string;
 }
 
-/* Draft copy: confirm the material facts with Kencho before launch. */
-const MATERIALS: Material[] = [
-  {
-    id: "white-oak",
-    label: "WHITE OAK",
-    caption:
-      "European oak veneers, matched door to door so the grain runs unbroken across a whole wall of cabinetry.",
-    image: "/furniture/white-oak-kitchen-wall-tbilisi-kencho-group.webp",
-    alt: "Wall of white oak upper cabinets over a white kitchen run by Kencho Group",
-  },
-  {
-    id: "walnut",
-    label: "WALNUT",
-    caption:
-      "Deep, warm walnut for panelled halls, studies and bedrooms, finished in our Tbilisi workshop to age with you.",
-    image: "/furniture/office-walnut-corridor-tbilisi-kencho-group.webp",
-    alt: "Walnut wall panelling along a bright corridor by Kencho Group",
-  },
-  {
-    id: "marble",
-    label: "MARBLE & STONE",
-    caption:
-      "Stone worktops and splashbacks templated on site and joined to the cabinetry without a visible seam.",
-    image: "/furniture/green-marble-kitchen-tbilisi-kencho-group.webp",
-    alt: "White marble splashback and worktop in a sage and oak kitchen by Kencho Group",
-  },
-  {
-    id: "light-mirror",
-    label: "LIGHT & MIRROR",
-    caption:
-      "Backlit slats, mirror and glass set into the joinery, so a room glows instead of simply being lit.",
-    image: "/furniture/backlit-slat-wall-mirror-tbilisi-kencho-group.webp",
-    alt: "Backlit oak slat wall with a round mirror in a marble lobby by Kencho Group",
-  },
-  {
-    id: "lacquer",
-    label: "PAINTED LACQUER",
-    caption:
-      "Smooth matt lacquer in any colour your designer chooses, from a quiet white to a deep teal.",
-    image: "/furniture/white-wardrobe-teal-bedroom-tbilisi-kencho-group.webp",
-    alt: "White lacquered wardrobe wall beside a teal niche in a bedroom by Kencho Group",
-  },
-];
-
 /* Diagonal wipe: the incoming photo slides in behind a sloped edge. */
 const WIPE_DURATION = 1.1;
 const SKEW_DEG = 14;
@@ -77,6 +35,46 @@ const PHOTO_WIDTH = `${(100 / MASK_SPAN) * 100}%`;
 const DRIFT_FROM = -(MASK_SPAN - 20);
 
 export default function MaterialsIndexSection() {
+  const t = useTranslations("home.era.materials");
+  /* Draft copy: confirm the material facts with Kencho before launch. */
+  const MATERIALS: Material[] = [
+    {
+      id: "white-oak",
+      label: t("oak"),
+      caption: t("oakCaption"),
+      image: "/furniture/white-oak-kitchen-wall-tbilisi-kencho-group.webp",
+      alt: t("oakAlt"),
+    },
+    {
+      id: "walnut",
+      label: t("walnut"),
+      caption: t("walnutCaption"),
+      image: "/furniture/office-walnut-corridor-tbilisi-kencho-group.webp",
+      alt: t("walnutAlt"),
+    },
+    {
+      id: "marble",
+      label: t("stone"),
+      caption: t("stoneCaption"),
+      image: "/furniture/green-marble-kitchen-tbilisi-kencho-group.webp",
+      alt: t("stoneAlt"),
+    },
+    {
+      id: "light-mirror",
+      label: t("light"),
+      caption: t("lightCaption"),
+      image: "/furniture/backlit-slat-wall-mirror-tbilisi-kencho-group.webp",
+      alt: t("lightAlt"),
+    },
+    {
+      id: "lacquer",
+      label: t("lacquer"),
+      caption: t("lacquerCaption"),
+      image: "/furniture/white-wardrobe-teal-bedroom-tbilisi-kencho-group.webp",
+      alt: t("lacquerAlt"),
+    },
+  ];
+
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
@@ -130,7 +128,7 @@ export default function MaterialsIndexSection() {
           )
           .from(
             first?.querySelectorAll(".mat-line") ?? [],
-            { yPercent: 110, duration: 0.9, ease: "power3.out", stagger: 0.08 },
+            { yPercent: 150, duration: 0.9, ease: "power3.out", stagger: 0.08 },
             0.3
           );
       });
@@ -204,7 +202,7 @@ export default function MaterialsIndexSection() {
     gsap.killTweensOf([outLines, outLabel]);
     gsap.to(outLabel, { opacity: 0, duration: 0.25, ease: "power2.in" });
     gsap.to(outLines, {
-      yPercent: reduced ? 0 : -110,
+      yPercent: reduced ? 0 : -150,
       opacity: reduced ? 0 : 1,
       duration: reduced ? 0.25 : 0.3,
       ease: "power2.in",
@@ -225,7 +223,7 @@ export default function MaterialsIndexSection() {
     );
     gsap.fromTo(
       inLines,
-      reduced ? { yPercent: 0, opacity: 0 } : { yPercent: 110, opacity: 1 },
+      reduced ? { yPercent: 0, opacity: 0 } : { yPercent: 150, opacity: 1 },
       {
         yPercent: 0,
         opacity: 1,
@@ -338,7 +336,7 @@ export default function MaterialsIndexSection() {
           className="mb-5 text-[9px] font-semibold tracking-[0.28em] uppercase text-[#FFFFFF]/75"
           style={{ fontFamily: "var(--font-sans)" }}
         >
-          THE MATERIALS — 0{MATERIALS.length}
+          {t("heading")}{MATERIALS.length}
         </h2>
 
         <ul
@@ -406,9 +404,8 @@ export default function MaterialsIndexSection() {
             </span>
             <p
               data-caption-text
-              className="uppercase text-[5.4vw] md:text-[1.85vw] tracking-[-0.01em] indent-[var(--indent)] [&_.mat-line]:indent-0 [&>*:first-child_.mat-line]:indent-[var(--indent)] [&_.mat-word]:inline-block [&_.mat-word]:indent-0 [&_.mat-word]:scale-y-[1.35]"
+              className="era-material-copy uppercase text-[5.4vw] md:text-[1.85vw] tracking-[-0.01em] indent-[var(--indent)] [&_.mat-line]:indent-0 [&>*:first-child_.mat-line]:indent-[var(--indent)] [&_.mat-word]:inline-block [&_.mat-word]:indent-0"
               style={{
-                fontFamily: "var(--font-bodoni), var(--font-display-en), Georgia, serif",
                 lineHeight: 1.25,
               }}
             >

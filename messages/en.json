@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Custom kitchens & wardrobes in Tbilisi | Kencho Group",
-    "description": "Made-to-measure kitchens, wardrobes and full interiors from one Tbilisi workshop — 3D design, precise production and installation by a single team.",
+    "description": "Custom kitchens and cabinetry from Tbilisi, with 3D design, specialist processing, delivery and installation throughout Georgia.",
     "ogAlt": "Kencho Group — custom furniture in Tbilisi"
   },
   "metaFaq": {
@@ -21,22 +21,22 @@
     "items": {
       "kitchens": {
         "name": "Kitchens",
-        "line": "Kitchens built to an individual design — integrated appliances, clean joins, precise measurement.",
+        "line": "Custom kitchen manufacturing, from an inspiration photo to fitted cabinetry. Design, materials, delivery and installation throughout Georgia.",
         "imageAlt": "A custom kitchen with dark wood cabinet fronts"
       },
       "wardrobes": {
         "name": "Wardrobes and storage",
-        "line": "Walk-in wardrobes, built-in closets, and storage systems — every corner put to work.",
+        "line": "Built-in wardrobes, dressing rooms and storage made to your dimensions, with delivery and installation throughout Georgia.",
         "imageAlt": "A built-in wardrobe room with wooden detailing"
       },
       "paneling": {
         "name": "Wall paneling and details",
-        "line": "Wood paneling, shelving, and interior details that give a space its character.",
+        "line": "Wall panelling, shelving, media units and custom wood, MDF and metalwork furniture, delivered and installed throughout Georgia.",
         "imageAlt": "Wooden wall paneling in soft light"
       },
       "commercial": {
         "name": "Commercial fit-outs",
-        "line": "Offices, cafés, and shops — a complete fit-out from design to opening day.",
+        "line": "Custom office, café, shop and reception furniture. Design, technical drawings, delivery and installation throughout Georgia.",
         "imageAlt": "A commercial interior with custom furniture"
       }
     }
@@ -44,27 +44,27 @@
   "process": {
     "eyebrow": "Process",
     "title": "How we work",
-    "note": "Our team discusses the details with you and your designer before production.",
+    "note": "Plan approximately 6–8 weeks, around two months, overall. This is an estimate; reviews, workload, season and additional finishing can extend it.",
     "steps": {
       "s1": {
         "title": "Measurement",
         "line": "We visit, measure, and listen to how you use the space."
       },
       "s2": {
-        "title": "3D design",
-        "line": "You see the result on screen before production begins."
+        "title": "3D design concept",
+        "line": "Approximately one week for the initial design."
       },
       "s3": {
-        "title": "Approval",
-        "line": "We agree on materials, colours and the final design."
+        "title": "Price agreement and technical drawings",
+        "line": "Approximately 7–10 days for drawings, detail review and approval. Requested revisions can change the design and quote."
       },
       "s4": {
-        "title": "Manufacturing",
-        "line": "Our team makes the agreed design in our own workshop."
+        "title": "Material preparation",
+        "line": "Approximately 5–14 days for preparation, precision cutting and edge-banding through specialist suppliers and processing providers, depending on workload and season."
       },
       "s5": {
-        "title": "Installation",
-        "line": "We install cleanly and hand over a finished space."
+        "title": "Assembly and installation",
+        "line": "Approximately one week. Painted MDF can add 7–10 days; CNC routing can add around five days. We confirm the schedule for your specification."
       }
     }
   },
@@ -86,7 +86,9 @@
     "close": "Close",
     "photoPrefill": "Hello! I would like to discuss a project like this: {title}",
     "designerPrefill": "Hello! I'm an interior designer and would like to send you a project.",
-    "codeSuffix": "(code {code})"
+    "codeSuffix": "(code {code})",
+    "attributionSuffix": "\n\nWebsite reference: {code}\nLanguage: {locale}\nPage: {page}\nSource: {source}\nReferrer: {referrer}\nFirst page: {landing}",
+    "directSource": "Direct / not supplied"
   },
   "contact": {
     "title": "Let's start your project",
@@ -119,7 +121,7 @@
     "dialog": "Get in touch"
   },
   "footer": {
-    "tagline": "Kitchens, wardrobes and interiors, made to measure in Tbilisi.",
+    "tagline": "Based in Tbilisi, with delivery and installation throughout Georgia. Logistics and installation are included in the agreed project quote.",
     "rights": "© {year} Kencho Group. All rights reserved.",
     "socials": "Social media",
     "enquiries": "Enquiries",
@@ -138,7 +140,7 @@
     "lede": "Finished kitchens, wardrobes and interiors, photographed in our clients' homes. Find what your designer has in mind, and we'll build it.",
     "all": "All",
     "chapters": "Catalogue chapters",
-    "designerNote": "Working with a designer? Send us the drawings — we build to the millimetre.",
+    "designerNote": "Start with a Pinterest photo, a rough idea or existing drawings. We consult, measure and develop the design and technical specification with you.",
     "open": "Open: {title}",
     "page": "Page",
     "quote": "Get a quote for this",
@@ -153,21 +155,23 @@
   },
   "about": {
     "eyebrow": "About us",
-    "title": "One workshop. Every piece made here.",
-    "lede": "Kencho Group is a custom furniture workshop in Tbilisi. We measure, build and install everything ourselves — one team from the first visit to the last screw.",
+    "title": "Your idea. A complete furniture service.",
+    "lede": "Custom kitchens, built-in wardrobes, cabinetry, wood, MDF and architectural metalwork furniture. Upholstered furniture is excluded. Based in Tbilisi, with delivery and installation throughout Georgia. Logistics and installation are included in the agreed project quote.",
     "videoTitle": "A walk through a finished home",
     "videoNote": "Our owner shows a kitchen and storage we built — from the wine rack to the hidden pantry.",
     "designersEyebrow": "For interior designers",
     "designersTitle": "Your drawings, built to the millimetre.",
-    "designersText": "Most of our clients come to us with a designer. Send us the project and we follow it exactly — materials, joints and details — and keep you informed at every stage.",
+    "designersText": "Bring your designer’s drawings or use our design service. We review dimensions, materials and technical details together, then agree the specification, quote and delivery schedule.",
     "designersCta": "Send drawings on WhatsApp",
     "faqMore": "All questions",
     "heroMeta": "Measurement, 3D design, production, installation",
-    "heroLine": "We believe the best furniture comes from one team that measures, builds and installs it."
+    "heroLine": "Start with a Pinterest photo, a rough idea or existing drawings. We consult, measure and develop the design and technical specification with you.",
+    "watchFilm": "Watch the project film",
+    "detailAlt": "Fluted wood panel and joinery detail by Kencho Group"
   },
   "metaAbout": {
     "title": "About us — how we work | Kencho Group",
-    "description": "Kencho Group is a custom furniture workshop in Tbilisi: measurement, production and installation by one team. We build designers' projects exactly.",
+    "description": "Custom kitchens and cabinetry from Tbilisi, with 3D design, specialist processing, delivery and installation throughout Georgia.",
     "ogAlt": "Kencho Group — the owner in a finished kitchen"
   },
   "faq": {
@@ -175,20 +179,20 @@
     "title": "Common questions",
     "items": {
       "pricing": {
-        "q": "Can you work with my interior designer?",
-        "a": "Yes. Send the drawings or renders on WhatsApp. Our team will review the project with you and your designer."
+        "q": "Can I start with an idea, and what does design cost?",
+        "a": "Start with a Pinterest photo, a rough idea or existing drawings. We consult, measure and develop the design and technical specification with you. Furniture 3D design and technical drawings: 30 GEL/m², calculated by front elevation. Full interior design: US$15–20/m², calculated by floor area. Design fees are separate from manufacturing. The furniture quotation follows consultation, 3D design and technical specification. The price is fixed for the agreed specification; customer-requested design or material revisions during review are re-estimated and approved before production."
       },
       "timeline": {
-        "q": "What should I send to get started?",
-        "a": "A plan, a few inspiration photographs or a short description is a useful starting point. If you have drawings, send those too. The team will guide the next steps."
+        "q": "How long does a project take, and when is the price fixed?",
+        "a": "Plan approximately 6–8 weeks, around two months, overall. This is an estimate; reviews, workload, season and additional finishing can extend it. Approximately one week for the initial design. Approximately 7–10 days for drawings, detail review and approval. Requested revisions can change the design and quote. Approximately 5–14 days for preparation, precision cutting and edge-banding through specialist suppliers and processing providers, depending on workload and season. Approximately one week. Painted MDF can add 7–10 days; CNC routing can add around five days. We confirm the schedule for your specification."
       },
       "materials": {
         "q": "How do we choose materials and finishes?",
-        "a": "Share the look and practical requirements you have in mind. Our team will discuss materials, finishes and hardware that suit the project."
+        "a": "We source materials and processing services from LTB, Imeri, Geo Decor, Ionfasha, Kasta (including Kronospan materials) and Oldlami (including Starwood materials). These are suppliers and service providers. Specific materials and availability are confirmed for each project. Our capabilities include CNC routing, laser cutting, custom metal structures and decor, laser metal welding and electrostatic powder coating. Specialist processing is arranged where required."
       },
       "commercial": {
         "q": "Do you take commercial projects?",
-        "a": "Yes — offices, cafés, and shops, from single pieces to complete turnkey fit-outs."
+        "a": "Custom kitchens, built-in wardrobes, cabinetry, wood, MDF and architectural metalwork furniture. Upholstered furniture is excluded. Based in Tbilisi, with delivery and installation throughout Georgia. Logistics and installation are included in the agreed project quote."
       }
     }
   },
@@ -222,7 +226,7 @@
   "statement": {
     "eyebrow": "How we work",
     "title": "Measured. Drawn. Built. Installed.",
-    "text": "One workshop in Tbilisi does all of it. We measure your space, draw it in 3D, build every piece ourselves and install it with our own team — so what you approve on screen is exactly what arrives. Most of our clients come with a designer; we build their drawings to the millimetre.",
+    "text": "Custom kitchens, built-in wardrobes, cabinetry, wood, MDF and architectural metalwork furniture. Upholstered furniture is excluded. Based in Tbilisi, with delivery and installation throughout Georgia. Logistics and installation are included in the agreed project quote.",
     "cta": "More about us"
   },
   "latest": {
@@ -242,5 +246,92 @@
     "workshop": "Workshop",
     "follow": "Follow",
     "email": "E-mail"
+  },
+  "commercial": {
+    "scope": "Custom kitchens, built-in wardrobes, cabinetry, wood, MDF and architectural metalwork furniture. Upholstered furniture is excluded.",
+    "coverage": "Based in Tbilisi, with delivery and installation throughout Georgia. Logistics and installation are included in the agreed project quote.",
+    "start": "Start with a Pinterest photo, a rough idea or existing drawings. We consult, measure and develop the design and technical specification with you.",
+    "feesTitle": "Design fees and manufacturing price",
+    "furnitureFee": "Furniture 3D design and technical drawings: 30 GEL/m², calculated by front elevation.",
+    "interiorFee": "Full interior design: US$15–20/m², calculated by floor area.",
+    "quote": "Design fees are separate from manufacturing. The furniture quotation follows consultation, 3D design and technical specification. The price is fixed for the agreed specification; customer-requested design or material revisions during review are re-estimated and approved before production.",
+    "timelineTitle": "From idea to installation",
+    "timeline": "Plan approximately 6–8 weeks, around two months, overall. This is an estimate; reviews, workload, season and additional finishing can extend it.",
+    "stages": {
+      "design": {
+        "title": "3D design concept",
+        "text": "Approximately one week for the initial design."
+      },
+      "review": {
+        "title": "Price agreement and technical drawings",
+        "text": "Approximately 7–10 days for drawings, detail review and approval. Requested revisions can change the design and quote."
+      },
+      "materials": {
+        "title": "Material preparation",
+        "text": "Approximately 5–14 days for preparation, precision cutting and edge-banding through specialist suppliers and processing providers, depending on workload and season."
+      },
+      "installation": {
+        "title": "Assembly and installation",
+        "text": "Approximately one week. Painted MDF can add 7–10 days; CNC routing can add around five days. We confirm the schedule for your specification."
+      }
+    },
+    "materialsTitle": "Materials and specialist processing",
+    "suppliers": "We source materials and processing services from LTB, Imeri, Geo Decor, Ionfasha, Kasta (including Kronospan materials) and Oldlami (including Starwood materials). These are suppliers and service providers. Specific materials and availability are confirmed for each project.",
+    "technical": "Our capabilities include CNC routing, laser cutting, custom metal structures and decor, laser metal welding and electrostatic powder coating. Specialist processing is arranged where required.",
+    "faqTitle": "Questions about your project",
+    "cta": "Discuss your project on WhatsApp",
+    "related": "Explore other categories"
+  },
+  "categoryGuides": {
+    "items": {
+      "kitchens": {
+        "title": "Custom kitchens in Tbilisi",
+        "metaTitle": "Custom kitchens in Tbilisi | Kencho Group",
+        "metaDescription": "Custom kitchen manufacturing, from an inspiration photo to fitted cabinetry. Design, materials, delivery and installation throughout Georgia.",
+        "lede": "Custom kitchen manufacturing, from an inspiration photo to fitted cabinetry. Design, materials, delivery and installation throughout Georgia.",
+        "guideTitle": "Custom kitchens in Tbilisi",
+        "focus": "We develop the cabinet layout, appliance spaces, storage, fronts and worktop details around your room. Bring a Pinterest reference or your designer’s drawings; the final specification determines the manufacturing quote.",
+        "faq1q": "Can we start with a Pinterest kitchen photograph?",
+        "faq1a": "Yes. We use the photograph to understand the style, then review your room, dimensions, appliance requirements, materials and technical drawings before agreeing what will be made.",
+        "faq2q": "Does the design fee include manufacturing?",
+        "faq2a": "No. Furniture 3D design and technical drawings cost 30 GEL/m² of front elevation. Full interior design costs US$15–20/m² of floor area. Manufacturing, delivery and installation are priced in the separate agreed project quote."
+      },
+      "wardrobes-storage": {
+        "title": "Built-in wardrobes and storage",
+        "metaTitle": "Built-in wardrobes in Tbilisi | Kencho Group",
+        "metaDescription": "Built-in wardrobes, dressing rooms and storage made to your dimensions, with delivery and installation throughout Georgia.",
+        "lede": "Built-in wardrobes, dressing rooms and storage made to your dimensions, with delivery and installation throughout Georgia.",
+        "guideTitle": "Built-in wardrobes and storage",
+        "focus": "We review depth, height, door movement, hanging space, drawers and everyday storage needs. The approved design and materials define the technical drawings and quote.",
+        "faq1q": "Can you design storage for an awkward space?",
+        "faq1a": "Yes. Send photographs or drawings and describe what you need to store. We check the dimensions and design a built-in solution for the available space.",
+        "faq2q": "Does the design fee include manufacturing?",
+        "faq2a": "No. Furniture 3D design and technical drawings cost 30 GEL/m² of front elevation. Full interior design costs US$15–20/m² of floor area. Manufacturing, delivery and installation are priced in the separate agreed project quote."
+      },
+      "home-interiors": {
+        "title": "Custom cabinetry and wall panelling",
+        "metaTitle": "Custom interiors and wall panelling | Kencho Group",
+        "metaDescription": "Wall panelling, shelving, media units and custom wood, MDF and metalwork furniture, delivered and installed throughout Georgia.",
+        "lede": "Wall panelling, shelving, media units and custom wood, MDF and metalwork furniture, delivered and installed throughout Georgia.",
+        "guideTitle": "Custom cabinetry and wall panelling",
+        "focus": "We coordinate furniture, wall details and finishes in one specification. We offer custom cabinet and architectural furniture; upholstered furniture is excluded.",
+        "faq1q": "Can you coordinate furniture across several rooms?",
+        "faq1a": "Yes. Share the full plan or reference photographs so we can review cabinetry, shelving, wall panels and other furniture together. Upholstered furniture is not offered.",
+        "faq2q": "Does the design fee include manufacturing?",
+        "faq2a": "No. Furniture 3D design and technical drawings cost 30 GEL/m² of front elevation. Full interior design costs US$15–20/m² of floor area. Manufacturing, delivery and installation are priced in the separate agreed project quote."
+      },
+      "commercial-spaces": {
+        "title": "Furniture for commercial spaces",
+        "metaTitle": "Commercial furniture in Georgia | Kencho Group",
+        "metaDescription": "Custom office, café, shop and reception furniture. Design, technical drawings, delivery and installation throughout Georgia.",
+        "lede": "Custom office, café, shop and reception furniture. Design, technical drawings, delivery and installation throughout Georgia.",
+        "guideTitle": "Furniture for commercial spaces",
+        "focus": "We review drawings, operational needs, dimensions and the opening schedule. The agreed quote specifies furniture, processing, logistics and installation; upholstered furniture is excluded.",
+        "faq1q": "Can you manufacture from our designer’s drawings?",
+        "faq1a": "Yes. We review the project with you and your designer, verify dimensions and prepare the technical specification before approval and production.",
+        "faq2q": "Does the design fee include manufacturing?",
+        "faq2a": "No. Furniture 3D design and technical drawings cost 30 GEL/m² of front elevation. Full interior design costs US$15–20/m² of floor area. Manufacturing, delivery and installation are priced in the separate agreed project quote."
+      }
+    }
   }
 }

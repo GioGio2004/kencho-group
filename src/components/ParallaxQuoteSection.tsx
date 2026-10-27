@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
@@ -12,6 +14,8 @@ const FALLBACK_COMMERCIAL =
   "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=2000&q=85";
 
 export default function ParallaxQuoteSection() {
+  const t = useTranslations("home.era.quote");
+
   const sectionRef = useRef<HTMLElement>(null);
   const bgWrapRef = useRef<HTMLDivElement>(null);
   const quoteBoxRef = useRef<HTMLDivElement>(null);
@@ -25,39 +29,44 @@ export default function ParallaxQuoteSection() {
 
       if (!section || !bgWrap || !quoteBox) return;
 
-      // Subtle vertical parallax on the full-bleed background image
-      gsap.fromTo(
-        bgWrap,
-        { yPercent: -12, scale: 1.14 },
-        {
-          yPercent: 12,
-          scale: 1.14,
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          },
-        }
-      );
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Subtle vertical parallax on the full-bleed background image
+        gsap.fromTo(
+          bgWrap,
+          { yPercent: -12, scale: 1.14 },
+          {
+            yPercent: 12,
+            scale: 1.14,
+            ease: "none",
+            scrollTrigger: {
+              trigger: section,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          }
+        );
 
-      // Editorial pull-quote reveal
-      gsap.fromTo(
-        quoteBox,
-        { y: 56, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 68%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
+        // Editorial pull-quote reveal
+        gsap.fromTo(
+          quoteBox,
+          { y: 56, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: section,
+              start: "top 68%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      });
+
+      return () => mm.revert();
     },
     { scope: sectionRef }
   );
@@ -67,7 +76,7 @@ export default function ParallaxQuoteSection() {
       id="quote-banner"
       ref={sectionRef}
       data-hud-tone="light"
-      aria-label="Kencho Workshop Architectural Quote"
+      aria-label={t("label")}
       className="relative h-screen w-full overflow-hidden bg-[#F2ECE3] text-[#FFFFFF] flex items-end"
     >
       {/* Full-bleed Architectural Showcase Image with Vertical Parallax */}
@@ -77,7 +86,7 @@ export default function ParallaxQuoteSection() {
       >
         <Image
           src={imgSrc}
-          alt="Kencho Group architectural interior and bespoke millwork showcase in Tbilisi"
+          alt={t("alt")}
           fill
           sizes="100vw"
           onError={() => setImgSrc(FALLBACK_COMMERCIAL)}
@@ -108,18 +117,16 @@ export default function ParallaxQuoteSection() {
             className="font-era-display text-[clamp(1.5rem,2.6vw,2.45rem)] uppercase text-[#FFFFFF] tracking-[-0.015em] mb-12 indent-16"
             style={{ lineHeight: 1.32 }}
           >
-            INSTEAD OF OUTSOURCING, ONE TEAM MEASURES, DRAWS, BUILDS, AND
-            INSTALLS — SO YOUR DESIGNER&apos;S DRAWINGS ARE BUILT TO THE EXACT
-            MILLIMETRE.”
+            {t("quote")}
           </blockquote>
 
           <div
             className="flex flex-col gap-1 text-[10px] font-semibold tracking-[0.26em] uppercase text-[#FFFFFF]"
             style={{ fontFamily: "var(--font-sans)" }}
           >
-            <span>BESPOKE MILLWORK TEAM</span>
+            <span>{t("team")}</span>
             <span className="text-[#FFFFFF]/70">
-              KENCHO WORKSHOP • TBILISI, GEORGIA
+              {t("workshop")}
             </span>
           </div>
         </div>

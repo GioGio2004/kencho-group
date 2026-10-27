@@ -3,6 +3,7 @@ import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import ContactPanel from "@/app/_components/ContactPanel";
+import ContactLink from "@/app/_components/ContactLink";
 import PageHeader from "@/app/_components/PageHeader";
 import { routing, type Locale } from "@/i18n/routing";
 import { IMAGES, src } from "@/lib/images";
@@ -62,7 +63,7 @@ export default async function ContactPage({ params }: PageProps<"/[locale]/conta
               </div>
               <div>
                 <h2 className="u-meta text-mute">{t("phoneLabel")}</h2>
-                <a href={`tel:${SITE.phoneHref}`} className="u-link mt-2 inline-block">{SITE.phone}</a>
+                <ContactLink method="phone" className="u-link mt-2 inline-block">{SITE.phone}</ContactLink>
               </div>
               <div>
                 <h2 className="u-meta text-mute">{t("emailLabel")}</h2>

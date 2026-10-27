@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { HUD_TONE_TEXT, useHudTones, type HudPoints } from "@/lib/hud-tone";
@@ -15,6 +15,8 @@ const HUD_POINTS: HudPoints<"emblem" | "rail" | "lang"> = {
 /* Navigation lives in the bottom mega menu (app/_components/MegaMenu);
  * the HUD keeps only the emblem, the scroll rail and the languages. */
 export default function FixedHudFrame() {
+  const t = useTranslations("home.era.hud");
+
   const locale = (useLocale() as Locale) || "en";
   const pathname = usePathname();
 
@@ -54,7 +56,7 @@ export default function FixedHudFrame() {
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Kencho Group — Back to top"
+          aria-label={t("backToTop")}
           className="group relative flex items-center justify-center w-24 h-24 transition-transform duration-500 hover:scale-105 cursor-pointer"
         >
           <svg
@@ -74,7 +76,7 @@ export default function FixedHudFrame() {
               style={{ fontFamily: "var(--font-sans)" }}
             >
               <textPath href="#kencho-hud-emblem-ring" startOffset="0%">
-                KENCHO GROUP • TBILISI WORKSHOP •
+                {t("ring")}
               </textPath>
             </text>
           </svg>
@@ -125,7 +127,7 @@ export default function FixedHudFrame() {
             className="text-[8.5px] font-semibold tracking-[0.34em] uppercase [writing-mode:vertical-rl] rotate-180"
             style={{ fontFamily: "var(--font-sans)" }}
           >
-            SCROLL
+            {t("scroll")}
           </span>
           <svg
             width="8"
@@ -160,7 +162,7 @@ export default function FixedHudFrame() {
                 : "opacity-70"
             }`}
           >
-            ქარ
+            {t("georgian")}
           </Link>
           <span className="opacity-40">/</span>
           <Link
@@ -172,7 +174,7 @@ export default function FixedHudFrame() {
                 : "opacity-70"
             }`}
           >
-            RU
+            {t("russian")}
           </Link>
           <span className="opacity-40">/</span>
           <Link
@@ -184,7 +186,7 @@ export default function FixedHudFrame() {
                 : "opacity-70"
             }`}
           >
-            EN
+            {t("english")}
           </Link>
         </div>
       </div>

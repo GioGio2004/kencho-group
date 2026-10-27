@@ -941,6 +941,12 @@
     font-size: clamp(3.2rem, 7.8vw, 7.8rem);
     letter-spacing: -0.03em;
     line-height: 0.94;
+    overflow-wrap: anywhere;
+  }
+  @media (max-width: 639px) {
+    :lang(ru) .catalogue-title {
+      font-size: clamp(2.3rem, 12.5vw, 5rem);
+    }
   }
   :lang(ka) .catalogue-title {
     font-size: clamp(2.3rem, 5.5vw, 5.5rem);

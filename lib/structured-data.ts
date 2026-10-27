@@ -25,12 +25,14 @@ const SERVICE_IDS = [
  */
 export async function businessLd(locale: Locale): Promise<string> {
   const t = await getTranslations({ locale, namespace: "services" });
+  const commercial = await getTranslations({ locale, namespace: "commercial" });
 
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "FurnitureStore",
     "@id": `${SITE.url}/#business`,
     name: SITE.name,
+    description: `${commercial("scope")} ${commercial("coverage")}`,
     url: `${SITE.url}/${locale}`,
     image: `${SITE.url}${src(IMAGES.heroMain)}`,
     telephone: SITE.phone,
@@ -53,7 +55,7 @@ export async function businessLd(locale: Locale): Promise<string> {
       opens: spec.opens,
       closes: spec.closes,
     })),
-    areaServed: { "@type": "City", name: SITE.address.city },
+    areaServed: SITE.serviceAreas,
     sameAs: Object.values(SITE.socials).filter((url) => !url.includes("TODO")),
     hasOfferCatalog: {
       "@type": "OfferCatalog",
@@ -65,6 +67,7 @@ export async function businessLd(locale: Locale): Promise<string> {
           name: t(`items.${id}.name`),
           description: t(`items.${id}.line`),
           provider: { "@id": `${SITE.url}/#business` },
+          areaServed: SITE.serviceAreas,
         },
       })),
     },

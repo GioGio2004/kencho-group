@@ -32,6 +32,10 @@ export const SITE = {
   wordmark: "KENCHO",
   wordmarkSub: "GROUP",
   location: "Tbilisi, Georgia",
+  serviceAreas: [
+    { "@type": "City", name: "Tbilisi" },
+    { "@type": "Country", name: "Georgia" },
+  ],
   /*
    * The www host is canonical: production 308-redirects the bare apex
    * to www.kenchogroup.ge, so every canonical/hreflang/sitemap URL

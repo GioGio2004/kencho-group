@@ -5,11 +5,11 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import ContactButton from "@/app/_components/ContactButton";
 import { WhatsAppIcon } from "@/app/_components/ContactPanel";
 import FaqList from "@/app/_components/FaqList";
-import PageHeader from "@/app/_components/PageHeader";
+import Image from "next/image";
 import { routing, type Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { pageMetadata } from "@/lib/page-metadata";
-import { whatsappUrl } from "@/lib/site";
+import ContactLink from "@/app/_components/ContactLink";
 import { breadcrumbLd } from "@/lib/structured-data";
 
 /*
@@ -54,33 +54,42 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumb }} />
-      <main>
-        <PageHeader
-          meta={t("heroMeta")}
-          line={t("heroLine")}
-          title={t("title")}
-          image={{ src: "/video/hero-owner-poster.jpg", alt: t("videoTitle") }}
-        />
+      <main className="about-page">
+        <header className="about-intro">
+          <p className="u-meta text-mute">{t("eyebrow")} / KENCHO GROUP</p>
+          <div className="about-intro-grid">
+            <h1 className="u-display about-title">{t("title")}</h1>
+            <div className="about-intro-note">
+              <p className="u-meta text-mute">{t("heroMeta")}</p>
+              <p className="mt-6 leading-relaxed text-ink-2">{t("heroLine")}</p>
+              <a href="#about-film" className="u-link mt-8 inline-block">{t("watchFilm")} ↘</a>
+            </div>
+          </div>
+        </header>
+
+        <figure id="about-film" className="about-film">
+          <video
+            className="aspect-video w-full bg-ink object-contain"
+            controls
+            playsInline
+            preload="none"
+            poster="/video/hero-owner-poster.jpg"
+            aria-label={t("videoTitle")}
+          >
+            <source src="/video/hero-owner.mp4" type="video/mp4" />
+            <a href="/video/hero-owner.mp4">{t("watchFilm")}</a>
+          </video>
+          <figcaption className="about-film-caption">
+            <span className="u-meta">{t("videoTitle")}</span>
+            <span className="max-w-[48ch] text-sm leading-relaxed text-mute">{t("videoNote")}</span>
+          </figcaption>
+        </figure>
 
         {/* WHO — and the owner's walk through a finished home. */}
         <section className="px-5 py-20 sm:px-8 lg:grid lg:grid-cols-[1fr_2fr] lg:gap-12 lg:px-10 lg:py-28">
           <p className="u-meta text-mute">{t("eyebrow")}</p>
           <div>
             <p className="u-display max-w-[30ch] text-[clamp(1.6rem,2.8vw,2.6rem)]">{t("lede")}</p>
-            <video
-              className="mt-12 aspect-video w-full rounded-lg bg-sand object-cover"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              poster="/video/hero-owner-poster.jpg"
-              aria-label={t("videoTitle")}
-            >
-              <source src="/video/hero-owner-mobile.mp4" type="video/mp4" media="(max-width: 767px)" />
-              <source src="/video/hero-owner.mp4" type="video/mp4" />
-            </video>
-            <p className="mt-4 max-w-[52ch] text-[0.9375rem] text-mute">{t("videoNote")}</p>
           </div>
         </section>
 
@@ -90,12 +99,12 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
             <p className="u-meta text-mute">{tProcess("eyebrow")}</p>
             <div>
               <h2 className="u-display text-[clamp(2rem,4vw,3.4rem)]">{tProcess("title")}</h2>
-              <ol className="mt-10 grid gap-px overflow-hidden rounded-lg bg-line sm:grid-cols-2 lg:grid-cols-5">
+              <ol className="mt-10 divide-y divide-line border-t border-line">
                 {STEPS.map((id, i) => (
-                  <li key={id} className="bg-paper p-6">
+                  <li key={id} className="grid grid-cols-[2rem_1fr] gap-x-4 py-7 sm:grid-cols-[2rem_1fr_1.5fr] sm:gap-x-6">
                     <span className="u-meta text-orange tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-                    <h3 className="u-display mt-6 text-[1.25rem]">{tProcess(`steps.${id}.title`)}</h3>
-                    <p className="mt-2 text-[0.9375rem] leading-relaxed text-ink-2">{tProcess(`steps.${id}.line`)}</p>
+                    <h3 className="u-display text-[1.5rem]">{tProcess(`steps.${id}.title`)}</h3>
+                    <p className="col-start-2 mt-3 text-[0.9375rem] leading-relaxed text-ink-2 sm:col-start-auto sm:mt-0">{tProcess(`steps.${id}.line`)}</p>
                   </li>
                 ))}
               </ol>
@@ -106,20 +115,22 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
 
         {/* FOR DESIGNERS — most clients arrive with one. */}
         <section className="bg-grass px-5 py-20 text-ink sm:px-8 lg:px-10 lg:py-28">
-          <div className="lg:grid lg:grid-cols-[1fr_2fr] lg:gap-12">
-            <p className="u-meta text-ink/70">{t("designersEyebrow")}</p>
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-20">
+            <div className="relative aspect-[4/5] overflow-hidden">
+              <Image src="/furniture/fluted-oak-panel-detail-tbilisi-kencho-group.webp" alt={t("detailAlt")} fill sizes="(max-width: 1023px) 100vw, 50vw" className="object-cover" />
+            </div>
             <div>
+              <p className="u-meta mb-8 text-ink/70">{t("designersEyebrow")}</p>
               <h2 className="u-display max-w-[18ch] text-[clamp(2rem,4.4vw,3.8rem)]">{t("designersTitle")}</h2>
               <p className="mt-6 max-w-[52ch] text-[1.0625rem] leading-relaxed text-ink/80">{t("designersText")}</p>
-              <a
-                href={whatsappUrl(tCommon("designerPrefill"))}
-                target="_blank"
-                rel="noopener noreferrer"
+              <ContactLink
+                method="whatsapp"
+                message={tCommon("designerPrefill")}
                 className="btn btn-ink mt-8"
               >
                 <WhatsAppIcon />
                 {t("designersCta")}
-              </a>
+              </ContactLink>
             </div>
           </div>
         </section>

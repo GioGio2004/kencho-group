@@ -80,7 +80,7 @@
    ends with no transform left behind (fill-mode: backwards). */
 @keyframes kg-letter-rise {
   from {
-    transform: translateY(112%);
+    transform: translateY(150%);
   }
 }
 
@@ -119,6 +119,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow {
+    animation: none;
+  }
+
   .kg-letter,
   .kg-rule,
   .kg-meta {
@@ -156,8 +160,104 @@
 
 .font-era-script,
 .font-script-accent {
-  font-family: var(--font-script), cursive;
+  font-family: var(--font-script), var(--font-display-ka, var(--font-display-en, Georgia)), serif;
   font-weight: 400;
+}
+
+/* The display faces extend beyond their line boxes. Give reveal masks room
+ * for the stretched glyphs without changing the surrounding layout. */
+.era-letter-mask {
+  padding: 0.25em 0.04em;
+  margin: -0.19em -0.04em;
+}
+
+.era-line-mask {
+  overflow: hidden;
+  padding: 0.25em 0.08em;
+  margin: -0.25em -0.08em;
+}
+
+.era-heading-mask {
+  /* A translated heading can wrap inside one reveal line on phones. */
+  padding-block: 0.5em;
+  margin-block: -0.42em;
+}
+
+#materials .mat-line-mask {
+  /* SplitText supplies overflow:hidden inline. Padding keeps the mask intact
+   * while making space for the 1.35x word transforms and serif overhangs. */
+  padding: 0.25em 0.08em;
+  margin: -0.25em -0.08em;
+}
+
+.era-material-copy {
+  font-family: var(--font-bodoni), var(--font-display-en), Georgia, serif;
+}
+
+.era-material-copy .mat-word {
+  transform: scaleY(1.35);
+}
+
+:lang(ka) .era-material-copy .mat-word {
+  transform: scaleY(1.18);
+}
+
+@media (max-width: 767px) {
+  /* Longer translations need to fit the same editorial composition. */
+  :lang(ka) [data-manifesto-display] .font-era-display,
+  :lang(ka) [data-manifesto-display] > .font-era-display,
+  :lang(ru) [data-manifesto-display] .font-era-display,
+  :lang(ru) [data-manifesto-display] > .font-era-display {
+    font-size: clamp(2rem, 9vw, 4rem);
+  }
+
+  :lang(ka) #made-to-live-in-heading,
+  :lang(ru) #made-to-live-in-heading {
+    row-gap: 0.75rem;
+  }
+
+  :lang(ka) #made-to-live-in-heading .font-era-script,
+  :lang(ru) #made-to-live-in-heading .font-era-script {
+    margin-top: 0;
+    font-size: clamp(2.5rem, 12vw, 4rem);
+  }
+
+  :lang(ka) #made-to-live-in-heading > .font-era-display,
+  :lang(ru) #made-to-live-in-heading > .font-era-display {
+    font-size: clamp(2.75rem, 15vw, 4.2rem);
+  }
+}
+
+@media (max-height: 700px) and (max-width: 767px) {
+  /* Keep the photograph and service copy usable on shorter phones. */
+  #collection .era-collection-shell {
+    padding-block: 1.25rem;
+  }
+
+  #collection .era-collection-stage {
+    padding-top: 6.5rem;
+    padding-bottom: 4.5rem;
+  }
+
+  #collection [data-room-heading] {
+    font-size: 1.5rem;
+  }
+
+  #collection .era-collection-photo {
+    height: min(28svh, 160px);
+  }
+
+  #collection [data-room-description] p {
+    font-size: 11px;
+    line-height: 1.5;
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 359px) {
+  :lang(en) [data-manifesto-display] [data-drift-word] > .font-era-display {
+    font-size: 2.75rem;
+  }
 }
 
 /* When the ERA-choreographed landing page is mounted, suppress legacy chrome
@@ -1157,6 +1257,45 @@ nextjs-portal,
    * PAGE HEADER — the band that opens an inner page (/about, /faq, /contact).
    * Styled with ERA's warm limestone surface and fine architectural rule.
    * ---------------------------------------------------------------- */
+  .about-intro {
+    padding: 8rem clamp(1.25rem, 4vw, 4.5rem) 3.5rem;
+    background: var(--color-cream);
+  }
+  @media (max-width: 359px) {
+    :lang(ru) [data-project-invitation] h3 { font-size: 1.5rem; }
+  }
+  .about-intro-grid {
+    display: grid;
+    gap: 2.5rem;
+    margin-top: 3rem;
+    align-items: end;
+  }
+  .about-title {
+    max-width: 17ch;
+    font-size: clamp(2.5rem, 6vw, 6rem);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    overflow-wrap: anywhere;
+  }
+  :lang(ka) .about-title {
+    font-size: clamp(2rem, 4.6vw, 4.6rem);
+    line-height: 1.25;
+  }
+  .about-intro-note { max-width: 37ch; }
+  .about-film { background: var(--color-cream); scroll-margin-top: 6rem; }
+  .about-film video { max-height: 78svh; }
+  .about-film-caption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding: 1.5rem clamp(1.25rem, 4vw, 4.5rem) 2.5rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  @media (min-width: 1024px) {
+    .about-intro-grid { grid-template-columns: 1.5fr 1fr; gap: 5rem; }
+    .about-intro-note { justify-self: end; }
+  }
   .ph {
     display: grid;
     min-height: 70svh;

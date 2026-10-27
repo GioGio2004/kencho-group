@@ -19,6 +19,7 @@ export default async function CatalogueShell({
   active,
   title,
   lede,
+  children,
 }: {
   locale: Locale;
   chapters: Chapter[];
@@ -27,6 +28,7 @@ export default async function CatalogueShell({
   active?: string;
   title: string;
   lede: string;
+  children?: React.ReactNode;
 }) {
   const t = await getTranslations({ locale, namespace: "catalogue" });
   const tabs = [
@@ -67,6 +69,7 @@ export default async function CatalogueShell({
       <div className="catalogue-stage px-2.5 pt-4 pb-20 sm:px-8 sm:pt-8 sm:pb-28 lg:px-10">
         <Catalogue key={active ?? "all"} pages={pages} shareBase={shareBase} />
       </div>
+      {children}
     </main>
   );
 }

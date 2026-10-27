@@ -1,6 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useTranslations } from "next-intl";
+
+import { Fragment, useRef } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -51,14 +53,6 @@ function catmullRom(points: Array<[number, number]>): string {
 }
 
 const WAVE_D = catmullRom(WAVE_POINTS);
-
-const MILESTONES = [
-  { title: "MEASUREMENT", time: "DAY 1", point: WAVE_POINTS[1] },
-  { title: "3D DESIGN", time: "5 DAYS", point: WAVE_POINTS[2] },
-  { title: null, time: null, point: WAVE_POINTS[3] },
-  { title: "WORKSHOP", time: "3 WEEKS", point: WAVE_POINTS[4] },
-  { title: "INSTALLATION", time: "2 DAYS", point: WAVE_POINTS[5] },
-] as const;
 
 /* ---------------------------------------------------------------------
  * Olive-sprig silhouettes, generated from a seed so server and client
@@ -180,15 +174,22 @@ function JoineryStar({ className }: { className?: string }) {
   );
 }
 
-const STOP1_LINES = [
-  "KENCHO IS A BESPOKE MILLWORK STUDIO",
-  "DESIGNED AROUND QUIET LUXURY, WARM TIMBER",
-  "AND EFFORTLESS LIVING IN TBILISI.",
-];
-
-const STOP1_SUBTEXT = ["One team measures, draws, and builds", "every piece under one roof."];
-
 export default function HorizontalConceptSection() {
+  const t = useTranslations("home.era.concept");
+  const MILESTONES = [
+    { title: t("measure"), time: t("dayOne"), point: WAVE_POINTS[1] },
+    { title: t("design"), time: t("fiveDays"), point: WAVE_POINTS[2] },
+    { title: null, time: null, point: WAVE_POINTS[3] },
+    { title: t("workshop"), time: t("threeWeeks"), point: WAVE_POINTS[4] },
+    { title: t("installation"), time: t("twoDays"), point: WAVE_POINTS[5] },
+  ] as const;
+  const STOP1_LINES = [
+    t("lineOne"),
+    t("lineTwo"),
+    t("lineThree"),
+  ];
+  const STOP1_SUBTEXT = [t("subOne"), t("subTwo")];
+
   const sectionRef = useRef<HTMLElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -252,12 +253,12 @@ export default function HorizontalConceptSection() {
           })
           .from(
             stop1.querySelectorAll("[data-line]"),
-            { yPercent: 115, duration: 0.9, ease: "power3.out", stagger: 0.1 },
+            { yPercent: 150, duration: 0.9, ease: "power3.out", stagger: 0.1 },
             0.05
           )
           .from(
             stop1.querySelectorAll("[data-sub]"),
-            { yPercent: 115, duration: 0.7, ease: "power3.out", stagger: 0.08 },
+            { yPercent: 150, duration: 0.7, ease: "power3.out", stagger: 0.08 },
             0.45
           )
           .from(
@@ -407,7 +408,7 @@ export default function HorizontalConceptSection() {
               className="text-[9px] tracking-[0.28em] uppercase mb-8 opacity-70"
               style={{ fontFamily: "var(--font-sans)" }}
             >
-              THE CONCEPT
+              {t("eyebrow")}
             </span>
 
             <h2
@@ -416,19 +417,18 @@ export default function HorizontalConceptSection() {
               className="flex flex-col items-center text-center"
             >
               {STOP1_LINES.map((line) => (
-                <span
-                  key={line}
-                  className="block overflow-hidden py-[0.08em] text-[6.4vw] md:text-[3.3vw]"
-                >
-                  <span data-line className="block">
-                    <span
-                      className="font-era-display text-[#2A2723]"
-                      style={{ lineHeight: 1.02 }}
-                    >
-                      {line}
+                <Fragment key={line}>
+                  <span className="era-line-mask era-heading-mask block text-[6.4vw] md:text-[3.3vw]">
+                    <span data-line className="block">
+                      <span
+                        className="font-era-display text-[#2A2723]"
+                        style={{ lineHeight: 1.02 }}
+                      >
+                        {line}
+                      </span>
                     </span>
-                  </span>
-                </span>
+                  </span>{" "}
+                </Fragment>
               ))}
             </h2>
 
@@ -437,11 +437,13 @@ export default function HorizontalConceptSection() {
               style={{ fontFamily: "var(--font-sans)" }}
             >
               {STOP1_SUBTEXT.map((line) => (
-                <span key={line} className="block overflow-hidden">
-                  <span data-sub className="block">
-                    {line}
-                  </span>
-                </span>
+                <Fragment key={line}>
+                  <span className="era-line-mask block">
+                    <span data-sub className="block">
+                      {line}
+                    </span>
+                  </span>{" "}
+                </Fragment>
               ))}
             </p>
 
@@ -458,24 +460,24 @@ export default function HorizontalConceptSection() {
               <h3 className="flex flex-col text-[15vw] md:text-[7.5vw] text-[#2A2723]">
                 <span className="block ml-[8vw] md:ml-16">
                   <span className="font-era-display" style={{ lineHeight: 0.86 }}>
-                    NEW
+                    {t("new")}
                   </span>
-                </span>
+                </span>{" "}
                 <span className="relative block ml-[16vw] md:ml-28 mt-[0.14em]">
                   <span
                     aria-hidden="true"
                     className="hidden md:block absolute right-full top-1/2 -translate-y-1/2 mr-10 whitespace-nowrap text-[10px] tracking-[0.45em] uppercase text-[#2A2723]"
                     style={{ fontFamily: "var(--font-sans)" }}
                   >
-                    T B I L I S I
-                  </span>
+                    {t("cityLabel")}
+                  </span>{" "}
                   <span className="font-era-display" style={{ lineHeight: 0.86 }}>
-                    GOLDEN
+                    {t("golden")}
                   </span>
-                </span>
+                </span>{" "}
                 <span className="block ml-0 mt-[0.14em]">
                   <span className="font-era-display" style={{ lineHeight: 0.86 }}>
-                    CRAFT
+                    {t("craft")}
                   </span>
                 </span>
               </h3>
@@ -489,7 +491,7 @@ export default function HorizontalConceptSection() {
               <div ref={portraitInnerRef} className="absolute inset-0 will-change-transform">
                 <Image
                   src="/images/wardrobe-showcase.jpg"
-                  alt="Sunlit bespoke cane-panel wardrobe and oak shoe bench by Kencho Group"
+                  alt={t("wardrobeAlt")}
                   fill
                   sizes="(min-width: 768px) 34vw, 100vw"
                   className="object-cover"
@@ -508,9 +510,9 @@ export default function HorizontalConceptSection() {
                     className="text-[9px] tracking-[0.22em] leading-relaxed uppercase text-[#2A2723]"
                     style={{ fontFamily: "var(--font-sans)" }}
                   >
-                    EXPLORE
-                    <br />
-                    OUR WORK
+                    {t("explore")}
+                    <br />{" "}
+                    {t("ourWork")}
                   </span>
                 </Link>
               </div>
@@ -518,15 +520,14 @@ export default function HorizontalConceptSection() {
               <div className="mt-20 max-w-xs">
                 <h3 className="mb-3 text-3xl text-[#2A2723]">
                   <span className="font-era-display" style={{ lineHeight: 1 }}>
-                    FROM DRAWING TO HOME
+                    {t("drawingToHome")}
                   </span>
                 </h3>
                 <p
                   className="text-[11px] leading-relaxed text-[#2A2723]/75"
                   style={{ fontFamily: "var(--font-sans)" }}
                 >
-                  No standard sizes or middlemen. We build directly from your
-                  walls and habits so everything fits to the millimetre.
+                  {t("drawingDescription")}
                 </p>
               </div>
             </div>
@@ -538,18 +539,18 @@ export default function HorizontalConceptSection() {
               <h3 className="flex flex-col items-center text-center text-[#2A2723]">
                 <span className="block text-[9vw] md:text-[5.2vw]">
                   <span className="font-era-display" style={{ lineHeight: 1 }}>
-                    THE SPACE YOU WANTED
+                    {t("spaceWanted")}
                   </span>
-                </span>
+                </span>{" "}
                 <span
                   className="block text-[12vw] md:text-[5.8vw] -my-3 md:-my-5 leading-none relative z-10"
-                  style={{ fontFamily: "var(--font-script), cursive" }}
+                  style={{ fontFamily: "var(--font-script), var(--font-display-ka, var(--font-display-en, Georgia)), serif" }}
                 >
-                  yours
-                </span>
+                  {t("yours")}
+                </span>{" "}
                 <span className="block text-[9vw] md:text-[5.2vw]">
                   <span className="font-era-display" style={{ lineHeight: 1 }}>
-                    THIS YEAR
+                    {t("thisYear")}
                   </span>
                 </span>
               </h3>
@@ -637,7 +638,7 @@ export default function HorizontalConceptSection() {
       >
         <Image
           src="/images/commercial-showcase.jpg"
-          alt="Sunlit commercial lounge with backlit oak slat columns by Kencho Group"
+          alt={t("commercialAlt")}
           fill
           sizes="100vw"
           className="object-cover"

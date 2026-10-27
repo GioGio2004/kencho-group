@@ -9,6 +9,7 @@
     "lint": "eslint",
     "verify:landing": "node scripts/verify-landing.mjs",
     "verify:seo": "node scripts/verify-seo.mjs",
+    "verify:commercial": "node --import ./scripts/alias-hook.mjs scripts/verify-commercial.mjs",
     "indexnow": "node --import ./scripts/alias-hook.mjs scripts/indexnow.mjs"
   },
   "dependencies": {
