@@ -178,7 +178,7 @@
       "hotspotMaterialsDescription": "Approximately 5–14 days for preparation, precision cutting and edge-banding through specialist suppliers and processing providers, depending on workload and season.",
       "hotspotWorkshopTitle": "ONE COORDINATED PROJECT",
       "hotspotWorkshopDescription": "Based in Tbilisi, with delivery and installation throughout Georgia. Logistics and installation are included in the agreed project quote.",
-      "h1": "Custom kitchens, wardrobes and bespoke millwork in Tbilisi — Kencho Group",
+      "h1": "Custom Kitchens & Architectural Furniture Made to Order — Across All of Georgia",
       "tagline": "Bespoke furniture · Tbilisi",
       "day": "BY DAY",
       "lightingToggle": "Toggle day or night lighting",
@@ -362,5 +362,307 @@
       "english": "EN",
       "georgian": "ქარ"
     }
+  },
+  "landing": {
+    "hero": {
+      "metaProduction": "01 / Full-cycle furniture manufacturing",
+      "metaLocation": "Tbilisi — across all of Georgia",
+      "metaPriority": "Our focus: custom kitchens",
+      "projectCaption": "A kitchen made to measure — MDF / veneer / quartz",
+      "badge": "Priority #1: Custom Kitchens · Across All of Georgia",
+      "h1": "Custom Kitchens & Architectural Furniture Made to Order — Across All of Georgia",
+      "lead": "Custom kitchens are Kencho Group’s #1 priority—the most complex and demanding architectural millwork, managed end-to-end starting even from a single Pinterest photo or an empty room. Alongside bespoke kitchens, we manufacture all cabinetry and architectural furniture (excluding soft/upholstered furniture): floor-to-ceiling wardrobes, walk-in closets, MDF and wood veneer wall paneling, commercial spaces, and custom metalwork. We deliver and install at any location across Georgia, with logistics and on-site installation included in the agreed project quote.",
+      "ctaAi": "Ask AI Consultant",
+      "ctaKitchens": "Kitchens Catalogue →",
+      "ctaWhatsapp": "Message on WhatsApp",
+      "stat1Value": "30 GEL / m²",
+      "stat1Label": "Furniture 3D design & blueprints (front elevation)",
+      "stat2Value": "~2 Months (6–8 Wks)",
+      "stat2Label": "Full cycle from Pinterest photo to installation",
+      "stat3Value": "All of Georgia",
+      "stat3Label": "Delivery & installation anywhere in the country",
+      "mainImageAlt": "Bespoke walnut and stone island kitchen made to order by Kencho Group in Tbilisi",
+      "secondaryImage1Alt": "Deep green custom island kitchen — Kencho Group",
+      "secondaryImage2Alt": "Fluted oak facade and precision CNC routed detail — Kencho Group",
+      "imageCaption": "Custom kitchens, fitted wardrobes, wall paneling & architectural metalwork · Tbilisi & All of Georgia"
+    },
+    "categories": {
+      "eyebrow": "01 / CORE CATEGORIES",
+      "title": "Four Core Categories — Direct Catalogue Hub",
+      "intro": "Explore our completed commissions, material specifications, and ordering workflow across our four specialized divisions.",
+      "items": {
+        "kitchens": {
+          "badge": "PRIORITY #1",
+          "title": "Custom Kitchens",
+          "description": "Bespoke kitchen islands, painted and CNC-routed MDF fronts, stone worktops, precision integrated appliances, and European soft-close mechanisms.",
+          "specs": "LTB · Imeri · Kronospan · CNC Routing · Painted MDF",
+          "linkLabel": "Explore Kitchens Catalogue →",
+          "imageAlt": "Custom deep green island kitchen built to order in Tbilisi"
+        },
+        "wardrobes": {
+          "badge": "CATEGORY 02",
+          "title": "Built-In Wardrobes & Walk-In Closets",
+          "description": "Floor-to-ceiling fitted wardrobes, walk-in dressing rooms, hallway storage systems, and bronze mirror or fluted glass vitrines with LED lighting.",
+          "specs": "Walk-In Systems · Bronze Mirror & Fluted Glass · Soft-Close Hardware",
+          "linkLabel": "Explore Wardrobes Catalogue →",
+          "imageAlt": "Floor-to-ceiling bronze mirror wardrobe doors with warm LED lighting"
+        },
+        "commercial": {
+          "badge": "CATEGORY 03",
+          "title": "Commercial & Office Furniture",
+          "description": "Offices, cafés, hotels, reception desks, and retail fit-outs engineered with high-durability cabinetry, wood veneers, and custom steel structures.",
+          "specs": "Offices · Cafés & Hotels · Reception Desks · Custom Metalwork",
+          "linkLabel": "Explore Commercial Catalogue →",
+          "imageAlt": "Custom commercial lobby and reception millwork"
+        },
+        "interiors": {
+          "badge": "CATEGORY 04",
+          "title": "Home Interiors & Wall Paneling",
+          "description": "MDF and natural veneer wall panels, living room media walls, and bespoke bedroom and bathroom cabinetry built to millimeter precision.",
+          "specs": "Wall Paneling · Media Walls · Bedroom & Bathroom Cabinetry",
+          "linkLabel": "Explore Home Interiors →",
+          "imageAlt": "Walnut living room media wall and architectural wall paneling"
+        }
+      }
+    },
+    "roadmap": {
+      "eyebrow": "02 / CLIENT ROADMAP & TIMELINE",
+      "title": "From Pinterest Photo to Installation — Real 6–8 Week (~2 Month) Roadmap",
+      "intro": "We set transparent engineering expectations. Every custom kitchen and cabinetry commission follows 5 structured stages and completes in approximately 2 months.",
+      "totalBadge": "Total Turnaround: ~2 Months (6–8 Weeks)",
+      "steps": {
+        "1": {
+          "number": "01",
+          "duration": "~1 Week (7 Days)",
+          "title": "Consultation & 3D Design",
+          "description": "Come with a Pinterest photo, rough idea, or empty room plan. Our designer prepares your project: furniture 3D design costs 30 GEL / m² (measured by front elevation / წინხედით); full interior design is $15–$20 / m² (measured by floor area / იატაკის კვადრატულობით)."
+        },
+        "2": {
+          "number": "02",
+          "duration": "7–10 Days",
+          "title": "Quote Approval & Engineering Blueprints (ახაზვა)",
+          "description": "Millimeter-exact engineering blueprints, hardware selection, and technical review. Design changes and budget adjustments can be reviewed upon request before manufacturing starts."
+        },
+        "3": {
+          "number": "03",
+          "duration": "5–14 Days",
+          "title": "Material Preparation, Cutting & Edge-Banding",
+          "description": "Industrial board cutting and precision edge-banding across our specialist partner facilities. The 5–14 day window depends on company workload and season."
+        },
+        "4": {
+          "number": "04",
+          "duration": "+5 to 10 Days (When Applicable)",
+          "title": "Specialized Finishing — Painted MDF, CNC Router, Metalwork",
+          "description": "Painted MDF (შესაღები მდფ) adds +7–10 days; 3D CNC routing work (რუტერული სამუშაო) adds +5 days. Custom iron structures are laser-welded and thermostatically powder-coated."
+        },
+        "5": {
+          "number": "05",
+          "duration": "~1 Week (7 Days)",
+          "title": "Assembly, Nationwide Delivery & Installation",
+          "description": "Full assembly, safe transport, and turnkey on-site installation anywhere in Georgia (included in the agreed project quote)."
+        }
+      }
+    },
+    "ecosystem": {
+      "eyebrow": "03 / TECHNOLOGY & MATERIAL ECOSYSTEM",
+      "title": "Why Kencho Group — Specialized Tech & Certified Partner Network",
+      "intro": "We combine advanced wood, MDF, and metal fabrication capabilities with Georgia’s premier European board importers and industrial processing centers.",
+      "techTitle": "In-House & Specialized Fabrication Technologies",
+      "techSubtitle": "CNC Routing, Laser Cutting, Laser Welding & Powder Coating",
+      "techItems": {
+        "1": {
+          "name": "CNC Routing (რუტერი)",
+          "detail": "3D fluted panels, custom cabinet profiles, and precision architectural MDF milling (+5 days when required)."
+        },
+        "2": {
+          "name": "Laser Cutting (ლაზერი)",
+          "detail": "High-precision laser cutting for decorative inlays and custom metal components."
+        },
+        "3": {
+          "name": "Custom Iron Structures & Decor",
+          "detail": "Architectural steel frames, kitchen island structures, shelving systems, and room dividers."
+        },
+        "4": {
+          "name": "Laser Metal Welding",
+          "detail": "Ultra-clean, seamless laser welds for exposed interior metalwork and structural joinery."
+        },
+        "5": {
+          "name": "Thermostatic Powder Coating",
+          "detail": "Electrostatic / thermostatic oven-cured metal painting for maximum scratch and wear resistance."
+        }
+      },
+      "partnersTitle": "Certified Materials & Processing Ecosystem",
+      "partnersSubtitle": "Partnered with 6 industry-leading suppliers and processing centers",
+      "partners": {
+        "ltb": {
+          "name": "LTB",
+          "role": "Materials & Hardware / Mechanisms",
+          "detail": "Premium board materials, hinges, drawer runners, and soft-close mechanisms."
+        },
+        "imeri": {
+          "name": "Imeri",
+          "role": "Italian & Spanish Materials + Cutting & Edge-Banding",
+          "detail": "European architectural boards paired with precision industrial cutting and edge-banding."
+        },
+        "geodecor": {
+          "name": "Geo Decor",
+          "role": "Cutting & Panel Processing",
+          "detail": "High-precision industrial board cutting and specialized furniture component processing."
+        },
+        "kasta": {
+          "name": "Kasta (Kronospan)",
+          "role": "Laminate & Kronospan Boards",
+          "detail": "Certified Kronospan laminated boards, worktops, and architectural decors."
+        },
+        "oldlami": {
+          "name": "Oldlami (Starwood)",
+          "role": "Starwood Materials & Processing Services",
+          "detail": "Starwood board collections and comprehensive industrial panel services."
+        },
+        "ionfasha": {
+          "name": "Ionfasha",
+          "role": "Direct Material Import",
+          "detail": "Direct import of specialized furniture boards and architectural surface materials."
+        }
+      }
+    },
+    "pricing": {
+      "eyebrow": "04 / TRANSPARENT PRICING & DESIGN RULES",
+      "title": "Design Fee Schedule & Measurement Methodology",
+      "intro": "Clear rules before you commit: how 3D furniture design and full interior design are measured, and when your manufacturing quote is fixed.",
+      "colService": "Service Tier",
+      "colPrice": "Rate",
+      "colMeasure": "Measurement Basis",
+      "colIncludes": "Scope Included",
+      "rows": {
+        "furniture": {
+          "service": "Furniture 3D Design + Engineering Blueprints (ახაზვა)",
+          "price": "30 GEL / m²",
+          "measure": "Measured by front elevation (წინხედით)",
+          "includes": "3D renders (~1 week), millimeter-exact engineering blueprints & spec review (7–10 days)."
+        },
+        "interior": {
+          "service": "Full Interior Design",
+          "price": "$15 – $20 / m²",
+          "measure": "Measured by floor area (იატაკის კვადრატულობით)",
+          "includes": "Complete room/apartment layout, 3D visualization, lighting, and material concept."
+        },
+        "manufacturing": {
+          "service": "Furniture Manufacturing, Delivery & Installation",
+          "price": "Custom Project Quote",
+          "measure": "Finalized after Stage 2 (Blueprinting / ახაზვა)",
+          "includes": "Materials, cutting/edge-banding, painting/CNC/metalwork, logistics & installation across Georgia."
+        }
+      },
+      "scopeNote": "Scope Note: We manufacture all custom cabinetry, wood, MDF, and metal furniture — excluding soft/upholstered furniture (sofas, armchairs, upholstered beds)."
+    },
+    "faq": {
+      "eyebrow": "05 / FREQUENTLY ASKED QUESTIONS",
+      "title": "Essential Answers Before Starting Your Project",
+      "intro": "Everything you need to know about design fees, our 2-month production timeline, partner materials, and nationwide installation.",
+      "ctaTitle": "Ready to start your project?",
+      "ctaText": "Send us a Pinterest photo or room dimensions on WhatsApp, or estimate your project right now with our AI Consultant.",
+      "ctaWhatsapp": "Send Photo on WhatsApp",
+      "ctaCall": "Call: +995 592 82 22 60",
+      "items": {
+        "1": {
+          "q": "How much does kitchen or furniture 3D design cost, and how is the area measured?",
+          "a": "Our in-house designer provides two clear options: Furniture 3D design and engineering blueprints cost 30 GEL per m², measured by the front elevation (facade projection) of the cabinetry. Full interior design costs $15–$20 per m², measured by the room’s floor area."
+        },
+        "2": {
+          "q": "How long does it take to manufacture and install a custom kitchen?",
+          "a": "From a Pinterest photo to completed installation, the full process takes approximately 2 months (6–8 weeks): 1) 3D Design — ~1 week; 2) Price agreement & engineering blueprints (ახაზვა) — 7–10 days; 3) Material cutting & edge-banding — 5–14 days (depending on supplier workload and season); 4) Assembly & installation — ~1 week (painted MDF adds +7–10 days; 3D CNC routing adds +5 days)."
+        },
+        "3": {
+          "q": "Can I start a custom kitchen order with just a Pinterest photo?",
+          "a": "Yes. We manage projects end-to-end starting from a Pinterest photo. Share your inspiration image—our team will measure your space, create the 3D design, agree on the budget, produce millimeter-exact blueprints, and install the finished furniture."
+        },
+        "4": {
+          "q": "Do you manufacture soft or upholstered furniture (sofas, armchairs, upholstered beds)?",
+          "a": "No, we do not make soft or upholstered furniture. We manufacture all cabinetry and architectural furniture excluding soft furniture: custom kitchens are our #1 priority, alongside built-in wardrobes, walk-in closets, wall paneling, commercial spaces, and laser-welded/powder-coated metalwork."
+        },
+        "5": {
+          "q": "Which material suppliers and technologies do you use?",
+          "a": "We work alongside Georgia’s leading material and processing partners: LTB (materials & hardware/mechanisms), Imeri (Italian-Spanish boards + cutting & edge-banding), Geo Decor (cutting & processing), Kasta (laminate & Kronospan), Oldlami (Starwood materials & service), and Ionfasha (material imports). We also utilize CNC routing, laser cutting, laser metal welding, and thermostatic powder coating."
+        },
+        "6": {
+          "q": "Do you deliver and install outside Tbilisi across Georgia?",
+          "a": "Yes, we operate across all of Georgia—at any location including Tbilisi, Batumi, Kutaisi, and regional projects. Safe transportation and on-site installation are included in the agreed project quote."
+        }
+      }
+    }
+  },
+  "aiIsland": {
+    "pillLabel": "Ask Kencho AI",
+    "navLabel": "Quick Navigation & AI Consultant",
+    "home": "Home",
+    "kitchens": "Kitchens",
+    "catalogue": "Catalogue",
+    "contact": "Contact",
+    "trigger": "✨ Ask Kencho AI",
+    "close": "Close",
+    "drawerTitle": "Kencho AI — Project Consultant",
+    "drawerSubtitle": "Instant answers on pricing, timelines & materials · 24/7",
+    "welcomeMessage": "Hello! I am Kencho Group’s AI Consultant. Ask me about our 3D design fees (30 GEL/m² front elevation), ~2-month kitchen production timeline, or materials—or fill in 4 quick details to send your project summary on WhatsApp.",
+    "chipsLabel": "Quick questions:",
+    "chip1": "What does kitchen design cost?",
+    "chip2": "How long does a kitchen take?",
+    "chip3": "I want to order a kitchen from a Pinterest photo",
+    "chip4": "Do you make soft/upholstered furniture?",
+    "inputPlaceholder": "Ask a question or describe your project...",
+    "send": "Send",
+    "thinking": "Kencho AI is preparing an answer...",
+    "leadToggleOpen": "Quick Project Estimator (4 Details)",
+    "leadToggleClose": "Hide Estimator",
+    "leadTitle": "Complete 4 details for a pre-filled WhatsApp handoff:",
+    "fieldFurniture": "1. What furniture do you need?",
+    "furnitureKitchen": "Custom Kitchen (Priority #1)",
+    "furnitureWardrobe": "Built-In Wardrobe / Walk-In Closet",
+    "furnitureCommercial": "Commercial / Office Furniture",
+    "furniturePanels": "Wall Paneling / Home Interior",
+    "fieldCity": "2. City / Location in Georgia",
+    "cityPlaceholder": "e.g. Tbilisi, Batumi, Kutaisi...",
+    "fieldDesign": "3. Do you have drawings or a Pinterest photo?",
+    "designPinterest": "I have a Pinterest photo / idea",
+    "designDrawings": "I have ready drawings / design",
+    "designNeed3d": "I need 3D furniture design (30 GEL/m²)",
+    "designNeedInterior": "I need full interior design ($15–$20/m²)",
+    "fieldPhone": "4. Your Phone / WhatsApp (optional)",
+    "phonePlaceholder": "+995 5XX XX XX XX",
+    "whatsappHandoff": "Send Project to WhatsApp →",
+    "callDirect": "Call Directly"
+  },
+  "compact": {
+    "headline": "We design and make custom kitchens, fitted wardrobes, wall panels and commercial furniture.",
+    "lead": "Bring finished drawings or just a photograph. Our team handles measuring, 3D design, factory production and installation anywhere in Georgia.",
+    "collections": "Every space starts with an idea.",
+    "process": "From idea to installation.",
+    "time": "Typically 6–8 weeks",
+    "timeNote": "Materials, specialist finishes and production workload shape the schedule. We agree the timeline before manufacturing begins.",
+    "processLink": "Stages & realistic deadlines",
+    "pricing": "Design. Precisely considered.",
+    "pricingNote": "Furniture design: 30 GEL/m² by front elevation. Interior design: $15–$20/m² by floor area.",
+    "pricingLink": "Design & pricing",
+    "materials": "Materials give a space its character.",
+    "materialsNote": "MDF, natural veneer and metal. Considered materials and precise fabrication for each space.",
+    "materialsLink": "Materials & technologies",
+    "more": "Explore",
+    "faq": "Before your project begins",
+    "contact": "Let’s create your space."
+  },
+  "metaProcess": {
+    "title": "Stages & realistic deadlines | Kencho Group",
+    "description": "Materials, specialist finishes and production workload shape the schedule. We agree the timeline before manufacturing begins.",
+    "ogAlt": "Stages & realistic deadlines"
+  },
+  "metaPricing": {
+    "title": "Design & pricing | Kencho Group",
+    "description": "Furniture design: 30 GEL/m² by front elevation. Interior design: $15–$20/m² by floor area.",
+    "ogAlt": "Design & pricing"
+  },
+  "metaMaterials": {
+    "title": "Materials & technologies | Kencho Group",
+    "description": "MDF, natural veneer and metal. Considered materials and precise fabrication for each space.",
+    "ogAlt": "Materials & technologies"
   }
 }

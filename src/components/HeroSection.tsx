@@ -8,6 +8,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { motion } from "framer-motion";
+import { useMobile } from "@/lib/use-mobile";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,6 +30,7 @@ const NAME_WORDS = ["KENCHO", "GROUP"];
 
 export default function HeroSection() {
   const t = useTranslations("home.era.hero");
+  const mobile = useMobile();
   const HOTSPOTS: HotspotItem[] = [
     {
       id: "millimetre",
@@ -102,8 +104,8 @@ export default function HeroSection() {
 
       mm.add(
         {
-          motion: "(prefers-reduced-motion: no-preference)",
-          reduced: "(prefers-reduced-motion: reduce)",
+          motion: "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
+          reduced: "(min-width: 768px) and (prefers-reduced-motion: reduce)",
         },
         (ctx) => {
           const { reduced } = ctx.conditions as { reduced: boolean };
@@ -197,12 +199,14 @@ export default function HeroSection() {
   return (
     <section
       ref={sectionRef}
+      data-mobile-hero
       aria-label={t("h1")}
       className="relative w-full h-[340vh] bg-[#F2ECE3] text-[#2A2723]"
     >
       {/* Sticky Viewport Stage (100vw x 100vh, soft blue #F2ECE3 behind the white) */}
       <div
         data-hud-tone="ink"
+        data-hero-stage
         className="sticky top-0 h-screen w-full overflow-hidden relative bg-[#F2ECE3]"
       >
         {/* ===================================================================
@@ -211,6 +215,7 @@ export default function HeroSection() {
          * =================================================================== */}
         <div
           ref={curtainRef}
+          data-hero-curtain
           aria-hidden="true"
           className="absolute inset-x-0 top-0 h-[150%] z-[15] pointer-events-none will-change-transform"
           style={{
@@ -221,6 +226,7 @@ export default function HeroSection() {
 
         <div
           ref={nameRef}
+          data-hero-name
           className="absolute inset-0 z-20 flex flex-col items-center justify-center px-6 select-none pointer-events-none will-change-transform"
         >
           <h1 className="text-center text-[#2A2723]">
@@ -276,6 +282,7 @@ export default function HeroSection() {
          * =================================================================== */}
         <div
           ref={dockedBarRef}
+          data-hero-switcher
           style={{ transform: "translateY(24px)" }}
           className="absolute top-36 md:top-8 left-1/2 -translate-x-1/2 z-30 opacity-0 pointer-events-none will-change-transform"
         >
@@ -304,7 +311,7 @@ export default function HeroSection() {
               <span className="w-full h-px bg-[#FFFFFF]/55" />
               <motion.span
                 layout
-                transition={{ type: "spring", stiffness: 360, damping: 28 }}
+                transition={mobile ? { duration: 0 } : { type: "spring", stiffness: 360, damping: 28 }}
                 className="absolute w-2 h-2 rounded-full bg-[#FFFFFF]"
                 style={{
                   left: isNightMode ? "calc(100% - 8px)" : "0px",
@@ -329,6 +336,7 @@ export default function HeroSection() {
          * =================================================================== */}
         <div
           ref={risingImageContainerRef}
+          data-hero-image
           data-hud-tone="light"
           style={{ transform: "translateY(100%)" }}
           className="w-screen h-screen absolute inset-0 z-10 overflow-hidden will-change-transform"
@@ -336,6 +344,7 @@ export default function HeroSection() {
           {/* Top Feather Mask: blends the room's top edge into the #F2ECE3 sky */}
           <div
             ref={topGradientMaskRef}
+            data-hero-gradient
             className="bg-gradient-to-b from-[#F2ECE3] via-[#F2ECE3]/50 to-transparent h-28 absolute top-0 inset-x-0 z-20 pointer-events-none"
             aria-hidden="true"
           />
@@ -345,7 +354,8 @@ export default function HeroSection() {
             src={daySrc}
             alt={t("dayAlt")}
             fill
-            priority
+            loading="eager"
+            fetchPriority="high"
             sizes="100vw"
             onError={() => setDaySrc(FALLBACK_DAY)}
             className={`object-cover object-center transition-opacity duration-1000 ease-out ${
@@ -358,7 +368,7 @@ export default function HeroSection() {
             src={nightSrc}
             alt={t("nightAlt")}
             fill
-            sizes="100vw"
+            sizes="(max-width: 767px) 1px, 100vw"
             onError={() => setNightSrc(FALLBACK_NIGHT)}
             className={`object-cover object-center transition-opacity duration-1000 ease-out ${
               isNightMode ? "opacity-100" : "opacity-0"
@@ -374,6 +384,7 @@ export default function HeroSection() {
           {/* Phase 2 Interactive Room Layer (Hotspots + Bottom-Right Quote) */}
           <div
             ref={roomInteractiveLayerRef}
+            data-hero-interactive
             className="absolute inset-0 z-20 opacity-0 pointer-events-none"
             aria-label={t("hotspotsLabel")}
             onClick={(event) => {
@@ -430,7 +441,7 @@ export default function HeroSection() {
                   enter: { opacity: 1, y: 0, visibility: "visible" },
                   exit: { opacity: 0, y: 10, transitionEnd: { visibility: "hidden" } },
                 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: mobile ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
                 onAnimationComplete={(phase) => {
                   if (phase === "exit") setPresentHotspot(activeHotspot);
                 }}

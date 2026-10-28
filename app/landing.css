@@ -69,7 +69,7 @@
     letter-spacing: 0.06em;
     text-transform: uppercase;
     line-height: 1.5;
-    border-bottom: 1px solid rgb(42 39 35 / 0.3);
+    border-bottom: 1px solid rgb(255 255 255 / 0.3);
     padding-block: 0.5rem;
     transition:
       border-color 0.3s,
@@ -133,8 +133,8 @@
     align-items: center;
     gap: 3rem;
     padding-inline: clamp(1.25rem, 4vw, 4.5rem);
-    border-bottom: 1px solid rgb(42 39 35 / 0.1);
-    background: rgb(255 255 255 / 0.93);
+    border-bottom: 1px solid rgb(255 255 255 / 0.1);
+    background: rgb(7 7 8 / 0.93);
     backdrop-filter: blur(14px);
     transition:
       background-color 0.35s var(--ease-out),
@@ -296,11 +296,11 @@
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 1rem 2rem;
-    border-bottom: 1px solid rgb(42 39 35 / 0.16);
+    border-bottom: 1px solid rgb(255 255 255 / 0.16);
     padding-block: 2rem;
     margin-top: 1.25rem;
     font-size: 0.75rem;
-    color: rgb(42 39 35 / 0.82);
+    color: rgb(255 255 255 / 0.82);
   }
   .hero-proof li {
     display: flex;
@@ -402,12 +402,12 @@
     grid-template-columns: 1.5rem minmax(0, 0.9fr) minmax(0, 1fr) 1.5rem;
     align-items: center;
     gap: 1.2rem;
-    border-top: 1px solid rgb(42 39 35 / 0.16);
+    border-top: 1px solid rgb(255 255 255 / 0.16);
     padding-block: 1.5rem;
     transition: color 0.3s;
   }
   .service-row:last-child {
-    border-bottom: 1px solid rgb(42 39 35 / 0.16);
+    border-bottom: 1px solid rgb(255 255 255 / 0.16);
   }
   .service-row h3 {
     font-size: 1.125rem;
@@ -448,11 +448,11 @@
     margin-top: 3.5rem;
   }
   .process-grid li {
-    border-top: 1px solid rgb(42 39 35 / 0.16);
+    border-top: 1px solid rgb(255 255 255 / 0.16);
     padding-top: 1.1rem;
   }
   .process-number {
-    color: rgb(42 39 35 / 0.8);
+    color: rgb(255 255 255 / 0.8);
     font-size: 0.75rem;
   }
   .process-grid h3 {
@@ -464,7 +464,7 @@
     max-width: 21ch;
   }
   .process-grid p {
-    color: rgb(42 39 35 / 0.8);
+    color: rgb(255 255 255 / 0.8);
     font-size: 0.875rem;
     line-height: 1.8;
     margin-top: 1rem;
@@ -571,7 +571,7 @@
     border-radius: 50%;
     background: var(--color-sky);
     color: var(--color-ink);
-    border: 1px solid rgb(42 39 35 / 0.2);
+    border: 1px solid rgb(255 255 255 / 0.2);
     font-size: 0.625rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -621,10 +621,10 @@
     padding-block: 0 var(--section-space);
   }
   .question-list details {
-    border-top: 1px solid rgb(42 39 35 / 0.16);
+    border-top: 1px solid rgb(255 255 255 / 0.16);
   }
   .question-list details:last-child {
-    border-bottom: 1px solid rgb(42 39 35 / 0.16);
+    border-bottom: 1px solid rgb(255 255 255 / 0.16);
   }
   .question-list summary {
     display: flex;
@@ -682,7 +682,7 @@
     background: var(--color-sky);
     color: var(--color-ink);
     padding-block: 4rem 1.5rem;
-    border-top: 1px solid rgb(42 39 35 / 0.12);
+    border-top: 1px solid rgb(255 255 255 / 0.12);
   }
   .footer-grid {
     display: grid;
@@ -737,7 +737,7 @@
     align-items: center;
     gap: 1rem;
     padding-top: 1.25rem;
-    border-top: 1px solid rgb(42 39 35 / 0.14);
+    border-top: 1px solid rgb(255 255 255 / 0.14);
     font-size: 0.6875rem;
     color: var(--color-ink-soft);
   }
@@ -777,7 +777,7 @@
     align-items: center;
     justify-content: space-between;
     padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgb(42 39 35 / 0.18);
+    border-bottom: 1px solid rgb(255 255 255 / 0.18);
   }
   .nav-close {
     display: flex;
@@ -856,7 +856,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
-    border-top: 1px solid rgb(42 39 35 / 0.18);
+    border-top: 1px solid rgb(255 255 255 / 0.18);
     padding-top: 1rem;
     font-size: 0.75rem;
     color: var(--color-ink-soft);
@@ -957,7 +957,7 @@
     max-width: 40rem;
     font-size: clamp(1rem, 1.2vw, 1.125rem);
     line-height: 1.75;
-    color: rgb(42 39 35 / 0.82);
+    color: rgb(255 255 255 / 0.82);
   }
   .catalogue-note {
     max-width: 26rem;
@@ -969,8 +969,8 @@
   }
   .catalogue-tabs {
     top: 88px;
-    border-block: 1px solid rgb(42 39 35 / 0.12);
-    background: rgb(242 236 227 / 0.92);
+    border-block: 1px solid rgb(255 255 255 / 0.12);
+    background: rgb(20 20 22 / 0.95);
     backdrop-filter: blur(12px);
   }
   .catalogue-page .tab {
@@ -1003,13 +1003,13 @@
   /* The header joins the powder-sky head band on the catalogue. */
   body:has(.catalogue-page) .site-header {
     color: var(--color-ink);
-    background: rgb(242 236 227 / 0.92);
-    border-bottom-color: rgb(42 39 35 / 0.12);
+    background: rgb(20 20 22 / 0.95);
+    border-bottom-color: rgb(255 255 255 / 0.12);
   }
   body:has(.catalogue-page) .site-header .header-contact {
     color: var(--color-ink);
     background: transparent;
-    border: 1px solid rgb(42 39 35 / 0.3);
+    border: 1px solid rgb(255 255 255 / 0.3);
     box-shadow: none;
   }
   body:has(.catalogue-page) .site-header .header-contact:hover {
@@ -1189,8 +1189,8 @@
     place-items: center;
     border-radius: 50%;
     color: var(--color-ink);
-    background: rgb(242 236 227 / 0.92);
-    border: 1px solid rgb(42 39 35 / 0.2);
+    background: rgb(20 20 22 / 0.95);
+    border: 1px solid rgb(255 255 255 / 0.2);
     transition:
       background-color 0.3s var(--ease-out),
       transform 0.6s var(--ease-soft);
@@ -1215,8 +1215,8 @@
     display: grid;
     place-items: center;
     border-radius: 50%;
-    background: rgb(242 236 227 / 0.92);
-    border: 1px solid rgb(42 39 35 / 0.2);
+    background: rgb(20 20 22 / 0.95);
+    border: 1px solid rgb(255 255 255 / 0.2);
     color: var(--color-ink);
     font-size: 1.3rem;
     transition: background-color 0.3s var(--ease-out);
@@ -1233,8 +1233,8 @@
     top: 1.5rem;
     left: 1.5rem;
     z-index: 3;
-    background: rgb(242 236 227 / 0.92);
-    border: 1px solid rgb(42 39 35 / 0.2);
+    background: rgb(20 20 22 / 0.95);
+    border: 1px solid rgb(255 255 255 / 0.2);
     color: var(--color-ink);
     padding: 0.7rem 1rem;
     border-radius: 2px;

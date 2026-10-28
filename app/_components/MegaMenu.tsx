@@ -7,14 +7,9 @@ import { useGSAP } from "@gsap/react";
 import { Link } from "@/i18n/navigation";
 import { useMenu } from "@/app/_components/MenuProvider";
 import { lockPage } from "@/lib/modal-lock";
-import { HUD_TONE_TEXT, useHudTones, type HudPoints } from "@/lib/hud-tone";
 
 /*
- * THE MEGA MENU — three pages and nothing else. A round trigger sits in
- * the bottom-right corner on every page; a full-screen sheet rises from
- * the bottom on a white-to-linen gradient, a gold hairline draws across
- * its leading edge, and the three words follow. Every move is a long inOut ease: it
- * should glide, never snap.
+ * Full-screen navigation, opened from the shared header.
  */
 const LINKS = [
   { href: "/gallery", key: "gallery" },
@@ -22,18 +17,13 @@ const LINKS = [
   { href: "/contact", key: "contacts" },
 ] as const;
 
-const TRIGGER_POINT: HudPoints<"trigger"> = {
-  trigger: (w, h) => [w - 64, h - 64],
-};
-
 export default function MegaMenu() {
   const t = useTranslations("menu");
   const georgian = useLocale() === "ka";
   const { open, setOpen } = useMenu();
   const rootRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
-  const tones = useHudTones(TRIGGER_POINT);
 
   useGSAP(
     () => {
@@ -43,7 +33,7 @@ export default function MegaMenu() {
       const sheet = root.querySelector("[data-sheet]");
       const rule = root.querySelector("[data-rule]");
       const items = root.querySelectorAll("[data-item]");
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce), (max-width: 767px)").matches;
 
       const tl = gsap.timeline({
         paused: true,
@@ -73,7 +63,6 @@ export default function MegaMenu() {
     { scope: rootRef }
   );
 
-  // Open glides forward; close plays the same moves back, a touch quicker.
   useEffect(() => {
     const tl = timelineRef.current;
     if (!tl) return;
@@ -88,17 +77,16 @@ export default function MegaMenu() {
       rootRef.current?.querySelector("a")?.focus({ preventScroll: true })
     );
 
-    // Escape closes; Tab cycles through the three links and the trigger.
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(false);
-        triggerRef.current?.focus();
+        document.getElementById("site-menu-trigger")?.focus();
         return;
       }
       if (e.key !== "Tab") return;
       const controls = [
         ...(rootRef.current?.querySelectorAll<HTMLElement>("a") ?? []),
-        triggerRef.current,
+        closeRef.current,
       ].filter(Boolean) as HTMLElement[];
       const index = controls.indexOf(document.activeElement as HTMLElement);
       e.preventDefault();
@@ -114,7 +102,10 @@ export default function MegaMenu() {
     };
   }, [open, setOpen]);
 
-  const close = () => setOpen(false);
+  const close = () => {
+    setOpen(false);
+    document.getElementById("site-menu-trigger")?.focus();
+  };
 
   return (
     <>
@@ -128,31 +119,38 @@ export default function MegaMenu() {
         className="invisible fixed inset-0 z-[90]"
         data-lenis-prevent
       >
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={close}
+          className="absolute right-6 md:right-12 top-6 z-10 rounded-full border border-white/15 bg-white/[0.05] px-5 py-2 text-xs tracking-wide text-white cursor-pointer"
+        >
+          {t("close")} <span aria-hidden="true">×</span>
+        </button>
         <div
           data-veil
           onClick={close}
-          className="absolute inset-0 bg-[#FFFFFF]/55 opacity-0"
+          className="absolute inset-0 bg-zinc-950/70 opacity-0"
           aria-hidden="true"
         />
 
         <div
           data-sheet
-          className="absolute inset-x-0 bottom-0 h-[100svh] overflow-hidden"
+          className="absolute inset-x-0 bottom-0 h-[100svh] overflow-hidden bg-zinc-950 text-zinc-50"
           style={{
-            background: "linear-gradient(to bottom, #FFFFFF 0%, #F2ECE3 100%)",
             transform: "translateY(100%)",
           }}
         >
           <span
             data-rule
             aria-hidden="true"
-            className="absolute top-0 inset-x-0 h-px bg-[#B39359] origin-left"
+            className="absolute top-0 inset-x-0 h-px bg-white/20 origin-left"
             style={{ transform: "scaleX(0)" }}
           />
 
           <nav
             aria-label={t("menu")}
-            className="h-full flex items-end px-6 md:px-16 pb-32 md:pb-[20vh]"
+            className="h-full flex items-end px-6 md:px-16 pb-36 md:pb-[20vh]"
           >
             <ul className="group/list w-full flex flex-col gap-9 md:grid md:grid-cols-3 md:gap-10">
               {LINKS.map((link, i) => (
@@ -163,26 +161,24 @@ export default function MegaMenu() {
                     className="group/link inline-block transition-opacity duration-500 ease-out group-hover/list:opacity-40 group-hover/list:hover:opacity-100 focus-visible:outline-none"
                   >
                     <span
-                      className="block mb-4 text-[10px] font-semibold tracking-[0.3em] text-[#B39359] tabular-nums"
-                      style={{ fontFamily: "var(--font-sans)" }}
+                      className="block mb-3 text-xs font-semibold tracking-[0.25em] text-zinc-400 tabular-nums"
                       aria-hidden="true"
                     >
                       0{i + 1}
                     </span>
                     <span className="relative inline-block">
                       <span
-                        className="font-era-display text-[13vw] md:text-[5vw] text-[#2A2723]"
+                        className="font-semibold tracking-tight text-3xl sm:text-5xl md:text-6xl text-zinc-50"
                         style={{
-                          lineHeight: 1,
+                          lineHeight: 1.1,
                           textTransform: georgian ? "none" : undefined,
                         }}
                       >
                         {t(link.key)}
                       </span>
-                      {/* Gold underline draws in from the left on hover / focus */}
                       <span
                         aria-hidden="true"
-                        className="absolute left-0 right-0 -bottom-4 h-px bg-[#B39359] origin-left scale-x-0 transition-transform duration-700 ease-[cubic-bezier(0.65,0,0.35,1)] group-hover/link:scale-x-100 group-focus-visible/link:scale-x-100"
+                        className="absolute left-0 right-0 -bottom-3 h-px bg-white/40 origin-left scale-x-0 transition-transform duration-700 ease-[cubic-bezier(0.65,0,0.35,1)] group-hover/link:scale-x-100 group-focus-visible/link:scale-x-100"
                       />
                     </span>
                   </Link>
@@ -193,39 +189,6 @@ export default function MegaMenu() {
         </div>
       </div>
 
-      {/* The trigger: bottom-right on every page, above the open sheet */}
-      <button
-        ref={triggerRef}
-        type="button"
-        data-hud
-        aria-expanded={open}
-        aria-controls="mega-menu"
-        aria-label={open ? t("close") : t("menu")}
-        onClick={() => setOpen(!open)}
-        className={`fixed z-[95] bottom-6 right-6 md:bottom-10 md:right-10 w-[4.5rem] h-[4.5rem] md:w-20 md:h-20 rounded-full border border-current/30 hover:border-[#B39359] flex flex-col items-center justify-center gap-2 cursor-pointer transition-[color,border-color] duration-500 ${
-          HUD_TONE_TEXT[open ? "ink" : tones.trigger ?? "ink"]
-        }`}
-      >
-        {/* MENU rolls up into CLOSE */}
-        <span
-          className={`relative h-3 overflow-hidden text-[9px] font-semibold tracking-[0.28em] ${
-            georgian ? "" : "uppercase"
-          }`}
-          style={{ fontFamily: "var(--font-sans)" }}
-        >
-          <span
-            className={`block transition-transform duration-700 ease-[cubic-bezier(0.65,0,0.35,1)] ${
-              open ? "-translate-y-1/2" : ""
-            }`}
-          >
-            <span className="block h-3 leading-3">{t("menu")}</span>
-            <span className="block h-3 leading-3" aria-hidden="true">
-              {t("close")}
-            </span>
-          </span>
-        </span>
-        <span className="w-1 h-1 rounded-full bg-[#B39359]" aria-hidden="true" />
-      </button>
     </>
   );
 }

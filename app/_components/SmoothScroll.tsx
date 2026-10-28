@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function SmoothScroll() {
   useEffect(() => {
-    const motion = matchMedia("(prefers-reduced-motion: reduce)");
+    const motion = matchMedia("(prefers-reduced-motion: reduce), (max-width: 767px)");
     let lenis: Lenis | undefined;
 
     const tick = (time: number) => {

@@ -56,6 +56,16 @@ export async function businessLd(locale: Locale): Promise<string> {
       closes: spec.closes,
     })),
     areaServed: SITE.serviceAreas,
+    knowsAbout: [
+      t("items.kitchens.name"),
+      t("items.wardrobes.name"),
+      t("items.paneling.name"),
+      t("items.commercial.name"),
+      commercial("furnitureFee"),
+      commercial("interiorFee"),
+      commercial("technical"),
+      commercial("suppliers"),
+    ],
     sameAs: Object.values(SITE.socials).filter((url) => !url.includes("TODO")),
     hasOfferCatalog: {
       "@type": "OfferCatalog",

@@ -18,7 +18,7 @@ const LOCALE_OPTIONS: ReadonlyArray<{
   short: string;
   name: string;
 }> = [
-  { code: "ka", short: "ქარ", name: "ქართული" },
+  { code: "ka", short: "KA", name: "ქართული" },
   { code: "ru", short: "RU", name: "Русский" },
   { code: "en", short: "EN", name: "English" },
 ];

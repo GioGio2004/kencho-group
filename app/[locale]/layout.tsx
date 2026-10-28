@@ -12,12 +12,13 @@ import ScrollRail from "@/app/_components/ScrollRail";
 import SiteHeader from "@/app/_components/SiteHeader";
 import SmoothScroll from "@/app/_components/SmoothScroll";
 import Greeting from "@/app/_components/Greeting";
+import FloatingIslandBar from "@/src/components/FloatingIslandBar";
 import { routing, type Locale } from "@/i18n/routing";
 import { navigationChapters } from "@/lib/navigation-chapters";
 import { brandFontClass, fontClassesFor } from "@/lib/fonts";
 import { GREETING_BOOTSTRAP } from "@/lib/greeting";
 import { IMAGES, src } from "@/lib/images";
-import { PALETTE, SITE } from "@/lib/site";
+import { SITE } from "@/lib/site";
 import { businessLd } from "@/lib/structured-data";
 import "../globals.css";
 
@@ -88,8 +89,8 @@ export async function generateMetadata({
 }
 
 export const viewport: Viewport = {
-  themeColor: PALETTE.paper,
-  colorScheme: "light",
+  themeColor: "#09090B",
+  colorScheme: "dark",
 };
 
 export default async function LocaleLayout({
@@ -135,6 +136,7 @@ export default async function LocaleLayout({
                 <MegaMenu />
                 <div id="main-content" tabIndex={-1}>{children}</div>
                 <Footer locale={locale as Locale} chapters={chapterLinks} />
+                <FloatingIslandBar />
               </div>
             </ContactProvider>
           </MenuProvider>

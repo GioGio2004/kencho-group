@@ -37,7 +37,7 @@ export default function ManifestoMapSection() {
       if (!section) return;
 
       const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
         // Decorative corner elements parallax at 1.3x scroll speed
         if (cornerFrames) {
           const corners = cornerFrames.querySelectorAll("[data-corner-parallax]");

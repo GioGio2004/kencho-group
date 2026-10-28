@@ -5,7 +5,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import ContactButton from "@/app/_components/ContactButton";
 import { WhatsAppIcon } from "@/app/_components/ContactPanel";
 import FaqList from "@/app/_components/FaqList";
-import Image from "next/image";
+import GlassImage from "@/app/_components/GlassImage";
+import { SHOWCASE_PHOTOS, showcasePhotoAlt } from "@/lib/showcase-photos";
 import { routing, type Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { pageMetadata } from "@/lib/page-metadata";
@@ -94,7 +95,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
         </section>
 
         {/* HOW IT WORKS */}
-        <section className="border-t border-line px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
+        <section id="about-process" className="border-t border-line px-5 py-20 sm:px-8 lg:px-10 lg:py-28 scroll-mt-24">
           <div className="lg:grid lg:grid-cols-[1fr_2fr] lg:gap-12">
             <p className="u-meta text-mute">{tProcess("eyebrow")}</p>
             <div>
@@ -116,9 +117,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
         {/* FOR DESIGNERS — most clients arrive with one. */}
         <section className="bg-grass px-5 py-20 text-ink sm:px-8 lg:px-10 lg:py-28">
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-20">
-            <div className="relative aspect-[4/5] overflow-hidden">
-              <Image src="/furniture/fluted-oak-panel-detail-tbilisi-kencho-group.webp" alt={t("detailAlt")} fill sizes="(max-width: 1023px) 100vw, 50vw" className="object-cover" />
-            </div>
+            <GlassImage className="aspect-[4/5]" src={SHOWCASE_PHOTOS.materials.src} alt={showcasePhotoAlt(SHOWCASE_PHOTOS.materials, locale)} quality={85} sizes="(max-width: 1023px) 100vw, 50vw" />
             <div>
               <p className="u-meta mb-8 text-ink/70">{t("designersEyebrow")}</p>
               <h2 className="u-display max-w-[18ch] text-[clamp(2rem,4.4vw,3.8rem)]">{t("designersTitle")}</h2>

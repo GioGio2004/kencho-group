@@ -4,50 +4,34 @@
 @import "./arrival.css";
 @import "./cinematic.css";
 @import "./greeting.css";
+@import "./showcase.css";
+@import "./polished-controls.css";
+@import "./image-surfaces.css";
 
-/*
- * KENCHO GROUP — Architectural Editorial Luxury Tokens (Linen system).
- * An all-light, airy system: white, linen and gold, no dark surfaces.
- *
- * - White (Default page canvas): #FFFFFF  (--color-paper)
- * - Linen (Primary soft surfaces — footer, menu, sheets, panels, bands,
- *   the colour the opening melts into): #F2ECE3  (--color-linen; the
- *   older names --color-sky / --color-mineral / --color-grass alias it)
- * - Deep Linen (hover and accent bands on linen): #E6DCCD
- *   (--color-linen-deep)
- * - Pale Linen (Secondary tint — cards, placeholders): #F8F4EE
- *   (--color-ice)
- * - Warm Charcoal Ink (All text, borders, SVG lines; never pure black):
- *   #2A2723 (--color-ink; muted text --color-ink-soft, AA on white and linen)
- * - Warm Brass / Oak Accent (rules and decoration, not small text): #B58E58
- * - Muted Gold (the one accent: hairlines, index numerals, the menu's
- *   marks; decoration only, never body text): #B39359  (--color-gold)
- *
- * --color-ivory is kept only for text laid over photography.
- */
+/* Shared monochrome design system. Dark by default; no user theme switch. */
 @theme {
-  --color-paper: #FFFFFF;
-  --color-linen: #F2ECE3;
-  --color-linen-deep: #E6DCCD;
-  --color-sky: #F2ECE3;
-  --color-ice: #F8F4EE;
-  --color-cream: #EFECE3;
-  --color-sand: #E5E1D6;
+  --color-paper: #070708;
+  --color-linen: #141416;
+  --color-linen-deep: #202023;
+  --color-sky: #141416;
+  --color-ice: #111113;
+  --color-cream: #161618;
+  --color-sand: #252528;
   /* Aliases of --color-linen, kept for existing class names. */
-  --color-mineral: #F2ECE3;
-  --color-grass: #F2ECE3;
-  --color-ink: #2A2723;
-  --color-ink-2: #3A3631;
-  --color-ink-soft: rgb(42 39 35 / 0.7);
-  --color-mute: #6F6A63;
+  --color-mineral: #141416;
+  --color-grass: #141416;
+  --color-ink: #f5f5f5;
+  --color-ink-2: #d4d4d8;
+  --color-ink-soft: #a1a1aa;
+  --color-mute: #a1a1aa;
   --color-ivory: #FFFFFF;
-  --color-orange: #B58E58;
-  --color-brass: #B58E58;
+  --color-orange: #d4d4d8;
+  --color-brass: #d4d4d8;
   /* Deep oak: the brass family where it must read as small text or a
    * hover colour on linen. */
-  --color-bronze: #74452A;
-  --color-gold: #B39359;
-  --color-line: rgb(42 39 35 / 0.14);
+  --color-bronze: #e4e4e7;
+  --color-gold: #d4d4d8;
+  --color-line: rgb(255 255 255 / 0.12);
 
   --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
@@ -56,10 +40,10 @@
 
 /* Per-locale fonts (lib/fonts.ts): Bodoni Moda, Pinyon Script, Plus Jakarta Sans. */
 @theme inline {
-  --font-display: var(--font-bodoni, var(--font-display-ka, var(--font-display-en, Georgia, serif)));
-  --font-script: var(--font-script, cursive);
-  --font-sans: var(--font-body-ka, var(--font-body-en, ui-sans-serif, system-ui));
-  --font-brand: var(--font-brand-en, ui-sans-serif, system-ui);
+  --font-display: var(--font-body-ka, var(--font-body-en, ui-sans-serif, system-ui, sans-serif));
+  --font-script: var(--font-body-ka, var(--font-body-en, ui-sans-serif, system-ui, sans-serif));
+  --font-sans: var(--font-body-ka, var(--font-body-en, ui-sans-serif, system-ui, sans-serif));
+  --font-brand: var(--font-body-ka, var(--font-body-en, ui-sans-serif, system-ui, sans-serif));
 }
 
 @keyframes spin-slow {
@@ -130,38 +114,24 @@
   }
 }
 
-.font-era-display {
-  font-family: var(--font-bodoni), var(--font-display-en), Georgia, serif;
-  text-transform: uppercase;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  line-height: 0.88;
-  transform: scaleY(1.35);
-  transform-origin: center;
-  display: inline-block;
-}
-
+.font-era-display,
 .font-display-tall {
-  font-family: var(--font-bodoni), var(--font-display-en), Georgia, serif;
-  text-transform: uppercase;
-  font-weight: 400;
+  font-family: var(--font-sans);
+  font-weight: 600;
   letter-spacing: -0.02em;
-  line-height: 0.88;
-  transform: scaleY(1.35);
-  transform-origin: center;
+  line-height: 1.1;
   display: inline-block;
 }
 
 :lang(ka) .font-era-display,
 :lang(ka) .font-display-tall {
   letter-spacing: -0.01em;
-  transform: scaleY(1.18);
 }
 
 .font-era-script,
 .font-script-accent {
-  font-family: var(--font-script), var(--font-display-ka, var(--font-display-en, Georgia)), serif;
-  font-weight: 400;
+  font-family: var(--font-sans);
+  font-weight: 500;
 }
 
 /* The display faces extend beyond their line boxes. Give reveal masks room
@@ -260,15 +230,158 @@
   }
 }
 
-/* When the ERA-choreographed landing page is mounted, suppress legacy chrome
-   and Next.js dev overlays so FixedHudFrame is the exclusive HUD overlay. */
-body:has(.era-landing) .site-header,
+/* Phones use a static, native-scrolling version of the same desktop design. */
+@media (max-width: 767px) {
+  .era-landing *, .era-landing *::before, .era-landing *::after {
+    animation: none !important;
+    transition-duration: 0s !important;
+    scroll-behavior: auto !important;
+  }
+  .era-landing [class*="will-change"] { will-change: auto !important; }
+  .era-landing .font-era-display { transform: none; line-height: 1.2 !important; }
+  .era-landing .kg-letter, .era-landing .kg-rule, .era-landing .kg-meta { opacity: 1; transform: none; }
+  [data-mobile-hero] { height: auto !important; padding-top: 6rem; }
+  [data-hero-stage] { position: relative !important; height: auto !important; overflow: visible !important; }
+  [data-hero-curtain], [data-hero-gradient], [data-hero-switcher] { display: none; }
+  [data-hero-name] { position: relative !important; padding: 1.5rem 1.5rem 3rem; }
+  [data-hero-image] { position: relative !important; height: 65svh !important; min-height: 400px; transform: none !important; opacity: 1 !important; }
+  [data-hero-interactive] { opacity: 1 !important; pointer-events: auto !important; }
+  [data-hero-hotspot] { left: 1.25rem !important; bottom: 2rem !important; max-width: calc(100vw - 2.5rem) !important; padding: 1.5rem !important; }
+  [data-hero-hotspot] h2 { font-size: 1.4rem; }
+  #concept { overflow: hidden; }
+  #concept > div:first-child > div:first-child > div { padding-block: 3rem; }
+  #concept .concept-space-heading { gap: .75rem; }
+  #concept .concept-space-heading > span { margin-block: 0 !important; line-height: 1.3; }
+  .mobile-process-steps li { display: grid; grid-template-columns: 1.5rem 1fr; gap: 1rem; border-top: 1px solid #ddd7ce; padding: 1.5rem 0; }
+  .mobile-process-steps h4 { font-family: var(--font-display); font-size: 1.35rem; line-height: 1.4; }
+  .mobile-process-steps p { font-size: .875rem; line-height: 1.8; color: #635e57; margin-top: .6rem; }
+  #collection { margin-top: 0 !important; height: auto !important; pointer-events: auto; }
+  #collection > div { position: relative !important; height: auto !important; }
+  #collection .era-collection-shell { height: auto; padding: 3rem 1.25rem; clip-path: none !important; }
+  #collection .era-collection-shell > div:first-child { display: none; }
+  #collection .era-collection-stage { padding: 0; height: auto; gap: 2rem; transform: none !important; opacity: 1 !important; }
+  #collection [data-room-heading] { margin-inline: auto; font-size: clamp(1.75rem, 7vw, 2.5rem); line-height: 1.3 !important; }
+  #collection .era-collection-photo { width: 100%; height: auto; aspect-ratio: 4/3; }
+  #collection .era-collection-photo > div { clip-path: none !important; transform: none !important; opacity: 1 !important; }
+  #collection .era-collection-photo img { transform: none; }
+  #collection [data-room-description][aria-hidden="false"] { position: relative !important; visibility: visible !important; opacity: 1 !important; transform: none !important; }
+  #collection [data-room-description][aria-hidden="true"] { display: none; }
+  #collection [data-room-description] p { font-size: .875rem; line-height: 1.8; }
+  #collection [data-room-description] a { font-size: .8rem; }
+  #quote-banner { height: 75svh; min-height: 500px; }
+  #quote-banner blockquote { text-indent: 0; }
+  #process { padding-block: 3rem; }
+  #process > div:first-of-type { display: none; }
+  #process [data-drift-word] { margin-left: 0; transform: none !important; }
+  #process > div:nth-of-type(2) { margin-bottom: 3rem; }
+  #process h2 { margin-block: 1rem; }
+  #process h2 + p { margin-top: 1rem; }
+  [data-manifesto-phrase] { gap: .5rem; }
+  [data-manifesto-phrase] > span { margin-block: 0 !important; }
+  #materials { height: 90svh; min-height: 650px; }
+  .page-enter { animation: none !important; }
+  [data-hud] svg.animate-spin-slow { animation: none; }
+  [data-hud] button.group { width: 3.5rem; height: 3.5rem; }
+  [data-hud]:has(button.group) { top: 1rem; left: 1rem; }
+  .rail { display: none; }
+}
+
+/* The editorial landing uses the shared header and AI pill, without legacy rails. */
 body:has(.era-landing) .rail,
 body:has(.era-landing) .greeting,
 nextjs-portal,
 [data-nextjs-toast],
 [data-nextjs-dialog-overlay] {
   display: none !important;
+}
+
+body:has(.era-landing) {
+  background: #070708;
+  color: #FAFAFA;
+}
+
+body:has(.era-landing) .site-header {
+  background: rgba(7, 7, 8, 0.65);
+  color: #FAFAFA;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body:has(.era-landing) .site-footer {
+  background: #070708;
+  color: #FAFAFA;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body:has(.era-landing) .site-footer h2,
+body:has(.era-landing) .site-footer .footer-brand > p,
+body:has(.era-landing) .site-footer .footer-bottom {
+  color: #A1A1AA;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body:has(.era-landing) .site-footer a:hover {
+  color: #FFFFFF;
+}
+
+.site-footer {
+  padding-bottom: 6.5rem !important;
+}
+
+/* Shared editorial header: navigation belongs at the top, AI at the bottom. */
+.site-header {
+  height: 88px;
+  padding-inline: max(24px, calc((100vw - 1344px) / 2));
+  gap: 1rem;
+  background: rgba(7, 7, 8, 0.85);
+  color: #fafafa;
+  border-color: rgb(255 255 255 / 0.09);
+}
+.editorial-wordmark {
+  font-family: var(--font-sans), sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+.site-header .header-actions { gap: 1.5rem; }
+.site-header .locale-option { color: #d4d4d8; }
+.site-header .locale-option:hover,
+.site-header .locale-option[aria-current] { color: #fff; }
+.header-languages .locale-option + .locale-option::before {
+  content: "/";
+  position: absolute;
+  left: -2px;
+  color: #71717a;
+}
+.header-languages .locale-option { position: relative; }
+.era-landing { overflow-wrap: break-word; }
+.era-landing summary::-webkit-details-marker { display: none; }
+.era-landing :is(a, button, summary, [tabindex]):focus-visible,
+[data-floating-island] :is(a, button, input, select):focus-visible {
+  outline: 2px solid #fafafa;
+  outline-offset: 4px;
+}
+[data-ai-drawer] select { color-scheme: dark; }
+html:has(#mega-menu:not([inert])) [data-floating-island] { visibility: hidden; }
+@media (max-width: 767px) {
+  .site-header { height: 80px; padding-inline: 24px; }
+  .site-header .header-actions { gap: 0.75rem; }
+  .editorial-wordmark { font-size: 15px; }
+  .site-header .locale-option { min-width: 30px; padding-inline: 6px; font-size: 11px; }
+  .site-menu-trigger { padding-inline: 14px; letter-spacing: 0.08em; min-height: 40px; }
+}
+@media (max-width: 374px) {
+  .site-header { padding-inline: 16px; gap: 8px; }
+  .editorial-wordmark { font-size: 12px; }
+  .site-header .header-actions { gap: 8px; }
+  .site-menu-trigger { padding-inline: 10px; font-size: 10px; }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 @layer components {
@@ -691,7 +804,7 @@ nextjs-portal,
     display: flex;
     flex-direction: column;
     color: var(--color-ink);
-    background: rgb(242 236 227 / 0.92);
+    background: rgb(20 20 22 / 0.95);
     -webkit-backdrop-filter: blur(26px) saturate(1.3);
     backdrop-filter: blur(26px) saturate(1.3);
     transform: translateY(100%);
@@ -1586,7 +1699,7 @@ nextjs-portal,
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    border: 1px solid rgb(42 39 35 / 0.2);
+    border: 1px solid rgb(255 255 255 / 0.2);
     color: var(--color-ink);
     transition:
       background-color 0.3s var(--ease-out),
@@ -1597,7 +1710,7 @@ nextjs-portal,
   @media (hover: hover) {
     .sheet-close:hover {
       background: var(--color-ice);
-      border-color: rgb(42 39 35 / 0.45);
+      border-color: rgb(255 255 255 / 0.45);
       transform: rotate(90deg);
     }
   }
@@ -1632,7 +1745,7 @@ nextjs-portal,
   }
 
   .sheet .contact-call {
-    border-color: rgb(42 39 35 / 0.24);
+    border-color: rgb(255 255 255 / 0.24);
     color: var(--color-ink);
   }
 
@@ -1649,7 +1762,7 @@ nextjs-portal,
   }
 
   .sheet .contact-prepare {
-    border-top-color: rgb(42 39 35 / 0.16);
+    border-top-color: rgb(255 255 255 / 0.16);
     color: var(--color-ink-soft);
   }
 
@@ -1662,7 +1775,7 @@ nextjs-portal,
       max-height: none;
       padding: clamp(2rem, 6svh, 4rem) clamp(2rem, 3.2vw, 3.25rem);
       border-radius: 0;
-      border-left: 1px solid rgb(42 39 35 / 0.12);
+      border-left: 1px solid rgb(255 255 255 / 0.12);
       box-shadow: -40px 0 120px rgb(42 39 35 / 0.14);
     }
     .sheet-grip {

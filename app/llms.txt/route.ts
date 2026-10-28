@@ -51,9 +51,29 @@ export async function GET() {
 
 > ${en.meta.description}
 
-${SITE.name} is a custom furniture workshop in ${SITE.location}. One team
-handles the full project: site measurement, 3D design, production in our own
-workshop, delivery and installation.
+${en.commercial.scope} ${en.commercial.coverage}
+${en.commercial.start}
+
+## Design Fees & Quotation Policy
+
+- ${en.commercial.furnitureFee}
+- ${en.commercial.interiorFee}
+- ${en.commercial.quote}
+
+## Production Timeline (~2 Months / 6–8 Weeks)
+
+${en.commercial.timeline}
+
+- **01. ${en.process.steps.s1.title}**: ${en.process.steps.s1.line}
+- **02. ${en.commercial.stages.design.title}**: ${en.commercial.stages.design.text}
+- **03. ${en.commercial.stages.review.title}**: ${en.commercial.stages.review.text}
+- **04. ${en.commercial.stages.materials.title}**: ${en.commercial.stages.materials.text}
+- **05. ${en.commercial.stages.installation.title}**: ${en.commercial.stages.installation.text}
+
+## Materials, Partners & Technical Capabilities
+
+- **Suppliers & Processing Partners**: ${en.commercial.suppliers}
+- **Technologies & Metalwork**: ${en.commercial.technical}
 
 ## Services
 
@@ -61,14 +81,21 @@ ${services}
 
 ## Key pages
 
-Every page is available in Georgian (/ka), Russian (/ru) and English (/en);
-the English URLs are listed.
+Every page is available in Georgian (/ka), Russian (/ru) and English (/en):
 
-- [Home](${SITE.url}/en): who we are and what we make
-- [Catalogue](${SITE.url}/en/gallery): photographs of finished kitchens, wardrobes, interiors and commercial fit-outs
-- [About us](${SITE.url}/en/about): the workshop, how a project runs from measurement to installation, and working with interior designers
-- [FAQ](${SITE.url}/en/faq): prices, timelines, materials, commercial work
-- [Contact](${SITE.url}/en/contact): free consultation
+- [Production process & deadlines](${SITE.url}/en/process): five stages, realistic lead times and specialist finishing allowances
+- [Design & pricing](${SITE.url}/en/design-pricing): design fees, measurement methods and project quotation scope
+- [Materials & technologies](${SITE.url}/en/materials): suppliers, processing services, CNC routing and metal fabrication
+
+- [Home (KA)](${SITE.url}/ka) | [Home (EN)](${SITE.url}/en) | [Home (RU)](${SITE.url}/ru)
+- [Custom Kitchens — #1 Priority (KA)](${SITE.url}/ka/gallery/kitchens) | [EN](${SITE.url}/en/gallery/kitchens) | [RU](${SITE.url}/ru/gallery/kitchens)
+- [Built-in Wardrobes & Storage (KA)](${SITE.url}/ka/gallery/wardrobes-storage) | [EN](${SITE.url}/en/gallery/wardrobes-storage) | [RU](${SITE.url}/ru/gallery/wardrobes-storage)
+- [Wall Panelling & Home Interiors (KA)](${SITE.url}/ka/gallery/home-interiors) | [EN](${SITE.url}/en/gallery/home-interiors) | [RU](${SITE.url}/ru/gallery/home-interiors)
+- [Commercial Spaces (KA)](${SITE.url}/ka/gallery/commercial-spaces) | [EN](${SITE.url}/en/gallery/commercial-spaces) | [RU](${SITE.url}/ru/gallery/commercial-spaces)
+- [Full Catalogue](${SITE.url}/en/gallery): photographs of finished kitchens, wardrobes, interiors and commercial fit-outs
+- [About us](${SITE.url}/en/about): how a project runs from Pinterest photo or drawings to installation
+- [FAQ](${SITE.url}/en/faq): design fees (30 GEL/m² front elevation, $15–20/m² floor area), 2-month timeline, materials and suppliers
+- [Contact](${SITE.url}/en/contact): WhatsApp and phone consultation
 ${galleriesSection}
 
 ## Contact

@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { useContact } from "@/app/_components/ContactProvider";
 import { SITE } from "@/lib/site";
 import ContactLink from "@/app/_components/ContactLink";
+import { useMobile } from "@/lib/use-mobile";
 
 const subscribeToHydration = () => () => {};
 const clientSnapshot = () => true;
@@ -15,6 +16,7 @@ const serverSnapshot = () => false;
 
 export default function EditorialSplitSection() {
   const t = useTranslations("home.era.editorial");
+  const mobile = useMobile();
   const HARDWARE_SPECS = [
     t("specWood"),
     t("specHardware"),
@@ -266,7 +268,7 @@ export default function EditorialSplitSection() {
                       data-home-faq-answer={idx}
                       initial={false}
                       animate={enhanced ? { height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 } : { height: "auto", opacity: 1 }}
-                      transition={{ duration: 0.3, ease: "easeOut" }}
+                      transition={{ duration: mobile ? 0 : 0.3, ease: "easeOut" }}
                       onAnimationComplete={() => {
                         if (!isOpen) setClosingFaqs((previous) => previous.filter((item) => item !== idx));
                       }}

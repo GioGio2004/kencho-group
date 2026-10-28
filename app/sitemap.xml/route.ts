@@ -10,6 +10,9 @@ import { SITE } from "@/lib/site";
  */
 
 const PAGES = [
+  { path: "/process", priority: 0.7, fallback: 0.5 },
+  { path: "/design-pricing", priority: 0.7, fallback: 0.5 },
+  { path: "/materials", priority: 0.7, fallback: 0.5 },
   { path: "", priority: 1.0, fallback: 0.8 },
   { path: "/gallery", priority: 0.9, fallback: 0.7 },
   { path: "/about", priority: 0.7, fallback: 0.5 },
@@ -21,7 +24,7 @@ export const dynamic = "force-dynamic";
 
 // Stable build/release date for static pages
 const STATIC_LAST_MOD = new Date(
-  process.env.NEXT_PUBLIC_BUILD_TIME ?? "2026-08-16T00:00:00.000Z",
+  process.env.NEXT_PUBLIC_BUILD_TIME ?? "2026-10-29T00:00:00.000Z",
 );
 
 type Entry = {

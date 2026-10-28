@@ -10,12 +10,10 @@ import { readFile } from "node:fs/promises";
 const BASE = process.env.SEO_BASE ?? "http://localhost:3100";
 const SITE_URL = "https://www.kenchogroup.ge";
 const LOCALES = ["ka", "ru", "en"];
-const HOME_H1 = {
-  ka: "სამზარეულოს და კარადების დამზადება შეკვეთით თბილისში — Kencho Group",
-  ru: "Кухни и корпусная мебель на заказ в Тбилиси — Kencho Group",
-  en: "Custom kitchens, wardrobes and bespoke millwork in Tbilisi — Kencho Group",
-};
 const ROUTES = [
+  { path: "/process", breadcrumb: true },
+  { path: "/design-pricing", breadcrumb: true },
+  { path: "/materials", breadcrumb: true },
   { path: "", breadcrumb: false },
   { path: "/about", breadcrumb: true },
   { path: "/faq", breadcrumb: true, faq: true },
@@ -136,9 +134,12 @@ check(
 const llms = await fetch(`${BASE}/llms.txt`);
 const llmsBody = await llms.text();
 check(
-  "llms.txt: markdown with gallery links",
-  llms.status === 200 && llmsBody.startsWith("# Kencho Group") &&
-    llmsBody.includes("/en/gallery/"),
+  "llms.txt: markdown with gallery links and commercial facts",
+  llms.status === 200 &&
+    llmsBody.startsWith("# Kencho Group") &&
+    llmsBody.includes("/en/gallery/") &&
+    llmsBody.includes("30 GEL/m²") &&
+    llmsBody.includes("LTB"),
 );
 
 const smRes = await fetch(`${BASE}/sitemap.xml`);
@@ -152,8 +153,6 @@ const urlCount = (sm.match(/<url>/g) ?? []).length;
 const expectedPaths = [...ROUTES.filter(route => !route.creativeWork).map(route => route.path), ...publishedGalleryPaths];
 const expectedUrls = expectedPaths.flatMap(path => LOCALES.map(locale => `${SITE_URL}/${locale}${path}`));
 check("sitemap: current public routes and galleries in every locale", urlCount === expectedUrls.length, String(urlCount));
-/* Docs-conformant shape: every entry carries loc + hreflang alternates
- * + lastmod, nothing else rides along. */
 const lastmods = (sm.match(/<lastmod>/g) ?? []).length;
 check("sitemap: lastmod on every entry (docs shape)", lastmods === urlCount, String(lastmods));
 check("sitemap: no image/video extensions", !/xmlns:(image|video)/.test(sm));
@@ -185,13 +184,22 @@ check("sitemap: every listed URL responds 200", broken === 0, `${parse.locs.leng
 /* Parse the HTTP response in an inert document. RSC data and JS strings
  * must never count as visible/semantic HTML content for these assertions. */
 const homeBodies = [];
-const englishHome = JSON.parse(await readFile(new URL("../messages/home-en.json", import.meta.url), "utf8")).era;
+const englishHomeFile = JSON.parse(await readFile(new URL("../messages/home-en.json", import.meta.url), "utf8"));
+const englishLanding = englishHomeFile.landing;
+const englishAiIsland = englishHomeFile.aiIsland;
 const messageKeys = (messages, prefix = "") => Object.entries(messages).flatMap(([key, value]) =>
   typeof value === "object" ? messageKeys(value, `${prefix}${key}.`) : [`${prefix}${key}`],
 ).sort();
+
 for (const locale of LOCALES) {
-  const { era } = JSON.parse(await readFile(new URL(`../messages/home-${locale}.json`, import.meta.url), "utf8"));
-  check(`home /${locale}: complete dictionary`, JSON.stringify(messageKeys(era)) === JSON.stringify(messageKeys(englishHome)));
+  const localeHomeFile = JSON.parse(await readFile(new URL(`../messages/home-${locale}.json`, import.meta.url), "utf8"));
+  const { landing, aiIsland } = localeHomeFile;
+  check(
+    `home /${locale}: complete dictionary`,
+    JSON.stringify(messageKeys(landing)) === JSON.stringify(messageKeys(englishLanding)) &&
+      JSON.stringify(messageKeys(aiIsland)) === JSON.stringify(messageKeys(englishAiIsland)),
+  );
+
   const dom = await page.evaluate((html) => {
     const doc = new DOMParser().parseFromString(html, "text/html");
     const text = (node) => node?.textContent.replace(/\s+/g, " ").trim() ?? "";
@@ -203,68 +211,44 @@ for (const locale of LOCALES) {
     };
     const main = doc.querySelector("main");
     return {
-      h1: text(doc.querySelector("h1 .sr-only")),
+      h1: text(doc.querySelector("main h1")),
+      lead: text(doc.querySelector("[data-hero-lead]")),
       body: semantic(main),
       rawBody: text(main),
-      rooms: [...doc.querySelectorAll("[data-room-heading]")].map(text),
-      descriptions: [...doc.querySelectorAll("[data-room-description] p")].map(text),
-      hotspots: [...doc.querySelectorAll("[data-hero-hotspot]")].map((el) => ({ title: text(el.querySelector("h2")), description: text(el.querySelector("p")) })),
+      sections: [...doc.querySelectorAll("main > section")].map((s) => s.getAttribute("data-section")),
+      categories: [...doc.querySelectorAll("[data-category-card]")].map((el) => ({
+        slug: el.getAttribute("data-category-card"),
+        href: el.getAttribute("href"),
+        heading: text(el.querySelector("[data-category-heading]")),
+        description: text(el.querySelector("[data-category-description]")),
+      })),
+      roadmapSteps: [...doc.querySelectorAll("[data-roadmap-step]")].map((el) => text(el)),
+      techItems: [...doc.querySelectorAll("[data-tech-item]")].map((el) => text(el)),
+      partners: [...doc.querySelectorAll("[data-partner-card]")].map((el) => el.getAttribute("data-partner-card")),
+      pricingRows: [...doc.querySelectorAll("[data-pricing-row]")].map((el) => el.getAttribute("data-pricing-row")),
+      faqs: [...doc.querySelectorAll("[data-home-faq]")].length,
       answers: [...doc.querySelectorAll("[data-home-faq-answer] p")].map(text),
-      headings: [...main.querySelectorAll("h1,h2,h3")].map(text),
-      concept: semantic(doc.querySelector("#concept-heading")),
-      craft: semantic(doc.querySelector("#concept h3")),
-      rawCraft: text(doc.querySelector("#concept h3")),
-      space: semantic([...doc.querySelectorAll("#concept h3")].at(-1)),
-      made: semantic(doc.querySelector("#made-to-live-in-heading")),
-      manifestoDisplay: text(doc.querySelector("[data-manifesto-display]")),
-      manifestoPhrase: text(doc.querySelector("[data-manifesto-phrase]")),
-      captions: [...doc.querySelectorAll("[data-caption-text]")].map(text),
-      alts: [...main.querySelectorAll('img')].map((el) => el.getAttribute("alt")),
-      categoryLinks: [...doc.querySelectorAll("[data-room-description] a")].map((el) => ({ href: el.getAttribute("href"), text: text(el) })),
+      alts: [...main.querySelectorAll("img")].map((el) => el.getAttribute("alt")),
       business: JSON.parse([...doc.querySelectorAll('script[type="application/ld+json"]')].find((el) => el.textContent.includes('"FurnitureStore"')).textContent),
     };
   }, homeHtml.get(locale));
+
   const prefix = `home /${locale}`;
   homeBodies.push(dom.body);
-  check(`${prefix}: exact localized H1`, dom.h1 === HOME_H1[locale]);
-  const script = locale === "ka" ? /[\u10a0-\u10ff]/ : locale === "ru" ? /[\u0400-\u04ff]/ : /[A-Za-z]/;
-  check(`${prefix}: localized main copy`, script.test(dom.concept) && dom.body.includes(era.manifesto.heading));
-  check(`${prefix}: localized copy across every active section`, [
-    era.hero.tagline, era.concept.lineOne, era.collection.kitchensDescription,
-    era.manifesto.heading, era.materials.oakCaption, era.editorial.hardwareDescription,
-    era.quote.quote, era.hud.scroll,
-  ].every(copy => dom.rawBody.includes(copy) && script.test(copy)));
-  if (locale !== "en") {
-    check(`${prefix}: no English section copy fallback`, [
-      englishHome.hero.tagline, englishHome.concept.lineOne, englishHome.collection.kitchensDescription,
-      englishHome.manifesto.heading, englishHome.materials.oakCaption,
-      englishHome.editorial.hardwareDescription, englishHome.quote.quote,
-    ].every(copy => !dom.rawBody.includes(copy)));
+  check(`${prefix}: exact localized H1`, dom.h1 === localeHomeFile.compact.headline, dom.h1);
+  check(`${prefix}: six concise showcase sections`, JSON.stringify(dom.sections) === JSON.stringify(["hero", "categories", "roadmap", "ecosystem", "pricing", "faq"]));
+  check(`${prefix}: localized introduction in initial HTML`, dom.lead === localeHomeFile.compact.lead);
+  check(`${prefix}: four collection links in initial HTML`, dom.categories.length === 4 && ["kitchens", "wardrobes-storage", "commercial-spaces", "home-interiors"].every((slug, i) => dom.categories[i].href === `/${locale}/gallery/${slug}`));
+  check(`${prefix}: detailed guides linked from initial HTML`, ["process", "materials", "design-pricing"].every(slug => homeHtml.get(locale).includes(`href="/${locale}/${slug}"`)));
+  for (const [slug, section] of [["process", "roadmap"], ["materials", "ecosystem"], ["design-pricing", "pricing"]]) {
+    const response = await fetch(`${BASE}/${locale}/${slug}`);
+    const html = await response.text();
+    const content = await page.evaluate(html => new DOMParser().parseFromString(html, "text/html").querySelector("main").textContent.replace(/\s+/g, " "), html);
+    const strings = value => typeof value === "string" ? [value] : Object.values(value).flatMap(strings);
+    check(`${prefix}: complete ${slug} guide in initial HTML`, response.ok && strings(landing[section]).every(copy => content.includes(copy)));
   }
-  const services = ["kitchens", "wardrobes", "paneling", "commercial"];
-  check(`${prefix}: all four service headings in initial HTML`, dom.rooms.length === 4 && services.every((key, i) => dom.rooms[i] === era.collection[`${key}Title`]));
-  check(`${prefix}: all four service descriptions in initial HTML`, dom.descriptions.length === 4 && services.every((key, i) => dom.descriptions[i] === era.collection[`${key}Description`]));
-  const hotspots = ["Measure", "Materials", "Workshop"];
-  check(`${prefix}: all three hotspots in initial HTML`, dom.hotspots.length === 3 && hotspots.every((key, i) => dom.hotspots[i].title === era.hero[`hotspot${key}Title`] && dom.hotspots[i].description === era.hero[`hotspot${key}Description`]));
-  const answers = ["faqDesignerAnswer", "faqNoDesignerAnswer", "faqTimelineAnswer", "faqVisitAnswer"];
-  check(`${prefix}: all four FAQ answers in initial HTML`, dom.answers.length === 4 && answers.every((key, i) => dom.answers[i] === era.editorial[key]));
-  const slugs = ["kitchens", "wardrobes-storage", "home-interiors", "commercial-spaces"];
-  check(`${prefix}: direct localized category links`, dom.categoryLinks.length === 4 && slugs.every((slug, i) => dom.categoryLinks[i].href === `/${locale}/gallery/${slug}` && dom.categoryLinks[i].text === era.collection[`${services[i]}Link`]));
-  check(`${prefix}: Tbilisi and Georgia service coverage`, ["Tbilisi", "Georgia"].every((name) => dom.business.areaServed.some((area) => area.name === name)));
-  check(`${prefix}: intact split heading boundaries`,
-    dom.concept === [era.concept.lineOne, era.concept.lineTwo, era.concept.lineThree].join(" ") &&
-    dom.craft === [era.concept.new, era.concept.golden, era.concept.craft].join(" ") &&
-    dom.rawCraft === [era.concept.new, era.concept.cityLabel, era.concept.golden, era.concept.craft].join(" ") &&
-    dom.space === [era.concept.spaceWanted, era.concept.yours, era.concept.thisYear].join(" ") &&
-    dom.made === [era.editorial.made, era.editorial.toLive].join(" ") &&
-    !dom.headings.some((h) => /STUDIODESIGNED|TIMBERAND|NEWGOLDENCRAFT|WANTEDyoursTHIS|MADETo/.test(h)));
-  check(`${prefix}: intact manifesto word boundaries`,
-    dom.manifestoDisplay === [era.manifesto.city, era.manifesto.country, era.manifesto.workshop, era.manifesto.craft].join(" ") &&
-    dom.manifestoPhrase === [era.manifesto.fromHands, era.manifesto.directly, era.manifesto.toHome].join(" ") &&
-    !dom.manifestoDisplay.includes("G E O R G I A"));
-  check(`${prefix}: all five intact material captions in initial HTML`,
-    dom.captions.length === 5 && ["oak", "walnut", "stone", "light", "lacquer"].every((key, i) => dom.captions[i] === era.materials[`${key}Caption`]));
-  check(`${prefix}: localized nondecorative image alts`, dom.alts.length > 0 && dom.alts.every((alt) => alt === "" || (alt !== null && script.test(alt))));
+  check(`${prefix}: service coverage`, ["Tbilisi", "Georgia"].every(name => dom.business.areaServed.some(area => area.name === name)));
+
 }
 check("home: three distinct localized main bodies", new Set(homeBodies).size === 3);
 

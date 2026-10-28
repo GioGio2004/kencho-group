@@ -25,6 +25,7 @@ export default function FixedHudFrame() {
 
   useEffect(() => {
     const updateScroll = () => {
+      if (matchMedia("(max-width: 767px)").matches) return;
       const doc = document.documentElement;
       const maxScroll = Math.max(1, doc.scrollHeight - window.innerHeight);
       const pct = Math.min(

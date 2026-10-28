@@ -8,6 +8,7 @@ export const GREETING_BOOTSTRAP = `(() => {
   const root = document.documentElement;
   const replay = new URLSearchParams(location.search).get("intro") === "1";
   if (!replay) return;
+  if (matchMedia("(max-width: 767px)").matches) return;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   root.dataset.greeting = "pending";
   window.__kenchoGreetingTimeout = setTimeout(() => {

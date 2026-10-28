@@ -36,7 +36,6 @@ const nextConfig: NextConfig = {
       ["planner", "gallery"],
       ["projects", "gallery"],
       ["services", "gallery"],
-      ["process", "about"],
     ];
     return moved.map(([from, to]) => ({
       source: `/:locale(ka|ru|en)/${from}`,

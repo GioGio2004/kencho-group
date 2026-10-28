@@ -10,6 +10,7 @@ import { useGSAP } from "@gsap/react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { useMobile } from "@/lib/use-mobile";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -28,6 +29,7 @@ interface RoomSlide {
 export default function CircleRevealSection() {
   const t = useTranslations("home.era.collection");
   const reducedMotion = useReducedMotion();
+  const mobile = useMobile();
   const ROOMS: RoomSlide[] = [
     {
       index: "01",
@@ -103,11 +105,11 @@ export default function CircleRevealSection() {
       }
 
       const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: reduce)", () => {
+      mm.add("(prefers-reduced-motion: reduce), (max-width: 767px)", () => {
         gsap.set(maskContainer, { clipPath: "none" });
         gsap.set(introArc, { opacity: 0 });
       });
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
@@ -279,7 +281,7 @@ export default function CircleRevealSection() {
                     initial={{ opacity: 0, x: reducedMotion ? 0 : 28, scale: reducedMotion ? 1 : 0.96 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, x: reducedMotion ? 0 : -28, scale: reducedMotion ? 1 : 0.96 }}
-                    transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: mobile ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
                     style={{
                       clipPath: "polygon(18% 0%, 100% 0%, 82% 100%, 0% 100%)",
                     }}
@@ -289,7 +291,7 @@ export default function CircleRevealSection() {
                       src={currentRoom.image}
                       alt={currentRoom.alt}
                       fill
-                      sizes="420px"
+                      sizes="(max-width: 767px) 100vw, 420px"
                       className="object-cover scale-110 transition-transform duration-700 hover:scale-100"
                     />
                   </motion.div>
@@ -353,7 +355,7 @@ export default function CircleRevealSection() {
                     enter: { opacity: 1, y: 0, visibility: "visible" },
                     exit: { opacity: 0, y: reducedMotion ? 0 : -8, transitionEnd: { visibility: "hidden" } },
                   }}
-                  transition={{ duration: 0.35 }}
+                  transition={{ duration: mobile ? 0 : 0.35 }}
                   onAnimationComplete={(phase) => {
                     if (phase === "exit") setPresentCaption(activeIdx);
                   }}

@@ -39,7 +39,7 @@ export function useContact() {
   return useContext(ContactContext);
 }
 
-const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+const calm = () => matchMedia("(prefers-reduced-motion: reduce), (max-width: 767px)").matches;
 const phone = () => matchMedia("(max-width: 767px)").matches;
 
 export default function ContactProvider({

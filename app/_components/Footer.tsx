@@ -16,6 +16,7 @@ export default async function Footer({
     getTranslations({ locale, namespace: "nav" }),
     getTranslations({ locale, namespace: "contact" }),
   ]);
+  const guides = await getTranslations({ locale, namespace: "home.compact" });
   return (
     <footer className="site-footer">
       <div className="home-shell">
@@ -47,7 +48,10 @@ export default async function Footer({
                 <Link href="/about">{n("about")}</Link>
               </li>
               <li>
-                <Link href="/faq">{n("faq")}</Link>
+                <Link href="/process">{guides("processLink")}</Link>
+              </li><li><Link href="/design-pricing">{guides("pricingLink")}</Link>
+              </li><li><Link href="/materials">{guides("materialsLink")}</Link>
+              </li><li><Link href="/faq">{n("faq")}</Link>
               </li>
               <li>
                 <Link href="/contact">{n("contact")}</Link>

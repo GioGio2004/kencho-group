@@ -1,0 +1,82 @@
+/* Photographs fill their rounded surfaces directly, without decorative frames. */
+.glass-media {
+  --media-radius: 20px;
+  position: relative;
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--media-radius);
+}
+.glass-media img {
+  scale: 1;
+  transform: translateZ(0);
+  transition:
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    scale 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, scale;
+}
+@media (hover: hover) {
+  .showcase-hero-image:hover img,
+  .material-photo:hover img,
+  .collection-exhibit:hover .glass-media img,
+  .about-page .glass-media:hover img {
+    scale: 1.03;
+  }
+}
+.collection-exhibit:focus-visible .glass-media { outline: 2px solid rgb(255 255 255 / .7); outline-offset: 4px; }
+.collection-exhibit:focus-visible { outline: none; }
+
+.catalogue-page .mtile {
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  border-radius: 20px;
+  background: transparent;
+  box-shadow: none;
+}
+.catalogue-page .mtile img {
+  border-radius: inherit;
+  scale: 1;
+  transition:
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    scale 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  .catalogue-page .mtile:hover img {
+    scale: 1.03;
+  }
+}
+.catalogue-page .mtile-label { inset-inline: 0; bottom: 0; border-radius: 0 0 20px 20px; }
+.gallery-overview-photo {
+  overflow: hidden;
+  border: none;
+  border-radius: 20px;
+  background: transparent;
+  box-shadow: none;
+}
+.gallery-overview-photo img { border-radius: inherit; }
+.about-page .about-film {
+  overflow: hidden;
+  margin-inline: clamp(20px, 4vw, 56px);
+  padding: 0;
+  border: none;
+  border-radius: 20px;
+  background: transparent;
+  box-shadow: none;
+}
+.about-page .about-film video { border-radius: 20px; }
+.about-page .about-film-caption { border: none; background: transparent; }
+@media (max-width: 767px) {
+  .glass-media { --media-radius: 16px; }
+  .catalogue-page .mtile,
+  .gallery-overview-photo,
+  .about-page .about-film,
+  .about-page .about-film video { border-radius: 16px; }
+  .catalogue-page .mtile-label { border-radius: 0 0 16px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glass-media img,
+  .catalogue-page .mtile img {
+    transition: none;
+  }
+}

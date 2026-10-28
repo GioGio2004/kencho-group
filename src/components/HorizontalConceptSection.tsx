@@ -176,6 +176,7 @@ function JoineryStar({ className }: { className?: string }) {
 
 export default function HorizontalConceptSection() {
   const t = useTranslations("home.era.concept");
+  const process = useTranslations("process");
   const MILESTONES = [
     { title: t("measure"), time: t("dayOne"), point: WAVE_POINTS[1] },
     { title: t("design"), time: t("fiveDays"), point: WAVE_POINTS[2] },
@@ -235,7 +236,7 @@ export default function HorizontalConceptSection() {
       const mm = gsap.matchMedia();
 
       // Stop 1 entrance (every size): masked lines slice upward on entry.
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
         const heading = stop1.querySelector("[data-heading]");
         gsap
           .timeline({
@@ -328,24 +329,6 @@ export default function HorizontalConceptSection() {
               TRACK_VH + RISE_VH * 0.65
             )
             .to({}, { duration: HOLD_VH });
-        }
-      );
-
-      // Phones: stacked stops; the wave simply draws itself on entry.
-      mm.add(
-        "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
-        () => {
-          const waveLength = wave.getTotalLength();
-          gsap.fromTo(
-            wave,
-            { strokeDasharray: waveLength, strokeDashoffset: waveLength },
-            {
-              strokeDashoffset: 0,
-              duration: 1.4,
-              ease: "power2.inOut",
-              scrollTrigger: { trigger: waveWrap, start: "top 80%" },
-            }
-          );
         }
       );
 
@@ -536,7 +519,7 @@ export default function HorizontalConceptSection() {
           {/* ---------------- STOP 3 — THE SPACE YOU WANTED ---------------- */}
           <div className="w-full md:w-[100vw] md:h-screen flex flex-col items-center justify-center px-6 md:px-16 py-24 md:py-0 shrink-0">
             <div ref={stop3InnerRef} className="w-full flex flex-col items-center will-change-transform">
-              <h3 className="flex flex-col items-center text-center text-[#2A2723]">
+              <h3 className="concept-space-heading flex flex-col items-center text-center text-[#2A2723]">
                 <span className="block text-[9vw] md:text-[5.2vw]">
                   <span className="font-era-display" style={{ lineHeight: 1 }}>
                     {t("spaceWanted")}
@@ -556,7 +539,7 @@ export default function HorizontalConceptSection() {
               </h3>
 
               {/* Minimal hand-drawn wave map with five milestones */}
-              <div ref={waveWrapRef} className="mt-16 w-full max-w-5xl relative">
+              <div ref={waveWrapRef} className="hidden md:block mt-16 w-full max-w-5xl relative">
                 <svg
                   viewBox="0 0 1000 120"
                   className="block w-full h-auto overflow-visible"
@@ -600,6 +583,18 @@ export default function HorizontalConceptSection() {
                     </li>
                   ))}
                 </ol>
+              </div>
+              <div className="mobile-process-steps mt-10 w-full md:hidden">
+                <ol>
+                  {(["s1", "s2", "s3", "s4", "s5"] as const).map((id, index) => (
+                    <li key={id} data-mobile-process-step>
+                      <span className="text-xs text-[#92703d]">0{index + 1}</span>
+                      <div><h4>{process(`steps.${id}.title`)}</h4><p>{process(`steps.${id}.line`)}</p></div>
+                    </li>
+                  ))}
+                </ol>
+                <p>{process("note")}</p>
+                <Link href="/about#about-process" className="mt-5 inline-block border-b border-current/40 pb-1 text-sm">{process("title")} ↗</Link>
               </div>
             </div>
           </div>

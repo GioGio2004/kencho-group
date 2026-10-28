@@ -74,7 +74,7 @@ export async function generateMetadata({
               url: cover.url,
               width: cover.width,
               height: cover.height,
-              alt: pick(cover.alt, locale as Locale),
+              alt: guide ? guide("title") : pick(cover.alt, locale as Locale),
             },
           ]
         : [],

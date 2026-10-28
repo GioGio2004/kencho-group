@@ -58,7 +58,7 @@ const { GET } = await import("../app/sitemap.xml/route.ts");
 const healthy = await GET();
 assert.equal(healthy.status, 200);
 const xml = await healthy.text();
-assert.equal((xml.match(/<loc>/g) ?? []).length, 27);
+assert.equal((xml.match(/<loc>/g) ?? []).length, 36);
 globalThis.__cmsUnavailable = true;
 const log = console.error;
 console.error = () => {};

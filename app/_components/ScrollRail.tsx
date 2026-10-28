@@ -18,6 +18,7 @@ export default function ScrollRail() {
   const thumb = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (matchMedia("(max-width: 767px)").matches) return;
     const el = rail.current;
     const th = thumb.current;
     if (!el || !th) return;

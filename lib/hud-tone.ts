@@ -57,7 +57,7 @@ export function useHudTones<K extends string>(
       frame = now < settleUntil ? requestAnimationFrame(loop) : 0;
     };
     const schedule = () => {
-      settleUntil = performance.now() + 1600;
+      settleUntil = performance.now() + (matchMedia("(max-width: 767px)").matches ? 0 : 1600);
       if (!frame) frame = requestAnimationFrame(loop);
     };
 

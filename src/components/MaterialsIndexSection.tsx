@@ -94,23 +94,21 @@ export default function MaterialsIndexSection() {
       const list = listRef.current;
       if (!section || !stage || !list) return;
 
-      // Captions split into masked lines (re-split on resize / font load).
-      captionRefs.current.forEach((caption) => {
-        const text = caption?.querySelector("[data-caption-text]");
-        if (!text) return;
-        SplitText.create(text, {
-          type: "lines,words",
-          mask: "lines",
-          linesClass: "mat-line",
-          wordsClass: "mat-word",
-          autoSplit: true,
-        });
-      });
-
       const mm = gsap.matchMedia();
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+        // Captions split into masked lines (re-split on resize / font load).
+        captionRefs.current.forEach((caption) => {
+          const text = caption?.querySelector("[data-caption-text]");
+          if (!text) return;
+          SplitText.create(text, {
+            type: "lines,words",
+            mask: "lines",
+            linesClass: "mat-line",
+            wordsClass: "mat-word",
+            autoSplit: true,
+          });
+        });
 
-      // First entry: photo settles, list rises, the first caption reveals.
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
         const first = captionRefs.current[activeRef.current];
         gsap
           .timeline({
@@ -151,6 +149,18 @@ export default function MaterialsIndexSection() {
     const caption = captionRefs.current[next];
     const outgoing = captionRefs.current[prev];
     if (!layer || !slide || !drift || !caption || !outgoing) return;
+
+    // Phone selections update immediately without diagonal wipes or text splitting.
+    if (matchMedia("(max-width: 767px)").matches) {
+      layerRefs.current.forEach((other, i) => {
+        gsap.killTweensOf([other, slideRefs.current[i], driftRefs.current[i], captionRefs.current[i]]);
+        gsap.set(other, {visibility: i === next ? "visible" : "hidden", opacity: 1});
+        gsap.set(slideRefs.current[i], {xPercent: 0});
+        gsap.set(driftRefs.current[i], {xPercent: 0, scale: 1});
+        gsap.set(captionRefs.current[i], {visibility: i === next ? "visible" : "hidden", opacity: 1});
+      });
+      return;
+    }
 
     // Once a wipe lands, every other photo goes back to hidden, in place.
     const settle = () => {

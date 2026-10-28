@@ -30,7 +30,7 @@ export default function ParallaxQuoteSection() {
       if (!section || !bgWrap || !quoteBox) return;
 
       const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
+      mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
         // Subtle vertical parallax on the full-bleed background image
         gsap.fromTo(
           bgWrap,
