@@ -5,34 +5,24 @@ import type { ComponentPropsWithRef } from "react";
 import { track } from "@/lib/analytics";
 import { getEnquiryAttribution, getRefCode } from "@/lib/lead-ref";
 import { SITE, whatsappUrl } from "@/lib/site";
-import { Link } from "@/i18n/navigation";
 
-export default function ContactLink({
+export default function PartnerContactLink({
   method,
   about = "",
   message: customMessage,
   className = "",
-  direct = false,
   children,
   ...anchorProps
 }: {
   method: "whatsapp" | "phone";
   about?: string;
   message?: string;
-  /** Direct partner channels are deliberately limited to the footer. */
-  direct?: boolean;
 } & Omit<ComponentPropsWithRef<"a">, "href" | "onClick">) {
   const t = useTranslations("common");
-  const request = useTranslations("request");
   const locale = useLocale();
   const message = customMessage ?? (about
     ? t("photoPrefill", { title: about })
     : t("whatsappPrefill"));
-  if (!direct) {
-    return <Link {...anchorProps} href="/contact#project-request" className={className}>
-      {request("cta")} <span aria-hidden="true">↗</span>
-    </Link>;
-  }
   return (
     <a
       {...anchorProps}

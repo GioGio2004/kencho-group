@@ -1,16 +1,15 @@
+import ProjectRequestLink from "@/app/_components/ProjectRequestLink";
 import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import ContactButton from "@/app/_components/ContactButton";
-import { WhatsAppIcon } from "@/app/_components/ContactPanel";
 import FaqList from "@/app/_components/FaqList";
 import GlassImage from "@/app/_components/GlassImage";
 import { SHOWCASE_PHOTOS, showcasePhotoAlt } from "@/lib/showcase-photos";
 import { routing, type Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { pageMetadata } from "@/lib/page-metadata";
-import ContactLink from "@/app/_components/ContactLink";
+
 import { breadcrumbLd } from "@/lib/structured-data";
 
 /*
@@ -42,13 +41,12 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
 
-  const [t, tProcess, tFaq, tNav, tContact, tCommon] = await Promise.all([
+  const [t, tProcess, tFaq, tNav, tContact] = await Promise.all([
     getTranslations({ locale, namespace: "about" }),
     getTranslations({ locale, namespace: "process" }),
     getTranslations({ locale, namespace: "faq" }),
     getTranslations({ locale, namespace: "nav" }),
     getTranslations({ locale, namespace: "contact" }),
-    getTranslations({ locale, namespace: "common" }),
   ]);
   const breadcrumb = await breadcrumbLd(locale as Locale, { name: tNav("about"), path: "/about" });
 
@@ -122,14 +120,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
               <p className="u-meta mb-8 text-ink/70">{t("designersEyebrow")}</p>
               <h2 className="u-display max-w-[18ch] text-[clamp(2rem,4.4vw,3.8rem)]">{t("designersTitle")}</h2>
               <p className="mt-6 max-w-[52ch] text-[1.0625rem] leading-relaxed text-ink/80">{t("designersText")}</p>
-              <ContactLink
-                method="whatsapp"
-                message={tCommon("designerPrefill")}
-                className="btn btn-ink mt-8"
-              >
-                <WhatsAppIcon />
-                {t("designersCta")}
-              </ContactLink>
+              <ProjectRequestLink className="btn btn-ink mt-8" />
             </div>
           </div>
         </section>
@@ -151,7 +142,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
         <section className="bg-cream px-5 py-20 sm:px-8 lg:px-10 lg:py-28">
           <div className="flex flex-wrap items-end justify-between gap-8">
             <h2 className="u-display max-w-[16ch] text-[clamp(2rem,4.4vw,3.8rem)]">{tContact("title")}</h2>
-            <ContactButton label={tNav("getInTouch")} className="btn btn-orange" />
+            <ProjectRequestLink className="btn btn-orange">{tNav("getInTouch")}</ProjectRequestLink>
           </div>
         </section>
       </main>

@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import ContactLink from "@/app/_components/ContactLink";
+import PartnerContactLink from "@/app/_components/PartnerContactLink";
 import LocaleSwitch from "@/app/_components/LocaleSwitch";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -77,8 +77,8 @@ export default async function Footer({
           <div>
             <h2>{t("enquiries")}</h2>
             <address>
-              <ContactLink direct method="phone">{SITE.phone}</ContactLink>
-              <ContactLink direct method="whatsapp">WhatsApp ↗</ContactLink>
+              <PartnerContactLink method="phone">{SITE.phone}</PartnerContactLink>
+              <PartnerContactLink method="whatsapp">WhatsApp ↗</PartnerContactLink>
               <span>{c("address")}</span>
               <a href={SITE.mapsUrl} target="_blank" rel="noopener noreferrer">
                 {c("mapCta")} ↗

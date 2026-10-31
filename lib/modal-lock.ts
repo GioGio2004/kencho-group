@@ -1,6 +1,6 @@
 import type { KeyboardEvent } from "react";
 
-// Count locks so closing the contact sheet over the gallery cannot unlock it.
+// Count locks so closing one overlapping viewer cannot unlock another.
 let locks = 0;
 let previousOverflow = "";
 let previousPadding = "";

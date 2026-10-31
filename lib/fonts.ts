@@ -21,12 +21,6 @@ export const notoSansGeorgian = Noto_Sans_Georgian({
   variable: "--font-body-ka",
 });
 
-/* Aliased exports so legacy imports remain type-safe without loading decorative fonts */
-export const bodoniModa = inter;
-export const cormorantGaramond = inter;
-export const pinyonScript = inter;
-export const plusJakartaSans = inter;
-
 export const brandFontClass = `${inter.variable} ${notoSansGeorgian.variable}`;
 
 export const LOCALE_FONTS: Record<Locale, { variables: string[] }> = {

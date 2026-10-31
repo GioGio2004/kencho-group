@@ -30,6 +30,7 @@ npm run build
 npm run verify:launch
 npm run verify:commercial
 npm run verify:chat
+npm run verify:request
 ```
 
 `verify:launch` exercises handlers using controlled database/provider adapters. `verify:chat` tests the browser UI with mocked chat/session responses and does not send project requests. It defaults to port 3000; override `BASE` to test another server or ngrok URL. It requires installed Chrome.
@@ -37,3 +38,15 @@ npm run verify:chat
 The broader browser suites are `verify:landing` (`LANDING_BASE`) and `verify:seo` (`SEO_BASE`), defaulting to port 3100. Prefer a production server for these checks so development hot reloads do not interrupt navigation.
 
 Production: `npm run build`, then `npm start`. Configure the same server-only secrets in the hosting environment; `.env.local` is not deployed or committed.
+
+## Project requests
+
+`ProjectRequestLink` routes to the dedicated `/contact` page. Requests can be sent only there or from the editable review inside the existing AI window; there is no global contact sheet or extra form sidebar. Both use `ProjectRequestForm`, with submission state in `useProjectRequestForm` and upload/session recovery in `project-request-upload`. The AI progressively extracts explicit conversation facts, preserves edits and requires the visitor to review and submit; it never sends a request autonomously. Only the footer uses `PartnerContactLink` for direct partner contact.
+
+Contact has a sticky introduction and accessible banner carousel beside the form on desktop, stacking on mobile. Supplied banners are named WebP files in `public/banners`. Slideshow controls support pause/manual navigation and respect reduced motion. `npm run verify:contact` checks both submission paths with intercepted request services; it never creates real leads or sends email.
+
+Attachments are uploaded through the server to private ImageKit storage, then claimed by the saved Convex request. Save retries retain the request ID and successful attachment IDs. `verify:request` checks expired upload sessions, failed-save retries, and preview cleanup at mobile and desktop sizes with all request endpoints mocked.
+
+The sibling admin owns the private inbox and notification jobs. Its development recipient is configured as `giokhvichia69@gmail.com`; actual email delivery still needs Resend settings. Production configuration and deployment are separate from this development setting. See the admin's `LAUNCH_SETUP.md` for the remaining hosting, authentication and provider configuration.
+
+Production branches, domains and exact environment-variable placement are documented in [PRODUCTION_RELEASE.md](./PRODUCTION_RELEASE.md).

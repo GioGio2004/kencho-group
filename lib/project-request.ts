@@ -35,7 +35,7 @@ export function validateBrief(input: unknown): { brief: ProjectBrief; errors: st
   if (!/^[+\d][\d\s()\-]{5,31}$/.test(brief.phone) || brief.phone.replace(/\D/g, "").length < 7) errors.push("phone");
   if (!brief.furnitureType) errors.push("furnitureType");
   if (!brief.city) errors.push("city");
-  if (brief.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(brief.email)) errors.push("email");
+  if (brief.email && !/^[^\s@,;<>]+@[^\s@,;<>]+\.[^\s@,;<>]+$/.test(brief.email)) errors.push("email");
   return { brief, errors: [...new Set(errors)] };
 }
 export function fileError(file: { name: string; type: string; size: number }): "fileType" | "fileSize" | null {

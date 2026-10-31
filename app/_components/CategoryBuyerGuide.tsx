@@ -1,3 +1,4 @@
+import ProjectRequestLink from "./ProjectRequestLink";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
@@ -58,7 +59,7 @@ export default async function CategoryBuyerGuide({ locale, slug }: { locale: Loc
             </details>
           ))}
         </div>
-        <Link href="/contact#project-request" className="btn">{request("cta")} →</Link>
+        <ProjectRequestLink className="btn">{request("cta")} →</ProjectRequestLink>
         <nav aria-label={t("related")} className="flex flex-wrap gap-x-8 gap-y-4 border-t border-line pt-6">
           {CATEGORY_SLUGS.filter((category) => category !== slug).map((category) => (
             <Link key={category} href={`/gallery/${category}`} className="u-link text-sm">{categories(`${category}.title`)}</Link>

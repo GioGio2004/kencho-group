@@ -19,11 +19,12 @@ async function fits(page) {
   assert.deepEqual(overflow, [], "Clipped chat controls");
 }
 try {
-  for (const locale of ["en", "ka", "ru"]) for (const width of [320, 390, 1440]) {
+  for (const locale of (process.env.LOCALES || "en,ka,ru").split(",")) for (const width of (process.env.WIDTHS || "320,390,1440").split(",").map(Number)) {
     const context = await browser.newContext({ viewport: { width, height: 900 }, hasTouch: width < 768, isMobile: width < 768,
       reducedMotion: "reduce", extraHTTPHeaders: { "ngrok-skip-browser-warning": "1" } });
     const page = await context.newPage();
-    page.setDefaultTimeout(15000);
+    page.setDefaultTimeout(30000);
+    page.setDefaultNavigationTimeout(60000);
     page.on("pageerror", error => errors.push(error.message));
     page.on("console", message => { if (message.type() === "error" && /hydration|hydrated|didn't match/i.test(message.text())) errors.push(message.text()); });
     let mode = "success", sessionCount = 0, expired = false;
@@ -44,10 +45,10 @@ try {
       await page.locator("dialog.chat-modal[open] .chat-composer").waitFor();
       await fits(page);
       await page.locator("[data-ai-details-toggle]").click();
-      await page.locator("[data-ai-details]").waitFor();
+      await page.locator("[data-ai-request-form]:visible").waitFor();
       await fits(page);
-      await page.locator("[data-ai-details] input[id$='-city']").fill("Batumi");
-      await page.locator("[data-ai-details] .chat-details-done").click();
+      await page.locator("[data-ai-request-form] input[name=city]").fill("Batumi");
+      await page.locator(".chat-request-back").click();
       const question = "A".repeat(2200) + " final detail";
       await page.locator(".chat-composer textarea").fill(question);
       await page.locator(".chat-composer button[type=submit]").click();
@@ -84,13 +85,15 @@ try {
       const labels = await page.locator("[data-theme-toggle]").evaluateAll(elements => elements.map(el => el.getAttribute("aria-label")));
       assert.equal(new Set(labels).size, 1, "Theme controls disagree");
       await page.locator(".chat-header [data-ai-request]").click();
-      await page.locator("dialog.sheet[open]").waitFor();
-      assert.equal(await page.locator("dialog.sheet input[name=city]").inputValue(), "Batumi");
-      await page.waitForTimeout(400);
-      assert.ok(await page.evaluate(() => !!document.activeElement?.closest("dialog.sheet[open]")), "AI exit stole contact form focus");
+      await page.locator("[data-ai-request-form]:visible").waitFor();
+      assert.equal(await page.locator("[data-ai-request-form] input[name=city]").inputValue(), "Batumi");
+      assert.equal(await page.locator("dialog[open]").count(), 1, "Request review must stay in the AI window");
+      assert.equal(await page.locator("dialog.sheet").count(), 0, "No extra contact sidebar");
       await page.keyboard.press("Escape");
-      await page.locator("dialog.sheet[open]").waitFor({ state: "hidden" });
-      assert.notEqual(await page.evaluate(() => document.documentElement.style.overflow), "hidden");
+      await page.locator("[data-ai-request-form]:visible").waitFor({ state: "hidden" });
+      await page.keyboard.press("Escape");
+      await page.locator("dialog.chat-modal[open]").waitFor({ state: "hidden" });
+      await page.waitForFunction(() => document.documentElement.style.overflow !== "hidden");
       await page.reload({ waitUntil: "load" });
       await page.locator("[data-ai-trigger]").click();
       await page.locator("dialog.chat-modal[open]").waitFor();
@@ -104,7 +107,7 @@ try {
       await page.locator("dialog.chat-modal[open]").waitFor({ state: "hidden" });
       assert.ok(await page.locator("[data-ai-trigger]").evaluate(el => el === document.activeElement));
       console.log(`PASS ${locale}/${width}: opening, full questions, session renewal, retry, stop, photos, handoff, themes, focus and layout`);
-    } catch (error) { failed++; console.error(`FAIL ${locale}/${width}: ${error.message}`); }
+    } catch (error) { await page.screenshot({ path: join(output, `failure-${locale}-${width}.png`) }).catch(() => {}); failed++; console.error(`FAIL ${locale}/${width}: ${error.message}`); }
     finally { await context.close(); }
   }
   assert.deepEqual([...new Set(errors)], [], "Browser runtime/hydration errors");

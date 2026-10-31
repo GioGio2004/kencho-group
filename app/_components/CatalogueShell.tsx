@@ -1,7 +1,7 @@
+import ProjectRequestLink from "./ProjectRequestLink";
 import { getTranslations } from "next-intl/server";
 import Catalogue from "@/app/_components/Catalogue";
 import type { Locale } from "@/i18n/routing";
-import { Link } from "@/i18n/navigation";
 import type { Chapter, CataloguePage } from "@/lib/catalogue";
 import { SITE } from "@/lib/site";
 import { JOURNEY_COPY } from "@/lib/journey-copy";
@@ -100,7 +100,7 @@ export default async function CatalogueShell({
           <h1 className="catalogue-title" data-category={Boolean(active)}>{displayTitle}</h1>
           <div className="gallery-hero-bottom">
             <div><p className="catalogue-lede">{lede}</p><p className="catalogue-count-badge">{t("count", { count: pages.length })}</p></div>
-            <Link href="/contact#project-request" className="details-primary-link">{copy.enquireCta}</Link>
+            <ProjectRequestLink className="details-primary-link">{copy.enquireCta}</ProjectRequestLink>
           </div>
         </div>
       </header>

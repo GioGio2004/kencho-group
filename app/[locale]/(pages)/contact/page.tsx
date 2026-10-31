@@ -1,10 +1,10 @@
-import PageHeader from "@/app/_components/PageHeader";
+import ContactBanners from "@/app/_components/ContactBanners";
 import { JOURNEY_COPY } from "@/lib/journey-copy";
 import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import ProjectRequestForm from "@/app/_components/ProjectRequestForm";
+import ContactRequest from "@/app/_components/ContactRequest";
 import { routing, type Locale } from "@/i18n/routing";
 import { IMAGES, src } from "@/lib/images";
 import { pageMetadata } from "@/lib/page-metadata";
@@ -49,13 +49,15 @@ export default async function ContactPage({
         dangerouslySetInnerHTML={{ __html: breadcrumb }}
       />
       <main className="request-page">
-        <PageHeader meta={journey.requestLabel} title={request("title")} line={journey.requestNote} />
         <section className="request-page-layout">
           <aside className="request-page-intro">
-            <h2>{journey.requestLabel}</h2>
+            <p className="home-eyebrow">{journey.requestLabel}</p>
+            <h1>{request("contactTitle")}</h1>
+            <p className="contact-page-note">{journey.requestNote}</p>
+            <ContactBanners />
             <ol>{journey.requestSteps.map((step, index) => <li key={step}><span>0{index + 1}</span>{step}</li>)}</ol>
           </aside>
-          <div id="project-request" className="contact-form-card"><ProjectRequestForm /></div>
+          <div id="project-request" className="contact-form-card"><ContactRequest /></div>
         </section>
       </main>
     </>

@@ -6,22 +6,16 @@ import { useLocale, useTranslations } from "next-intl";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowUp, ArrowUpRight, CalendarCheck, Check, ChevronDown, ChevronLeft, ChevronRight, Clock3, Copy, ImageIcon, Images, MessageCircle, Plus, RotateCcw, Square, SquarePen, X, Ruler } from "lucide-react";
 import { containDialogTab, lockPage } from "@/lib/modal-lock";
-import { useContact } from "@/app/_components/ContactProvider";
+import ProjectRequestForm from "@/app/_components/ProjectRequestForm";
 import { fetchWithEnquirySession } from "@/lib/request-client";
 import { assistantHistory, MAX_CHAT_MESSAGE } from "@/lib/assistant-request";
-import { FIELD_LIMITS, type ProjectBrief } from "@/lib/project-request";
+import { type ProjectBrief } from "@/lib/project-request";
 import ThemeToggle from "@/app/_components/ThemeToggle";
 import { Link } from "@/i18n/navigation";
 import type { AssistantUi } from "@/lib/assistant-media";
 import type { Locale } from "@/i18n/routing";
 
 interface ChatMessage { role: "user" | "assistant"; content: string; ui?: AssistantUi }
-interface LeadState {
-  furnitureKey: "" | "furnitureKitchen" | "furnitureWardrobe" | "furnitureCommercial" | "furniturePanels";
-  city: string;
-  designKey: "" | "designPinterest" | "designDrawings" | "designNeed3d" | "designNeedInterior";
-  phone: string;
-}
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const isUi = (value: unknown): value is AssistantUi =>
@@ -36,9 +30,9 @@ function MessageText({ content }: { content: string }) {
 }
 
 export default function FloatingIslandBar() {
-  const openContact = useContact();
   const requestCopy = useTranslations("request");
   const [projectBrief, setProjectBrief] = useState<Partial<ProjectBrief>>({});
+  const [formBrief, setFormBrief] = useState<Partial<ProjectBrief>>();
   const t = useTranslations("home.aiIsland");
   const ui = useTranslations("assistant");
   const locale = useLocale() as Locale;
@@ -59,26 +53,25 @@ export default function FloatingIslandBar() {
   const reducedMotion = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [showEstimator, setShowEstimator] = useState(false);
+  const [showRequest, setShowRequest] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [failedQuestion, setFailedQuestion] = useState<string | null>(null);
   const [stopped, setStopped] = useState(false);
   const [copied, setCopied] = useState<number | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [lead, setLead] = useState<LeadState>({ furnitureKey: "", city: "", designKey: "", phone: "" });
   const [lightbox, setLightbox] = useState<{ message: number; index: number } | null>(null);
   const lightboxCloseRef = useRef<HTMLButtonElement>(null);
   const [slideDirection, setSlideDirection] = useState(1);
 
   const closeChat = () => {
     setShowSuggestions(false);
-    setShowEstimator(false);
+    setShowRequest(false);
     setLightbox(null);
     setOpen(false);
   };
   const closeDetails = () => {
-    setShowEstimator(false);
+    setShowRequest(false);
     requestAnimationFrame(() => detailsToggleRef.current?.focus({ preventScroll: true }));
   };
 
@@ -141,12 +134,12 @@ export default function FloatingIslandBar() {
 
   useEffect(() => () => { requestRef.current?.abort(); releaseRef.current?.(); }, []);
   useEffect(() => {
-    if (!showEstimator || !open) return;
+    if (!showRequest || !open) return;
     const frame = requestAnimationFrame(() => {
-      dialogRef.current?.querySelector<HTMLButtonElement>("[data-ai-details] button")?.focus({ preventScroll: true });
+      dialogRef.current?.querySelector<HTMLInputElement>("[data-ai-request-form] input")?.focus({ preventScroll: true });
     });
     return () => cancelAnimationFrame(frame);
-  }, [showEstimator, open]);
+  }, [showRequest, open]);
   useEffect(() => {
     if (!open) return;
     const frame = requestAnimationFrame(() => {
@@ -203,7 +196,7 @@ export default function FloatingIslandBar() {
       const response = await fetchWithEnquirySession("/api/ai-consultant", {
         method: "POST", signal: AbortSignal.any([controller.signal, AbortSignal.timeout(55000)]),
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ locale, shown, messages: assistantHistory(nextMessages), brief: { ...projectBrief, ...(lead.furnitureKey ? { furnitureType: t(lead.furnitureKey) } : {}), ...(lead.city ? { city: lead.city } : {}), ...(lead.phone ? { phone: lead.phone } : {}), ...(lead.designKey ? { description: [projectBrief.description, t(lead.designKey)].filter(Boolean).join("\n").slice(0, FIELD_LIMITS.description) } : {}) } }),
+        body: JSON.stringify({ locale, shown, messages: assistantHistory(nextMessages), brief: projectBrief }),
       });
       if (!response.ok) throw new Error("Request failed");
       if (response.headers.get("content-type")?.includes("text/event-stream")) {
@@ -252,18 +245,18 @@ export default function FloatingIslandBar() {
       busyRef.current = false;
       setLoading(false);
     }
-  }, [lead, locale, messages, t, projectBrief]);
+  }, [locale, messages, projectBrief]);
 
   const newChat = () => {
     requestRef.current?.abort();
     setMessages([]);
     setProjectBrief({});
-    setLead({ furnitureKey: "", city: "", designKey: "", phone: "" });
+    setFormBrief(undefined);
     setCopied(null);
     setInput("");
     setFailedQuestion(null);
     setStopped(false);
-    setShowEstimator(false);
+    setShowRequest(false);
     setShowSuggestions(false);
     setLightbox(null);
     followReplyRef.current = true;
@@ -293,7 +286,7 @@ export default function FloatingIslandBar() {
     { key: "chip2", label: "promptTime", icon: Clock3 },
     { key: "chip3", label: "promptPhoto", icon: ImageIcon },
   ] as const;
-  const toggleDetails = () => { setShowSuggestions(false); setShowEstimator(value => !value); };
+  const toggleDetails = () => { if (showRequest) closeDetails(); else reviewRequest(); };
   const lightboxMedia = lightbox ? messages[lightbox.message]?.ui?.media ?? [] : [];
   const activePhoto = lightbox ? lightboxMedia[lightbox.index] : undefined;
   const openLightbox = (message: number, index: number) => { setSlideDirection(1); setLightbox({ message, index }); };
@@ -314,16 +307,11 @@ export default function FloatingIslandBar() {
     return () => cancelAnimationFrame(frame);
   }, [lightbox]);
   const reviewRequest = () => {
-    const brief = { ...projectBrief,
-      ...(lead.furnitureKey ? { furnitureType: t(lead.furnitureKey) } : {}),
-      ...(lead.city ? { city: lead.city } : {}), ...(lead.phone ? { phone: lead.phone } : {}),
-      ...(lead.designKey ? { description: [projectBrief.description, t(lead.designKey)].filter(Boolean).join("\n") } : {}),
-    };
-    requestRef.current?.abort();
-    closeChat();
-    // Release the AI modal before opening the existing contact sheet.
-    finishClose();
-    openContact({ brief });
+    if (busyRef.current) return;
+    setShowSuggestions(false);
+    setLightbox(null);
+    setFormBrief({ ...projectBrief });
+    setShowRequest(true);
   };
   const galleryHref = (category: AssistantUi["category"] | undefined) => (category ? `/gallery/${category}` : "/gallery") as "/gallery";
   const photoPrompt = locale === "ka"
@@ -332,8 +320,6 @@ export default function FloatingIslandBar() {
       ? "Покажите фотографии ваших кухонь и проектов"
       : "Show me photos of your completed kitchens and projects";
   const finishClose = () => {
-    // The request handoff closes synchronously; its exit animation must not
-    // restore focus a second time after the contact form has opened.
     if (!dialogRef.current?.open) return;
     dialogRef.current?.close();
     releaseRef.current?.();
@@ -354,7 +340,7 @@ export default function FloatingIslandBar() {
       </motion.button>
     </div>
     <dialog ref={dialogRef} id={drawerId} className="chat-modal" aria-label={t("drawerTitle")}
-      onCancel={event=>{event.preventDefault();if(lightbox) closeLightbox(); else if(showEstimator) closeDetails(); else closeChat();}}
+      onCancel={event=>{event.preventDefault();if(lightbox) closeLightbox(); else if(showRequest) closeDetails(); else closeChat();}}
       onKeyDown={event=>{
         if (lightbox && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
           event.preventDefault();
@@ -381,18 +367,18 @@ export default function FloatingIslandBar() {
           animate={{opacity:1,y:0,scale:1}}
           exit={reducedMotion?{opacity:0}:{opacity:0,y:18,scale:0.97}}
           transition={{duration:reducedMotion?0:0.22,ease:EASE}}>
-          <section className={`chat-context ${messages.length===0?"is-empty":""} ${showEstimator?"has-details":""}`} data-ai-drawer data-lenis-prevent>
+          <section className={`chat-context ${messages.length===0?"is-empty":""} ${showRequest?"has-request":""}`} data-ai-drawer data-lenis-prevent>
             <header className="chat-header" inert={!!lightbox}>
               <div className="chat-identity"><span className="chat-identity-mark" aria-hidden="true"><MessageCircle size={18}/></span><div><h2>Kencho AI</h2><p>{ui("note")}</p></div></div>
               <div className="chat-toolbar">
                 <ThemeToggle />
                 <button type="button" data-ai-new-chat className="chat-icon-button" aria-label={ui("newChat")} title={ui("newChat")} onClick={newChat} disabled={loading}><SquarePen size={19}/></button>
-                <button type="button" onClick={reviewRequest} className="chat-cta-pill is-primary chat-header-request" data-ai-request aria-label={requestCopy("reviewBrief")} title={requestCopy("reviewBrief")}><CalendarCheck size={15} aria-hidden="true"/><span>{requestCopy("reviewBrief")}</span></button>
+                <button type="button" onClick={reviewRequest} disabled={loading || showRequest} className="chat-cta-pill is-primary chat-header-request" data-ai-request aria-label={requestCopy("reviewBrief")} title={requestCopy("reviewBrief")}><CalendarCheck size={15} aria-hidden="true"/><span>{requestCopy("reviewBrief")}</span></button>
                 <button ref={closeRef} type="button" className="chat-icon-button" aria-label={t("close")} title={t("close")} onClick={closeChat}><X size={21}/></button>
               </div>
             </header>
             <div className="chat-stage">
-              <div className="chat-thread-frame" inert={showEstimator || !!lightbox}>
+              <div className="chat-thread-frame" hidden={showRequest} inert={showRequest || !!lightbox}>
                 <div className="chat-body">
                   <div ref={scrollRef} className="chat-conversation" tabIndex={0} role="region" aria-label={ui("assistant")} onScroll={event=>{const el=event.currentTarget;followReplyRef.current=el.scrollHeight-el.scrollTop-el.clientHeight<80;}}>
                     {messages.length===0 ? <motion.div key="welcome" className="chat-welcome-stage"
@@ -450,14 +436,14 @@ export default function FloatingIslandBar() {
                     <textarea ref={inputRef} rows={1} aria-label={ui("messageLabel")} value={input} maxLength={MAX_CHAT_MESSAGE} placeholder={ui("shortPlaceholder")} onChange={event=>setInput(event.target.value)}
                       onKeyDown={event=>{if(event.key==="Enter"&&!event.shiftKey&&!event.nativeEvent.isComposing&&matchMedia("(pointer:fine)").matches){event.preventDefault();void sendQuestion(input);}}}/>
                     <div className="chat-composer-tools">
-                      <button ref={detailsToggleRef} type="button" className="chat-icon-button" data-ai-details-toggle aria-label={ui("details")} title={ui("details")} aria-expanded={showEstimator} aria-controls={`${drawerId}-details`} onClick={toggleDetails}>
-                        <Plus size={22} style={{transform:showEstimator?"rotate(45deg)":"none",transition:reducedMotion?"none":"transform .2s cubic-bezier(.22,1,.36,1)"}}/>
+                      <button ref={detailsToggleRef} type="button" className="chat-icon-button" data-ai-details-toggle aria-label={ui("details")} title={ui("details")} aria-expanded={showRequest} aria-controls={`${drawerId}-details`} onClick={toggleDetails}>
+                        <Plus size={22} style={{transform:showRequest?"rotate(45deg)":"none",transition:reducedMotion?"none":"transform .2s cubic-bezier(.22,1,.36,1)"}}/>
                       </button>
                   <div ref={suggestionsRef} className="chat-suggestions-control"
                     onBlur={event=>{if (!event.currentTarget.contains(event.relatedTarget)) setShowSuggestions(false);}}>
                     <button ref={suggestionsButtonRef} type="button" data-ai-suggestions-toggle className="chat-suggestions-toggle"
                       aria-expanded={showSuggestions} aria-controls={`${drawerId}-suggestions`}
-                      onClick={()=>{setShowEstimator(false);setShowSuggestions(value=>!value);}}>
+                      onClick={()=>{setShowRequest(false);setShowSuggestions(value=>!value);}}>
                       {ui("suggestions")}<ChevronDown size={14} aria-hidden="true"/>
                     </button>
                     {showSuggestions && <div id={`${drawerId}-suggestions`} data-ai-suggestions-panel className="chat-suggestions-panel" role="region" aria-label={ui("suggestions")}>
@@ -505,19 +491,11 @@ export default function FloatingIslandBar() {
                   </div>
                 </motion.div>}
               </AnimatePresence>
-              <AnimatePresence>
-                {showEstimator && <motion.aside id={`${drawerId}-details`} data-ai-details className="chat-details" aria-label={ui("details")} initial={{opacity:0,x:reducedMotion?0:20}} animate={{opacity:1,x:0}} exit={{opacity:0,x:reducedMotion?0:20}} transition={{duration:reducedMotion?0:.2,ease:EASE}}>
-                  <div className="chat-details-heading"><h3>{ui("details")}</h3><button className="chat-icon-button" type="button" aria-label={ui("detailsDone")} onClick={closeDetails}><X size={18}/></button></div><p>{ui("detailsNote")}</p>
-                  <div className="chat-detail-fields">
-                    <label htmlFor={`${drawerId}-furniture`}>{t("fieldFurniture")}<select id={`${drawerId}-furniture`} value={lead.furnitureKey} onChange={e=>setLead({...lead,furnitureKey:e.target.value as LeadState["furnitureKey"]})}><option value="">{requestCopy("notSure")}</option>{(["furnitureKitchen","furnitureWardrobe","furnitureCommercial","furniturePanels"] as const).map(key=><option key={key} value={key}>{t(key)}</option>)}</select></label>
-                    <label htmlFor={`${drawerId}-city`}>{t("fieldCity")}<input id={`${drawerId}-city`} autoComplete="address-level2" maxLength={FIELD_LIMITS.city} value={lead.city} placeholder={t("cityPlaceholder")} onChange={e=>setLead({...lead,city:e.target.value})}/></label>
-                    <label htmlFor={`${drawerId}-design`}>{t("fieldDesign")}<select id={`${drawerId}-design`} value={lead.designKey} onChange={e=>setLead({...lead,designKey:e.target.value as LeadState["designKey"]})}><option value="">{requestCopy("notSure")}</option>{(["designPinterest","designDrawings","designNeed3d","designNeedInterior"] as const).map(key=><option key={key} value={key}>{t(key)}</option>)}</select></label>
-                    <label htmlFor={`${drawerId}-phone`}>{t("fieldPhone")}<input id={`${drawerId}-phone`} type="tel" autoComplete="tel" maxLength={FIELD_LIMITS.phone} value={lead.phone} placeholder={t("phonePlaceholder")} onChange={e=>setLead({...lead,phone:e.target.value})}/></label>
-                  </div>
-                  <button type="button" onClick={reviewRequest} className="chat-details-handoff">{requestCopy("reviewBrief")}<ArrowUpRight size={17}/></button>
-                  <button type="button" className="chat-details-done" onClick={closeDetails}><Check size={16}/>{ui("detailsDone")}</button>
-                </motion.aside>}
-              </AnimatePresence>
+              {formBrief && <div id={`${drawerId}-details`} data-ai-request-form className="chat-request" hidden={!showRequest}>
+                <button type="button" className="chat-request-back" onClick={closeDetails}><ChevronLeft size={17} aria-hidden="true"/>{ui("detailsDone")}</button>
+                <ProjectRequestForm initialBrief={formBrief} onDraftChange={setProjectBrief} />
+              </div>}
+
             </div>
           </section>
         </motion.div>}

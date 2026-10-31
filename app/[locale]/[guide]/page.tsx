@@ -1,8 +1,9 @@
+import ProjectRequestLink from "@/app/_components/ProjectRequestLink";
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import ProjectGuide from "@/app/_components/ProjectGuide";
-import ContactLink from "@/app/_components/ContactLink";
+
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { pageMetadata } from "@/lib/page-metadata";
@@ -29,7 +30,7 @@ export default async function GuidePage({ params }: Props) {
       <Link href="/process">{c("processLink")} ↗</Link>
       <Link href="/design-pricing">{c("pricingLink")} ↗</Link>
       <Link href="/materials">{c("materialsLink")} ↗</Link>
-      <ContactLink method="whatsapp" about={`Project guide: ${guide}`}>WhatsApp ↗</ContactLink>
+      <ProjectRequestLink />
     </nav>
   </main>;
 }

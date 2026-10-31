@@ -206,7 +206,7 @@ export default function CatalogueViewer({
             <button
               type="button"
               className="gallery-enquire"
-              onClick={() => openContact({ about })}
+              onClick={() => { onClose(); openContact({ about }); }}
             >
               {request("cta")} <span aria-hidden="true">↗</span>
             </button>

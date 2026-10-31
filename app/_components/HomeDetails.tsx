@@ -1,3 +1,4 @@
+import ProjectRequestLink from "./ProjectRequestLink";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Frame, ScanLine, Scissors, Sparkles } from "lucide-react";
@@ -61,7 +62,7 @@ export default async function HomeDetails({ locale }: { locale: Locale }) {
       <div id="inquiry" className="contact-overview-panel">
         <div className="contact-overview-copy"><p className="details-kicker">{c("faq")}</p><h2 id="contact-overview-heading">{c("contact")}</h2>
           <div className="contact-overview-actions">
-            <Link href="/contact#project-request" className="details-primary-link">{request("cta")} <span aria-hidden="true">↗</span></Link>
+            <ProjectRequestLink className="details-primary-link">{request("cta")} <span aria-hidden="true">↗</span></ProjectRequestLink>
             <Link href="/faq" className="details-text-link">{c("faq")} <span aria-hidden="true">↗</span></Link>
           </div>
         </div>

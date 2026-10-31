@@ -1,8 +1,8 @@
+import ProjectRequestLink from "@/app/_components/ProjectRequestLink";
 import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import ContactButton from "@/app/_components/ContactButton";
 import FaqList from "@/app/_components/FaqList";
 import PageHeader from "@/app/_components/PageHeader";
 import { routing, type Locale } from "@/i18n/routing";
@@ -55,7 +55,7 @@ export default async function FaqPage({ params }: PageProps<"/[locale]/faq">) {
             <div>
               <FaqList locale={locale as Locale} />
               <div className="mt-12">
-                <ContactButton label={tNav("getInTouch")} className="btn btn-orange" />
+                <ProjectRequestLink className="btn btn-orange">{tNav("getInTouch")}</ProjectRequestLink>
               </div>
             </div>
           </div>
