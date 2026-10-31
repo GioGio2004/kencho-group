@@ -2,14 +2,13 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Analytics } from "@vercel/analytics/next";
-import AnalyticsScripts from "@/app/_components/AnalyticsScripts";
+import LaunchContext from "@/app/_components/LaunchContext";
 import ContactProvider from "@/app/_components/ContactProvider";
 import Footer from "@/app/_components/Footer";
-import MegaMenu from "@/app/_components/MegaMenu";
 import MenuProvider from "@/app/_components/MenuProvider";
 import ScrollRail from "@/app/_components/ScrollRail";
 import SiteHeader from "@/app/_components/SiteHeader";
+import ButtonHoverSound from "@/app/_components/ButtonHoverSound";
 import SmoothScroll from "@/app/_components/SmoothScroll";
 import Greeting from "@/app/_components/Greeting";
 import FloatingIslandBar from "@/src/components/FloatingIslandBar";
@@ -21,6 +20,13 @@ import { IMAGES, src } from "@/lib/images";
 import { SITE } from "@/lib/site";
 import { businessLd } from "@/lib/structured-data";
 import "../globals.css";
+import "../request.css";
+import "../brand-hero.css";
+import "../featured-gallery.css";
+import "../process-overview.css";
+import "../home-details.css";
+import "../editorial-pages.css";
+import "../catalogue-filters.css";
 
 const OG_LOCALE: Record<Locale, string> = {
   ka: "ka_GE",
@@ -116,6 +122,7 @@ export default async function LocaleLayout({
       className={`${fontClassesFor(locale as Locale)} antialiased`}
     >
       <head>
+        <script id="kencho-theme" dangerouslySetInnerHTML={{ __html: `try{var t=localStorage.getItem("kg:theme")==="light"?"light":"dark";document.documentElement.dataset.theme=t;document.documentElement.style.colorScheme=t}catch{}` }} />
         <script id="kencho-greeting" dangerouslySetInnerHTML={{ __html: GREETING_BOOTSTRAP }} />
         {/* A raw script, not next/script: structured data must be in the
             server HTML. */}
@@ -133,18 +140,15 @@ export default async function LocaleLayout({
                 <SmoothScroll />
                 <ScrollRail />
                 <SiteHeader />
-                <MegaMenu />
+                <ButtonHoverSound src="/dragon-studio-pop-402322.mp3" />
                 <div id="main-content" tabIndex={-1}>{children}</div>
                 <Footer locale={locale as Locale} chapters={chapterLinks} />
                 <FloatingIslandBar />
               </div>
             </ContactProvider>
           </MenuProvider>
+          <LaunchContext vercel={process.env.VERCEL === "1"} />
         </NextIntlClientProvider>
-        <AnalyticsScripts />
-        {/* Vercel Web Analytics: cookieless; counts once "Web Analytics"
-            is enabled on the Vercel project. No-op in local dev. */}
-        {process.env.VERCEL === "1" && <Analytics />}
       </body>
     </html>
   );

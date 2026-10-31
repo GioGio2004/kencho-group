@@ -1,0 +1,545 @@
+/* ===================================================================
+ * EDITORIAL SITE HEADER & MEGA MENU DISCLOSURE
+ * Precision-crafted pills, fluid micro-interactions & subtle surface contrast
+ * Compatible with Dark Mode (#070708) and Light Mode (#f7f6f2)
+ * =================================================================== */
+
+.site-header > .header-actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* -------------------------------------------------------------------
+ * CATALOGUE CTA BUTTON (Primary Header Navigation Pill)
+ * ------------------------------------------------------------------- */
+.site-header .header-catalogue-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  gap: 14px;
+  min-height: 46px;
+  padding: 4px 6px 4px 20px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.22s var(--control-ease),
+    background 0.22s,
+    border-color 0.22s,
+    box-shadow 0.22s,
+    color 0.22s;
+
+  /* Default (Dark Mode) - crisp luminous pill with high contrast */
+  background: #f5f5f7;
+  color: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 16px -2px rgba(255, 255, 255, 0.12), 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.site-header .header-catalogue-cta .header-catalogue-label,
+.site-header .header-catalogue-cta > span:first-child {
+  line-height: 1;
+}
+
+.site-header .header-catalogue-cta .header-catalogue-badge,
+.site-header .header-catalogue-cta > span:last-child {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  background: #09090b;
+  color: #f5f5f7;
+  transition: transform 0.28s var(--control-ease), background 0.22s, color 0.22s;
+}
+
+@media (hover: hover) {
+  .site-header .header-catalogue-cta:hover {
+    background: #ffffff;
+    color: #000000;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px -2px rgba(255, 255, 255, 0.22), 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+  .site-header .header-catalogue-cta:hover .header-catalogue-badge,
+  .site-header .header-catalogue-cta:hover > span:last-child {
+    transform: translate(2px, -2px);
+    background: #18181b;
+    color: #ffffff;
+  }
+}
+
+.site-header .header-catalogue-cta:active {
+  transform: scale(0.98);
+  background: #e4e4e7;
+}
+
+/* Light Mode Catalogue CTA Override */
+html[data-theme="light"] .site-header .header-catalogue-cta {
+  background: #111113;
+  color: #f7f6f2;
+  border: 1px solid #111113;
+  box-shadow: 0 4px 16px -2px rgba(17, 17, 19, 0.14);
+}
+
+html[data-theme="light"] .site-header .header-catalogue-cta .header-catalogue-badge,
+html[data-theme="light"] .site-header .header-catalogue-cta > span:last-child {
+  background: #27272a;
+  color: #f7f6f2;
+}
+
+@media (hover: hover) {
+  html[data-theme="light"] .site-header .header-catalogue-cta:hover {
+    background: #242428;
+    color: #ffffff;
+    border-color: #242428;
+    box-shadow: 0 8px 24px -2px rgba(17, 17, 19, 0.22);
+  }
+  html[data-theme="light"] .site-header .header-catalogue-cta:hover .header-catalogue-badge,
+  html[data-theme="light"] .site-header .header-catalogue-cta:hover > span:last-child {
+    transform: translate(2px, -2px);
+    background: #3f3f46;
+    color: #ffffff;
+  }
+}
+
+/* -------------------------------------------------------------------
+ * MENU TRIGGER BUTTON
+ * ------------------------------------------------------------------- */
+.site-header .site-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  gap: 16px;
+  min-height: 46px;
+  min-width: 136px;
+  padding: 4px 5px 4px 20px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.22s var(--control-ease),
+    background 0.22s,
+    border-color 0.22s,
+    box-shadow 0.22s,
+    color 0.22s;
+
+  /* Default (Dark Mode) - quiet elevated glass pill */
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #f0f6f7;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.site-menu-trigger .menu-trigger-label {
+  flex: 1;
+  text-align: center;
+  line-height: 1;
+}
+
+.site-menu-trigger .menu-trigger-dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: transform 0.45s var(--control-ease), background 0.22s;
+}
+
+.site-menu-trigger .menu-trigger-dots > span {
+  width: 3.5px;
+  height: 3.5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.site-menu-trigger[aria-expanded="true"] .menu-trigger-dots {
+  transform: rotate(90deg);
+}
+
+@media (hover: hover) {
+  .site-menu-trigger:hover {
+    background: rgba(255, 255, 255, 0.11);
+    border-color: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+  }
+}
+
+.site-menu-trigger:active {
+  transform: scale(0.98);
+}
+
+/* Light Mode Menu Trigger Override */
+html[data-theme="light"] .site-header .site-menu-trigger {
+  background: rgba(17, 17, 19, 0.05);
+  border: 1px solid rgba(17, 17, 19, 0.14);
+  color: #111113;
+}
+
+html[data-theme="light"] .site-menu-trigger .menu-trigger-dots {
+  background: rgba(17, 17, 19, 0.08);
+}
+
+@media (hover: hover) {
+  html[data-theme="light"] .site-menu-trigger:hover {
+    background: rgba(17, 17, 19, 0.09);
+    border-color: rgba(17, 17, 19, 0.26);
+    transform: translateY(-1px);
+  }
+}
+
+/* -------------------------------------------------------------------
+ * MEGA MENU DISCLOSURE (Elevation "Just a tad different from canvas")
+ * ------------------------------------------------------------------- */
+.mega-menu-root {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  width: clamp(340px, 34.4vw, 660px);
+  max-width: calc(100vw - 48px);
+  max-height: calc(100dvh - 120px - env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 26px;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  transform-origin: top right;
+  pointer-events: none;
+  transition:
+    opacity 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s 0.3s;
+
+  /* Dark Mode: subtle elevated graphite (#131316 vs canvas #070708) */
+  background: #131316;
+  color: #f5f5f5;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+}
+
+.mega-menu-root[data-open="true"] {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+  transition:
+    opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s;
+}
+
+/* Opaque warm white surface for the light-theme navigation popup. */
+html[data-theme="light"] .mega-menu-root {
+  background: #fdfcf9;
+  color: #111113;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 20px 56px -12px rgba(17, 17, 19, 0.1), 0 0 0 1px rgba(17, 17, 19, 0.04);
+}
+
+.mega-menu-sheet {
+  padding: clamp(22px, 2.8vw, 48px) clamp(16px, 1.65vw, 32px) 16px;
+}
+
+.mega-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mega-menu-list li {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.15s, transform 0.2s;
+}
+
+[data-open="true"] .mega-menu-list li {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.28s calc(60ms + var(--menu-index) * 40ms),
+    transform 0.42s var(--control-ease) calc(60ms + var(--menu-index) * 40ms);
+}
+
+/* -------------------------------------------------------------------
+ * MEGA MENU LINKS & ACTIVE STATES
+ * ------------------------------------------------------------------- */
+.mega-menu-link {
+  --menu-arrow-size: clamp(22px, 1.8vw, 32px);
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 68px;
+  padding: 12px 24px;
+  border-radius: 14px;
+  color: #ededed;
+  text-decoration: none;
+  font-size: clamp(30px, 3.2vw, 56px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.05em;
+  transition: color 0.2s, background 0.22s, opacity 0.22s, transform 0.22s var(--control-ease), filter 0.22s;
+}
+
+html[data-theme="light"] .mega-menu-link {
+  color: #111113;
+}
+
+.mega-menu-link[aria-current="page"] {
+  color: #71717a;
+}
+
+html[data-theme="light"] .mega-menu-link[aria-current="page"] {
+  color: #8b8882;
+}
+
+.mega-menu-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  transition: transform 0.3s var(--control-ease);
+}
+
+.mega-menu-arrow {
+  position: absolute;
+  left: 20px;
+  width: var(--menu-arrow-size);
+  height: auto;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.22s, transform 0.3s var(--control-ease);
+}
+
+.mega-menu-link:is(:hover, :focus-visible) {
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+
+html[data-theme="light"] .mega-menu-link:is(:hover, :focus-visible) {
+  background: rgba(17, 17, 19, 0.06);
+  color: #000000;
+}
+
+.mega-menu-link:is(:hover, :focus-visible) .mega-menu-label {
+  transform: translateX(calc(var(--menu-arrow-size) + 8px));
+}
+
+.mega-menu-link:is(:hover, :focus-visible) .mega-menu-arrow {
+  opacity: 1;
+  transform: none;
+}
+
+:lang(ka) .mega-menu-link {
+  font-size: clamp(24px, 2.4vw, 44px);
+  letter-spacing: -0.025em;
+}
+
+/* Smooth Navigating Feedback */
+.mega-menu-root[data-navigating="true"] {
+  pointer-events: none;
+}
+
+.mega-menu-root[data-navigating="true"] .mega-menu-link:not([data-navigating-target="true"]) {
+  opacity: 0.32;
+  filter: blur(1px);
+}
+
+.mega-menu-root[data-navigating="true"] .mega-menu-link[data-navigating-target="true"] {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+html[data-theme="light"] .mega-menu-root[data-navigating="true"] .mega-menu-link[data-navigating-target="true"] {
+  background: rgba(17, 17, 19, 0.09);
+  color: #000000;
+}
+
+.mega-menu-root[data-navigating="true"] .mega-menu-link[data-navigating-target="true"] .mega-menu-arrow {
+  opacity: 1;
+  transform: none;
+}
+
+.mega-menu-root[data-navigating="true"] .mega-menu-link[data-navigating-target="true"] .mega-menu-label {
+  transform: translateX(calc(var(--menu-arrow-size) + 8px));
+}
+
+/* -------------------------------------------------------------------
+ * MENU BOTTOM UTILITIES (Locale Switch & Theme Toggle)
+ * ------------------------------------------------------------------- */
+.mega-menu-utilities {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 10px 0;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme="light"] .mega-menu-utilities {
+  border-top-color: rgba(17, 17, 19, 0.1);
+}
+
+.site-header .mega-menu-utilities .locale-option {
+  display: grid;
+  place-items: center;
+  min-width: 40px;
+  min-height: 40px;
+  color: #a1a1aa;
+  font-size: 12px;
+  transition: color 0.2s;
+}
+
+.site-header .mega-menu-utilities .locale-option:is(:hover, [aria-current]) {
+  color: #ffffff;
+}
+
+html[data-theme="light"] .site-header .mega-menu-utilities .locale-option {
+  color: #52525b;
+}
+
+html[data-theme="light"] .site-header .mega-menu-utilities .locale-option:is(:hover, [aria-current]) {
+  color: #111113;
+}
+
+.mega-menu-utilities .theme-toggle-btn {
+  min-height: 40px;
+  color: #f5f5f5;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+html[data-theme="light"] .mega-menu-utilities .theme-toggle-btn {
+  color: #111113;
+  background: rgba(17, 17, 19, 0.06);
+  border-color: rgba(17, 17, 19, 0.12);
+}
+
+.mega-menu-utilities .theme-toggle-label {
+  display: inline;
+}
+
+.site-header :is(a, button):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* -------------------------------------------------------------------
+ * RESPONSIVE ADJUSTMENTS
+ * ------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .site-header .site-menu-trigger {
+    min-width: 110px;
+    min-height: 40px;
+    padding: 3px 4px 3px 14px;
+    gap: 8px;
+    font-size: 10.5px;
+  }
+  .site-header .site-menu-trigger .menu-trigger-dots {
+    width: 32px;
+    height: 32px;
+  }
+  .site-header .header-catalogue-cta {
+    min-height: 40px;
+    padding: 3px 4px 3px 14px;
+    gap: 8px;
+    font-size: 10.5px;
+  }
+  .site-header .header-catalogue-cta .header-catalogue-badge,
+  .site-header .header-catalogue-cta > span:last-child {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  .mega-menu-root {
+    top: calc(100% + 12px);
+    width: 360px;
+    border-radius: 20px;
+    max-height: calc(100dvh - 96px - env(safe-area-inset-bottom));
+  }
+  .mega-menu-sheet {
+    padding: 18px 12px 10px;
+  }
+  .mega-menu-link {
+    padding: 10px 16px;
+    min-height: 56px;
+    font-size: 32px;
+  }
+  :lang(ka) .mega-menu-link {
+    font-size: 26px;
+  }
+  .mega-menu-utilities {
+    margin-top: 14px;
+    margin-inline: 4px;
+  }
+}
+
+@media (max-width: 540px) {
+  .site-header .header-catalogue-cta {
+    display: none;
+  }
+}
+
+@media (max-width: 374px) {
+  .mega-menu-root {
+    max-width: calc(100vw - 24px);
+  }
+  .site-header .site-menu-trigger {
+    min-width: 96px;
+    padding-inline: 10px;
+  }
+}
+
+@media (max-height: 500px) {
+  .mega-menu-sheet {
+    padding-top: 10px;
+  }
+  .mega-menu-link {
+    min-height: 44px;
+    padding-block: 6px;
+    font-size: 24px;
+  }
+  :lang(ka) .mega-menu-link {
+    font-size: 22px;
+  }
+  .mega-menu-utilities {
+    margin-top: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mega-menu-root,
+  .mega-menu-list li,
+  [data-open="true"] .mega-menu-list li,
+  .mega-menu-link,
+  .mega-menu-label,
+  .mega-menu-arrow,
+  .menu-trigger-dots,
+  .header-catalogue-cta,
+  .header-catalogue-badge {
+    transition: none !important;
+  }
+}

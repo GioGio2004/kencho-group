@@ -1,17 +1,20 @@
 "use client";
-import { useTranslations } from "next-intl";
-import ContactLink from "@/app/_components/ContactLink";
-import { SITE } from "@/lib/site";
+import { useLocale, useTranslations } from "next-intl";
+import ProjectRequestForm from "./ProjectRequestForm";
+import type { ProjectBrief } from "@/lib/project-request";
 
 /* data-sheet-item marks what rises in turn when the contact sheet opens
  * (ContactProvider); on the /contact page the attribute does nothing. */
 export default function ContactPanel({
   about = "",
+  initialBrief,
   headingLevel = "h2",
 }: {
   about?: string;
+  initialBrief?: Partial<ProjectBrief>;
   headingLevel?: "h1" | "h2";
 }) {
+  const locale = useLocale();
   const t = useTranslations("contact");
   const h = useTranslations("home");
   const Heading = headingLevel;
@@ -19,26 +22,14 @@ export default function ContactPanel({
     <div className="contact-panel">
       <p className="home-eyebrow" data-sheet-item>
         <span className="contact-rule" aria-hidden="true" />
-        Kencho Group · Tbilisi
+        {locale === "ka" ? "კენჭო ჯგუფი — Kencho Group" : "Kencho Group · Tbilisi"}
       </p>
       <Heading className="u-display pr-8 text-[clamp(1.7rem,3vw,2.25rem)]" data-sheet-item>
         {t("title")}
       </Heading>
       <p className="contact-intro" data-sheet-item>{h("contactIntro")}</p>
       {about && <p className="contact-about" data-sheet-item>{t("about", { title: about })}</p>}
-      <div className="contact-channels" data-sheet-item>
-        <ContactLink
-          method="whatsapp"
-          about={about}
-          className="btn contact-whatsapp"
-        >
-          <WhatsAppIcon />
-          {t("whatsapp")}
-        </ContactLink>
-        <ContactLink method="phone" className="btn btn-line contact-call">
-          {t("call", { phone: SITE.phone })}
-        </ContactLink>
-      </div>
+      <div id="project-request"><ProjectRequestForm initialBrief={initialBrief} about={about} /></div>
       <div className="contact-prepare" data-sheet-item>
         <p>{h("contactPrepare")}</p>
       </div>

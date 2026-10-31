@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { usePathname, Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 
 /*
@@ -33,7 +33,6 @@ export default function LocaleSwitch({
   const t = useTranslations("nav");
   const locale = useLocale();
   const pathname = usePathname();
-  const router = useRouter();
 
   return (
     <div
@@ -44,18 +43,13 @@ export default function LocaleSwitch({
       {LOCALE_OPTIONS.map((option) => {
         const active = option.code === locale;
         return (
-          <button
+          <Link
             key={option.code}
-            type="button"
+            href={pathname}
+            locale={option.code}
+            hrefLang={option.code}
             aria-label={option.name}
             aria-current={active ? "true" : undefined}
-            onClick={() => {
-              if (!active)
-                router.replace(
-                  `${pathname}${window.location.search}${window.location.hash}`,
-                  { locale: option.code, scroll: false },
-                );
-            }}
             className={`locale-option px-2.5 py-1.5 text-[0.8125rem] leading-none transition-colors ${
               light
                 ? active
@@ -67,7 +61,7 @@ export default function LocaleSwitch({
             }`}
           >
             {option.short}
-          </button>
+          </Link>
         );
       })}
     </div>

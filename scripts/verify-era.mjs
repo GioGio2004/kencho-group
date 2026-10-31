@@ -44,6 +44,8 @@ try {
    assert.equal(await page.locator("[data-ai-drawer] [class*=emerald]").count(),0);
    assert.ok(await page.locator(".chat-composer textarea").evaluate(el=>el===document.activeElement));
    await page.route("**/api/ai-consultant",route=>route.fulfill({json:{reply:"Project consultation response"}}));
+   await page.route("**/api/project-request/session",route=>route.fulfill({json:{ok:true}}));
+   await page.locator("[data-ai-suggestions-toggle]").click();
    await page.locator("[data-ai-chip]").first().click();
    await page.getByText("Project consultation response",{exact:true}).waitFor();
    for(let i=0;i<16;i++) { await page.keyboard.press("Tab"); assert.ok(await page.evaluate(()=>!!document.activeElement.closest("dialog"))); }

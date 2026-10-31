@@ -1,5 +1,4 @@
 import { getTranslations } from "next-intl/server";
-import ContactLink from "@/app/_components/ContactLink";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { CATEGORY_SLUGS, type CategorySlug } from "@/lib/category-guides";
@@ -9,6 +8,7 @@ export default async function CategoryBuyerGuide({ locale, slug }: { locale: Loc
     getTranslations({ locale, namespace: "commercial" }),
     getTranslations({ locale, namespace: `categoryGuides.items.${slug}` }),
   ]);
+  const request = await getTranslations({ locale, namespace: "request" });
   const categories = await getTranslations({ locale, namespace: "categoryGuides.items" });
   return (
     <section data-buyer-guide={slug} aria-labelledby="buyer-guide-heading" className="border-t border-line px-5 py-16 sm:px-8 sm:py-24 lg:px-10">
@@ -58,7 +58,7 @@ export default async function CategoryBuyerGuide({ locale, slug }: { locale: Loc
             </details>
           ))}
         </div>
-        <ContactLink method="whatsapp" about={guide("title")} className="u-link inline-block text-base">{t("cta")} →</ContactLink>
+        <Link href="/contact#project-request" className="btn">{request("cta")} →</Link>
         <nav aria-label={t("related")} className="flex flex-wrap gap-x-8 gap-y-4 border-t border-line pt-6">
           {CATEGORY_SLUGS.filter((category) => category !== slug).map((category) => (
             <Link key={category} href={`/gallery/${category}`} className="u-link text-sm">{categories(`${category}.title`)}</Link>

@@ -17,14 +17,14 @@ export default function PageHeader({
   image?: { src: string; alt: string };
 }) {
   return (
-    <header className={`ph${image ? "" : " ph-solo"}`}>
-      <div className="ph-copy">
-        <p className="u-meta max-w-[22rem] text-ink-2">{meta}</p>
-        {line && <p className="max-w-[30rem] text-[0.9375rem] leading-relaxed text-ink-2 lg:ml-[30%]">{line}</p>}
-        <h1 className="ph-title u-display">{title}</h1>
+    <header className={`interior-hero${image ? " interior-hero-with-image" : ""}`}>
+      <div className="interior-hero-copy">
+        {meta && <p className="interior-hero-prelude">{meta}</p>}
+        <h1>{title}</h1>
+        {line && <p className="interior-hero-description">{line}</p>}
       </div>
       {image && (
-        <div className="ph-img">
+        <div className="interior-hero-image">
           <Image src={image.src} alt={image.alt} fill sizes="(max-width: 1023px) 100vw, 50vw" preload />
         </div>
       )}

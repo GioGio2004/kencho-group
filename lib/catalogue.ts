@@ -1,23 +1,63 @@
-import { cache } from "react";
-import { fetchQuery } from "convex/nextjs";
 import type { Locale } from "@/i18n/routing";
 import { translatedPhotoTitle } from "@/lib/gallery-titles";
-import {
-  galleriesApi,
-  pick,
-  type Gallery,
-  type Localized,
-} from "@/lib/convex-gallery";
+import { pick, type Gallery, type GallerySlugEntry, type Localized } from "@/lib/convex-gallery";
 
 /*
- * THE CATALOGUE — every published gallery from the admin console,
- * flattened into one list of pages.
- *
- * Chapters are the galleries (Kitchens, Wardrobes…), pages are their
- * photographs. Everything here runs on the server: the catalogue's
- * full text — chapter names, headings, captions — is in the HTML a
- * crawler gets, and the client component only adds the page-turning.
+ * THE CATALOGUE — served directly from /public/furniture for instant
+ * server rendering, zero external database latency, and exact intrinsic
+ * dimensions (CLS = 0).
  */
+
+export type ChapterSlug =
+  | "kitchens"
+  | "wardrobes-storage"
+  | "commercial-spaces"
+  | "home-interiors";
+
+export type MaterialTag =
+  | "walnut"
+  | "oak"
+  | "white"
+  | "green"
+  | "grey"
+  | "black"
+  | "marble"
+  | "island"
+  | "glass"
+  | "mirror"
+  | "fluted"
+  | "wine"
+  | "office"
+  | "cafe"
+  | "reception"
+  | "bedroom"
+  | "bathroom"
+  | "hallway"
+  | "media"
+  | "kids";
+
+export const MATERIAL_LABELS: Record<MaterialTag, Record<Locale, string>> = {
+  walnut: { ka: "კაკალი", ru: "Орех", en: "Walnut" },
+  oak: { ka: "მუხა", ru: "Дуб", en: "Oak" },
+  white: { ka: "თეთრი", ru: "Белый", en: "White" },
+  green: { ka: "მწვანე", ru: "Зелёный", en: "Green" },
+  grey: { ka: "ნაცრისფერი", ru: "Серый", en: "Grey" },
+  black: { ka: "მუქი", ru: "Тёмный", en: "Dark" },
+  marble: { ka: "ქვა და მარმარილო", ru: "Камень и мрамор", en: "Stone & Marble" },
+  island: { ka: "კუნძული", ru: "Остров", en: "Island" },
+  glass: { ka: "მინის ვიტრინა", ru: "Стекло и витрина", en: "Glass & Vitrine" },
+  mirror: { ka: "სარკე", ru: "Зеркало", en: "Mirror" },
+  fluted: { ka: "რელიეფური პანელი", ru: "Рельефные панели", en: "Fluted Panel" },
+  wine: { ka: "ღვინის სათავსო", ru: "Винный шкаф", en: "Wine Storage" },
+  office: { ka: "ოფისი", ru: "Офис", en: "Office" },
+  cafe: { ka: "კაფე და ჰორეკა", ru: "Кафе и HoReCa", en: "Café & HoReCa" },
+  reception: { ka: "ლობი და რეცეფცია", ru: "Лобби и ресепшн", en: "Lobby & Reception" },
+  bedroom: { ka: "საძინებელი", ru: "Спальня", en: "Bedroom" },
+  bathroom: { ka: "აბაზანა", ru: "Ванная", en: "Bathroom" },
+  hallway: { ka: "შემოსასვლელი", ru: "Прихожая", en: "Hallway" },
+  media: { ka: "TV კედელი", ru: "Медиастена", en: "Media Wall" },
+  kids: { ka: "საბავშვო", ru: "Детская", en: "Kids Room" },
+};
 
 export type Chapter = {
   slug: string;
@@ -33,72 +73,249 @@ export type CataloguePage = {
   chapterTitle: string;
   url: string;
   alt: string;
-  /**
-   * The piece's name in the visitor's language — the alt's descriptive
-   * stem, without the importer's SEO tail. Empty when the admin has not
-   * written one in this language; the page then shows the chapter name.
-   */
   heading: string;
-  /** The English name, always present: what the lead tells the workshop. */
   ref: string;
-  /** Empty when the admin has not written one in this language. */
   caption: string;
+  tags: MaterialTag[];
+  tagLabels: string[];
   width: number;
   height: number;
-  /** Position within its chapter — what `?p=` opens on the chapter page. */
   indexInChapter: number;
 };
 
-/**
- * Captions only in the visitor's own language. Alt text may fall back
- * to English (a screen reader is better served by English than by
- * nothing), but a Georgian page with English captions under the
- * photographs reads as unfinished — so a missing caption is left out.
- */
-function strict(value: Localized | undefined, locale: Locale): string {
-  return value?.[locale]?.trim() ?? "";
+type RawWork = {
+  stem: string;
+  chapter: ChapterSlug;
+  width: number;
+  height: number;
+  tags: MaterialTag[];
+};
+
+const CHAPTER_META: {
+  slug: ChapterSlug;
+  title: Localized;
+  description: Localized;
+  createdAt: number;
+}[] = [
+  {
+    slug: "kitchens",
+    title: {
+      en: "Custom Kitchens",
+      ka: "სამზარეულოები შეკვეთით",
+      ru: "Кухни на заказ",
+    },
+    description: {
+      en: "Custom kitchen cabinetry, architectural islands, stone worktops and integrated storage built to measure in Tbilisi and installed across Georgia.",
+      ka: "ინდივიდუალური სამზარეულოები, კუნძულები, ქვის ზედაპირები და ჩაშენებული სისტემები — დამზადებული თბილისში, მონტაჟით მთელ საქართველოში.",
+      ru: "Индивидуальные кухни, острова, каменные столешницы и встроенные системы хранения — производство в Тбилиси и монтаж по всей Грузии.",
+    },
+    createdAt: Date.parse("2026-10-01T00:00:00Z"),
+  },
+  {
+    slug: "wardrobes-storage",
+    title: {
+      en: "Wardrobes & Storage",
+      ka: "ჩაშენებული კარადები და საგარდერობე",
+      ru: "Встроенные шкафы и гардеробные",
+    },
+    description: {
+      en: "Floor-to-ceiling wardrobes, walk-in dressing rooms, bronze mirror doors and hallway storage systems tailored to the millimetre.",
+      ka: "იატაკიდან ჭერამდე ჩაშენებული კარადები, საგარდერობე ოთახები, ბრინჯაოს სარკეები და შემოსასვლელის სისტემები მილიმეტრის სიზუსტით.",
+      ru: "Встроенные шкафы от пола до потолка, гардеробные комнаты, бронзовые зеркала и системы хранения для прихожей с точностью до миллиметра.",
+    },
+    createdAt: Date.parse("2026-10-02T00:00:00Z"),
+  },
+  {
+    slug: "commercial-spaces",
+    title: {
+      en: "Commercial Spaces",
+      ka: "კომერციული და საოფისე ავეჯი",
+      ru: "Коммерческая и офисная мебель",
+    },
+    description: {
+      en: "Custom reception desks, executive offices, boardrooms, hotel lobbies and café counters engineered in wood, MDF, stone and metalwork.",
+      ka: "რეცეფციის დახლები, საოფისე და სათათბირო ავეჯი, სასტუმროს ლობი და კაფე-რესტორნების ინტერიერი ხით, მდფ-ით, ქვითა და მეტალით.",
+      ru: "Стойки ресепшн, мебель для офисов и переговорных, лобби отелей и барные стойки для кафе из дерева, МДФ, камня и металла.",
+    },
+    createdAt: Date.parse("2026-10-03T00:00:00Z"),
+  },
+  {
+    slug: "home-interiors",
+    title: {
+      en: "Home Interiors & Paneling",
+      ka: "საცხოვრებელი ინტერიერი და კედლის პანელები",
+      ru: "Жилые интерьеры и стеновые панели",
+    },
+    description: {
+      en: "Architectural wall panelling, living room media walls, bedroom joinery, bathroom vanities and custom children's rooms.",
+      ka: "არქიტექტურული კედლის პანელები, მისაღების TV კედლები, საძინებლისა და აბაზანის ავეჯი და საბავშვო ოთახები.",
+      ru: "Архитектурные стеновые панели, медиастены для гостиной, мебель для спальни, тумбы для ванной и детские комнаты.",
+    },
+    createdAt: Date.parse("2026-10-04T00:00:00Z"),
+  },
+];
+
+const WORKS: RawWork[] = [
+  // KITCHENS (32 works)
+  { stem: "walnut-island-kitchen", chapter: "kitchens", width: 2048, height: 1365, tags: ["walnut", "island", "white"] },
+  { stem: "green-island-kitchen", chapter: "kitchens", width: 2048, height: 1365, tags: ["green", "island"] },
+  { stem: "white-oak-island-kitchen", chapter: "kitchens", width: 1600, height: 1066, tags: ["white", "oak", "island"] },
+  { stem: "black-marble-kitchen", chapter: "kitchens", width: 793, height: 1191, tags: ["black", "marble"] },
+  { stem: "glazed-partition-kitchen", chapter: "kitchens", width: 2048, height: 1792, tags: ["white", "oak", "glass"] },
+  { stem: "dark-walnut-kitchen", chapter: "kitchens", width: 1544, height: 1047, tags: ["walnut", "black"] },
+  { stem: "green-marble-kitchen", chapter: "kitchens", width: 2048, height: 1499, tags: ["green", "marble"] },
+  { stem: "grey-marble-kitchen", chapter: "kitchens", width: 1152, height: 2048, tags: ["grey", "marble"] },
+  { stem: "oak-island-kitchen-shelves", chapter: "kitchens", width: 2048, height: 1364, tags: ["oak", "island"] },
+  { stem: "classic-white-kitchen", chapter: "kitchens", width: 1600, height: 1118, tags: ["white"] },
+  { stem: "walnut-and-concrete-kitchen", chapter: "kitchens", width: 1593, height: 1333, tags: ["walnut", "grey"] },
+  { stem: "black-oak-kitchen-dining", chapter: "kitchens", width: 1781, height: 1170, tags: ["black", "oak"] },
+  { stem: "green-corner-kitchen", chapter: "kitchens", width: 960, height: 1280, tags: ["green"] },
+  { stem: "green-kitchen-glazed-partition", chapter: "kitchens", width: 960, height: 1280, tags: ["green", "glass"] },
+  { stem: "grey-kitchen-vitrine", chapter: "kitchens", width: 2048, height: 1366, tags: ["grey", "glass"] },
+  { stem: "grey-l-shaped-kitchen", chapter: "kitchens", width: 2048, height: 1366, tags: ["grey"] },
+  { stem: "fluted-oak-panel-detail", chapter: "kitchens", width: 1364, height: 2048, tags: ["oak", "fluted", "island"] },
+  { stem: "kitchen-island-staircase", chapter: "kitchens", width: 2048, height: 1365, tags: ["island", "oak"] },
+  { stem: "oak-graphite-kitchen", chapter: "kitchens", width: 926, height: 616, tags: ["oak", "grey"] },
+  { stem: "oak-kitchenette", chapter: "kitchens", width: 2048, height: 1159, tags: ["oak"] },
+  { stem: "open-plan-kitchen-media-wall", chapter: "kitchens", width: 2048, height: 1365, tags: ["media", "walnut"] },
+  { stem: "travertine-kitchen-detail", chapter: "kitchens", width: 1064, height: 1600, tags: ["marble"] },
+  { stem: "walnut-oven-column", chapter: "kitchens", width: 1064, height: 1600, tags: ["walnut"] },
+  { stem: "walnut-upper-cabinets-kitchen", chapter: "kitchens", width: 2000, height: 1334, tags: ["walnut", "white"] },
+  { stem: "white-minimal-kitchen-run", chapter: "kitchens", width: 1776, height: 1185, tags: ["white"] },
+  { stem: "white-oak-kitchen-wall", chapter: "kitchens", width: 2048, height: 1364, tags: ["white", "oak"] },
+  { stem: "white-oven-column-walnut-kitchen", chapter: "kitchens", width: 2000, height: 1334, tags: ["white", "walnut"] },
+  { stem: "white-wood-kitchen-corner", chapter: "kitchens", width: 2048, height: 1365, tags: ["white", "oak"] },
+  { stem: "built-in-oven-column", chapter: "kitchens", width: 1365, height: 2048, tags: ["grey"] },
+  { stem: "kitchen-sink-detail", chapter: "kitchens", width: 1200, height: 1600, tags: ["marble"] },
+  { stem: "built-in-wine-rack", chapter: "kitchens", width: 1365, height: 2048, tags: ["wine", "oak"] },
+  { stem: "wine-rack-glass-door", chapter: "kitchens", width: 1333, height: 2000, tags: ["wine", "glass"] },
+
+  // WARDROBES & STORAGE (11 works)
+  { stem: "bronze-mirror-wardrobe", chapter: "wardrobes-storage", width: 1065, height: 2048, tags: ["mirror"] },
+  { stem: "oak-framed-wardrobe", chapter: "wardrobes-storage", width: 2048, height: 1778, tags: ["oak", "white"] },
+  { stem: "cane-entryway-wardrobe", chapter: "wardrobes-storage", width: 1364, height: 2048, tags: ["hallway", "oak"] },
+  { stem: "white-hallway-wardrobes", chapter: "wardrobes-storage", width: 1600, height: 1066, tags: ["white", "hallway"] },
+  { stem: "flush-white-wardrobe-wall", chapter: "wardrobes-storage", width: 2048, height: 1692, tags: ["white"] },
+  { stem: "grey-hallway-built-ins", chapter: "wardrobes-storage", width: 2048, height: 1368, tags: ["grey", "hallway"] },
+  { stem: "hallway-mirror-unit", chapter: "wardrobes-storage", width: 1200, height: 1600, tags: ["hallway", "mirror"] },
+  { stem: "oak-framed-wardrobe-hall", chapter: "wardrobes-storage", width: 2048, height: 1485, tags: ["oak", "hallway"] },
+  { stem: "white-bedroom-wardrobe", chapter: "wardrobes-storage", width: 1200, height: 1600, tags: ["white", "bedroom"] },
+  { stem: "white-built-in-wardrobe", chapter: "wardrobes-storage", width: 1200, height: 1600, tags: ["white"] },
+  { stem: "white-wardrobe-teal-bedroom", chapter: "wardrobes-storage", width: 1450, height: 823, tags: ["white", "bedroom"] },
+
+  // COMMERCIAL SPACES (11 works)
+  { stem: "commercial-lobby-lounge", chapter: "commercial-spaces", width: 2048, height: 1365, tags: ["reception", "walnut"] },
+  { stem: "cafe-fluted-counter", chapter: "commercial-spaces", width: 2000, height: 1334, tags: ["cafe", "fluted"] },
+  { stem: "office-walnut-wall-unit", chapter: "commercial-spaces", width: 2048, height: 1365, tags: ["office", "walnut"] },
+  { stem: "commercial-reception-desk", chapter: "commercial-spaces", width: 2048, height: 1365, tags: ["reception", "marble"] },
+  { stem: "cafe-arched-shelving", chapter: "commercial-spaces", width: 1333, height: 2000, tags: ["cafe", "oak"] },
+  { stem: "office-boardroom-furniture", chapter: "commercial-spaces", width: 2048, height: 1366, tags: ["office", "walnut"] },
+  { stem: "commercial-lobby-mirror-wall", chapter: "commercial-spaces", width: 1365, height: 2048, tags: ["reception", "mirror"] },
+  { stem: "office-walnut-corridor", chapter: "commercial-spaces", width: 2048, height: 1365, tags: ["office", "walnut"] },
+  { stem: "office-kitchen-island", chapter: "commercial-spaces", width: 2048, height: 1365, tags: ["office", "island"] },
+  { stem: "commercial-lobby-bench", chapter: "commercial-spaces", width: 2048, height: 1365, tags: ["reception", "oak"] },
+  { stem: "commercial-lobby-partition", chapter: "commercial-spaces", width: 2048, height: 1365, tags: ["reception", "fluted"] },
+
+  // HOME INTERIORS (8 works)
+  { stem: "living-room-media-wall", chapter: "home-interiors", width: 1600, height: 1068, tags: ["media", "walnut"] },
+  { stem: "walnut-panel-bedroom", chapter: "home-interiors", width: 2048, height: 1536, tags: ["walnut", "bedroom"] },
+  { stem: "zellige-bathroom-vanity", chapter: "home-interiors", width: 1536, height: 2048, tags: ["bathroom", "oak"] },
+  { stem: "backlit-slat-wall-mirror", chapter: "home-interiors", width: 2000, height: 1334, tags: ["mirror", "fluted"] },
+  { stem: "walnut-headboard-bedroom", chapter: "home-interiors", width: 2048, height: 1367, tags: ["walnut", "bedroom"] },
+  { stem: "grey-bathroom-vanity", chapter: "home-interiors", width: 1600, height: 1066, tags: ["bathroom", "grey"] },
+  { stem: "bedroom-desk-unit", chapter: "home-interiors", width: 1200, height: 1600, tags: ["bedroom", "white"] },
+  { stem: "kids-room-furniture", chapter: "home-interiors", width: 2048, height: 1536, tags: ["kids", "white"] },
+];
+
+function stemToRef(stem: string): string {
+  const words = stem.replace(/-/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
-const loadGallery = cache(async (slug: string) =>
-  fetchQuery(galleriesApi.bySlug, { slug }),
-);
+function workUrl(stem: string): string {
+  return `/furniture/${stem}-tbilisi-kencho-group.webp`;
+}
 
-const loadPublished = cache(async () => {
-  const list = await fetchQuery(galleriesApi.listPublished, {});
-  return [...list].sort((a, b) => a.order - b.order);
-});
+function buildCaption(tags: MaterialTag[], chapterTitle: string, locale: Locale): string {
+  const labels = tags.map((tag) => MATERIAL_LABELS[tag][locale]);
+  return labels.length > 0 ? labels.join(" · ") : chapterTitle;
+}
 
-export { loadGallery };
-
-function toPages(gallery: Gallery, locale: Locale): CataloguePage[] {
-  const chapterTitle = pick(gallery.title, locale);
-  return gallery.images
-    .filter((img) => img.url !== null)
-    .sort((a, b) => a.order - b.order)
-    .map((img, indexInChapter) => {
-      const stem = (text: string) => text.split(" — ")[0].trim();
-      const ref = stem(img.alt.en);
-      const translated = translatedPhotoTitle(ref, locale);
+function buildGallery(slug: string): Gallery | null {
+  const meta = CHAPTER_META.find((c) => c.slug === slug);
+  if (!meta) return null;
+  const works = WORKS.filter((w) => w.chapter === meta.slug);
+  return {
+    slug: meta.slug,
+    title: meta.title,
+    description: meta.description,
+    createdAt: meta.createdAt,
+    images: works.map((w, idx) => {
+      const ref = stemToRef(w.stem);
+      const kaTitle = translatedPhotoTitle(ref, "ka") || ref;
+      const ruTitle = translatedPhotoTitle(ref, "ru") || ref;
       return {
-        id: img._id,
-        chapter: gallery.slug,
-        chapterTitle,
-        url: img.url as string,
-        alt: strict(img.alt, locale) || translated || pick(img.alt, locale),
-        heading: stem(strict(img.alt, locale)) || translated,
-        ref,
-        caption: strict(img.caption, locale),
-        width: img.width,
-        height: img.height,
-        indexInChapter,
+        _id: `${meta.slug}-${idx + 1}`,
+        url: workUrl(w.stem),
+        alt: {
+          en: `${ref} — custom furniture by Kencho Group in Tbilisi`,
+          ka: `${kaTitle} — Kencho Group, თბილისი`,
+          ru: `${ruTitle} — мебель на заказ Kencho Group, Тбилиси`,
+        },
+        caption: {
+          en: buildCaption(w.tags, meta.title.en, "en"),
+          ka: buildCaption(w.tags, meta.title.ka ?? meta.title.en, "ka"),
+          ru: buildCaption(w.tags, meta.title.ru ?? meta.title.en, "ru"),
+        },
+        order: idx,
+        width: w.width,
+        height: w.height,
       };
-    });
+    }),
+  };
 }
 
-/**
- * A chapter with four of its pages picked out — the links on its panel
- * in the home page's strip. Each opens the chapter with that page.
- */
+export async function loadGallery(slug: string): Promise<Gallery | null> {
+  return buildGallery(slug);
+}
+
+export function listLocalGallerySlugs(): GallerySlugEntry[] {
+  return CHAPTER_META.map((meta) => ({
+    slug: meta.slug,
+    title: meta.title,
+    description: meta.description,
+    createdAt: meta.createdAt,
+    updatedAt: Date.parse("2026-10-30T00:00:00Z"),
+  }));
+}
+
+function toPagesForChapter(slug: ChapterSlug, locale: Locale): CataloguePage[] {
+  const meta = CHAPTER_META.find((c) => c.slug === slug)!;
+  const chapterTitle = pick(meta.title, locale);
+  const works = WORKS.filter((w) => w.chapter === slug);
+  return works.map((w, indexInChapter) => {
+    const ref = stemToRef(w.stem);
+    const heading = translatedPhotoTitle(ref, locale) || ref;
+    const tagLabels = w.tags.map((t) => MATERIAL_LABELS[t][locale]);
+    const caption = tagLabels.length > 0 ? tagLabels.join(" · ") : chapterTitle;
+    return {
+      id: `${slug}-${indexInChapter + 1}`,
+      chapter: slug,
+      chapterTitle,
+      url: workUrl(w.stem),
+      alt: `${heading} — ${caption} · Kencho Group`,
+      heading,
+      ref,
+      caption,
+      tags: w.tags,
+      tagLabels,
+      width: w.width,
+      height: w.height,
+      indexInChapter,
+    };
+  });
+}
+
 export type ChapterHighlights = Chapter & {
   highlights: { index: number; heading: string }[];
 };
@@ -110,8 +327,6 @@ export async function loadHighlights(locale: Locale): Promise<ChapterHighlights[
       const pages = await loadPages(locale, chapter.slug);
       return {
         ...chapter,
-        // No name in this language yet → the piece's English name, which
-        // still tells four pieces apart (the chapter title would not).
         highlights: pages
           .slice(0, 4)
           .map((page, index) => ({ index, heading: page.heading || page.ref })),
@@ -120,56 +335,55 @@ export async function loadHighlights(locale: Locale): Promise<ChapterHighlights[
   );
 }
 
-/**
- * The newest pages across the catalogue — the first of each chapter,
- * then the second — for the home page's list.
- */
 export async function loadLatest(locale: Locale, count = 6): Promise<CataloguePage[]> {
   const all = await loadPages(locale);
   return all.slice(0, count);
 }
 
 export async function loadChapters(locale: Locale): Promise<Chapter[]> {
-  const published = await loadPublished();
-  return published.map((g) => ({
-    slug: g.slug,
-    title: pick(g.title, locale),
-    description: pick(g.description, locale),
-    count: g.imageCount,
-    cover:
-      g.cover?.url != null
+  return CHAPTER_META.map((meta) => {
+    const pages = toPagesForChapter(meta.slug, locale);
+    const first = pages[0] ?? null;
+    return {
+      slug: meta.slug,
+      title: pick(meta.title, locale),
+      description: pick(meta.description, locale),
+      count: pages.length,
+      cover: first
         ? {
-            url: g.cover.url,
-            alt: pick(g.cover.alt, locale),
-            width: g.cover.width,
-            height: g.cover.height,
+            url: first.url,
+            alt: first.alt,
+            width: first.width,
+            height: first.height,
           }
         : null,
-  }));
+    };
+  });
 }
 
 /**
  * Pages for one chapter, or for the whole catalogue when `slug` is
- * omitted. The whole catalogue interleaves chapters round-robin, so the
- * first screen of "All" shows a kitchen, a wardrobe, an office and an
- * interior rather than twenty-seven kitchens in a row.
+ * omitted. The whole catalogue interleaves chapters round-robin so the
+ * first screen of "All" shows a kitchen, a wardrobe, a commercial space,
+ * and a home interior before continuing through the full collection.
  */
 export async function loadPages(
   locale: Locale,
   slug?: string,
 ): Promise<CataloguePage[]> {
-  const published = await loadPublished();
-  const slugs = slug ? [slug] : published.map((g) => g.slug);
-  const galleries = (await Promise.all(slugs.map(loadGallery))).filter(
-    (g): g is Gallery => g !== null,
-  );
-  const lists = galleries.map((g) => toPages(g, locale));
-  if (lists.length === 1) return lists[0];
+  if (slug) {
+    const meta = CHAPTER_META.find((c) => c.slug === slug);
+    if (!meta) return [];
+    return toPagesForChapter(meta.slug, locale);
+  }
 
+  const lists = CHAPTER_META.map((meta) => toPagesForChapter(meta.slug, locale));
   const out: CataloguePage[] = [];
   const longest = Math.max(0, ...lists.map((l) => l.length));
   for (let i = 0; i < longest; i++) {
-    for (const list of lists) if (i < list.length) out.push(list[i]);
+    for (const list of lists) {
+      if (i < list.length) out.push(list[i]);
+    }
   }
   return out;
 }

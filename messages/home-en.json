@@ -435,12 +435,12 @@
           "number": "01",
           "duration": "~1 Week (7 Days)",
           "title": "Consultation & 3D Design",
-          "description": "Come with a Pinterest photo, rough idea, or empty room plan. Our designer prepares your project: furniture 3D design costs 30 GEL / m² (measured by front elevation / წინხედით); full interior design is $15–$20 / m² (measured by floor area / იატაკის კვადრატულობით)."
+          "description": "Come with a Pinterest photo, rough idea, or empty room plan. Our designer prepares your project: furniture 3D design costs 30 GEL / m² (measured by front elevation); full interior design is $15–$20 / m² (measured by floor area)."
         },
         "2": {
           "number": "02",
           "duration": "7–10 Days",
-          "title": "Quote Approval & Engineering Blueprints (ახაზვა)",
+          "title": "Quote Approval & Engineering Blueprints",
           "description": "Millimeter-exact engineering blueprints, hardware selection, and technical review. Design changes and budget adjustments can be reviewed upon request before manufacturing starts."
         },
         "3": {
@@ -453,7 +453,7 @@
           "number": "04",
           "duration": "+5 to 10 Days (When Applicable)",
           "title": "Specialized Finishing — Painted MDF, CNC Router, Metalwork",
-          "description": "Painted MDF (შესაღები მდფ) adds +7–10 days; 3D CNC routing work (რუტერული სამუშაო) adds +5 days. Custom iron structures are laser-welded and thermostatically powder-coated."
+          "description": "Painted MDF adds +7–10 days; 3D CNC routing work adds +5 days. Custom iron structures are laser-welded and thermostatically powder-coated."
         },
         "5": {
           "number": "05",
@@ -471,11 +471,11 @@
       "techSubtitle": "CNC Routing, Laser Cutting, Laser Welding & Powder Coating",
       "techItems": {
         "1": {
-          "name": "CNC Routing (რუტერი)",
+          "name": "CNC Routing",
           "detail": "3D fluted panels, custom cabinet profiles, and precision architectural MDF milling (+5 days when required)."
         },
         "2": {
-          "name": "Laser Cutting (ლაზერი)",
+          "name": "Laser Cutting",
           "detail": "High-precision laser cutting for decorative inlays and custom metal components."
         },
         "3": {
@@ -520,7 +520,7 @@
           "detail": "Starwood board collections and comprehensive industrial panel services."
         },
         "ionfasha": {
-          "name": "Ionfasha",
+          "name": "Yonpaş",
           "role": "Direct Material Import",
           "detail": "Direct import of specialized furniture boards and architectural surface materials."
         }
@@ -536,21 +536,21 @@
       "colIncludes": "Scope Included",
       "rows": {
         "furniture": {
-          "service": "Furniture 3D Design + Engineering Blueprints (ახაზვა)",
+          "service": "Furniture 3D Design + Engineering Blueprints",
           "price": "30 GEL / m²",
-          "measure": "Measured by front elevation (წინხედით)",
+          "measure": "Measured by front elevation",
           "includes": "3D renders (~1 week), millimeter-exact engineering blueprints & spec review (7–10 days)."
         },
         "interior": {
           "service": "Full Interior Design",
           "price": "$15 – $20 / m²",
-          "measure": "Measured by floor area (იატაკის კვადრატულობით)",
+          "measure": "Measured by floor area",
           "includes": "Complete room/apartment layout, 3D visualization, lighting, and material concept."
         },
         "manufacturing": {
           "service": "Furniture Manufacturing, Delivery & Installation",
           "price": "Custom Project Quote",
-          "measure": "Finalized after Stage 2 (Blueprinting / ახაზვა)",
+          "measure": "Finalized after Stage 2 (Blueprinting)",
           "includes": "Materials, cutting/edge-banding, painting/CNC/metalwork, logistics & installation across Georgia."
         }
       },
@@ -571,7 +571,7 @@
         },
         "2": {
           "q": "How long does it take to manufacture and install a custom kitchen?",
-          "a": "From a Pinterest photo to completed installation, the full process takes approximately 2 months (6–8 weeks): 1) 3D Design — ~1 week; 2) Price agreement & engineering blueprints (ახაზვა) — 7–10 days; 3) Material cutting & edge-banding — 5–14 days (depending on supplier workload and season); 4) Assembly & installation — ~1 week (painted MDF adds +7–10 days; 3D CNC routing adds +5 days)."
+          "a": "From a Pinterest photo to completed installation, the full process takes approximately 2 months (6–8 weeks): 1) 3D Design — ~1 week; 2) Price agreement & engineering blueprints — 7–10 days; 3) Material cutting & edge-banding — 5–14 days (depending on supplier workload and season); 4) Assembly & installation — ~1 week (painted MDF adds +7–10 days; 3D CNC routing adds +5 days)."
         },
         "3": {
           "q": "Can I start a custom kitchen order with just a Pinterest photo?",
@@ -633,8 +633,8 @@
     "callDirect": "Call Directly"
   },
   "compact": {
-    "headline": "We design and make custom kitchens, fitted wardrobes, wall panels and commercial furniture.",
-    "lead": "Bring finished drawings or just a photograph. Our team handles measuring, 3D design, factory production and installation anywhere in Georgia.",
+    "headline": "Custom kitchens & furniture.",
+    "lead": "Designed, built, and installed across Georgia — starting from finished drawings or a single photograph.",
     "collections": "Every space starts with an idea.",
     "process": "From idea to installation.",
     "time": "Typically 6–8 weeks",

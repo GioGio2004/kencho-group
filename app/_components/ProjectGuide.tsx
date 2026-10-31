@@ -1,9 +1,11 @@
 import GlassImage from "@/app/_components/GlassImage";
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { SHOWCASE_PHOTOS, showcasePhotoAlt } from "@/lib/showcase-photos";
 
 export default async function ProjectGuide({ locale, guide }: { locale: string; guide: string }) {
   const t = await getTranslations({ locale, namespace: "home.landing" });
+  const c = await getTranslations({ locale, namespace: "home.compact" });
   const roadmapSteps = ["1", "2", "3", "4", "5"] as const;
   const techKeys = roadmapSteps;
   const partnerKeys = ["ltb", "imeri", "geodecor", "kasta", "oldlami", "ionfasha"] as const;
@@ -18,10 +20,10 @@ export default async function ProjectGuide({ locale, guide }: { locale: string; 
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10 sm:mb-12">
           <div className="max-w-3xl space-y-3">
             <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-400">
-              {t("roadmap.eyebrow")}
+              {c("processLink")}
             </p>
             <h1 className="text-3xl md:text-5xl font-normal tracking-tight leading-[1.15] text-white">
-              {t("roadmap.title")}
+              {c("process")}
             </h1>
             <p className="text-sm sm:text-base text-zinc-400 leading-relaxed">
               {t("roadmap.intro")}
@@ -56,10 +58,10 @@ export default async function ProjectGuide({ locale, guide }: { locale: string; 
       >
         <div className="max-w-3xl space-y-5 mb-16 md:mb-24">
           <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-400">
-            {t("ecosystem.eyebrow")}
+            {c("materialsLink")}
           </p>
           <h1 className="text-3xl md:text-5xl font-normal tracking-tight leading-[1.15] text-white">
-            {t("ecosystem.title")}
+            {c("materials")}
           </h1>
           <p className="text-sm sm:text-base text-zinc-400 leading-relaxed">
             {t("ecosystem.intro")}
@@ -119,9 +121,7 @@ export default async function ProjectGuide({ locale, guide }: { locale: string; 
                   className="py-6 first:pt-0 space-y-2"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <h4 className="text-base font-semibold text-zinc-50">
-                      {t(`ecosystem.partners.${partner}.name`)}
-                    </h4>
+                    <h4 className="guide-partner-logo"><Image src={`/partners/${partner === "ionfasha" ? "yonpas" : partner}.png`} alt={t(`ecosystem.partners.${partner}.name`)} width={160} height={64} /></h4>
                   </div>
                   <p className="text-xs font-medium text-zinc-200">
                     {t(`ecosystem.partners.${partner}.role`)}
@@ -144,10 +144,10 @@ export default async function ProjectGuide({ locale, guide }: { locale: string; 
       >
         <div className="max-w-3xl space-y-3 mb-10">
           <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-400">
-            {t("pricing.eyebrow")}
+              {c("pricingLink")}
           </p>
           <h1 className="text-3xl md:text-5xl font-normal tracking-tight leading-[1.15] text-white">
-            {t("pricing.title")}
+              {c("pricing")}
           </h1>
           <p className="text-sm sm:text-base text-zinc-400 leading-relaxed">
             {t("pricing.intro")}

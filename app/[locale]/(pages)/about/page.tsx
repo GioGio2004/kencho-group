@@ -57,7 +57,7 @@ export default async function AboutPage({ params }: PageProps<"/[locale]/about">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: breadcrumb }} />
       <main className="about-page">
         <header className="about-intro">
-          <p className="u-meta text-mute">{t("eyebrow")} / KENCHO GROUP</p>
+          <p className="u-meta text-mute">{t("eyebrow")} / {locale === "ka" ? "კენჭო ჯგუფი — Kencho Group" : "KENCHO GROUP"}</p>
           <div className="about-intro-grid">
             <h1 className="u-display about-title">{t("title")}</h1>
             <div className="about-intro-note">

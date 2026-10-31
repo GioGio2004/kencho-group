@@ -31,7 +31,7 @@ import { containDialogTab, lockPage } from "@/lib/modal-lock";
  * WhatsApp message and the lead both say which photograph sold them.
  */
 
-type OpenOptions = { about?: string };
+type OpenOptions = { about?: string; brief?: import("@/lib/project-request").ProjectBrief | Partial<import("@/lib/project-request").ProjectBrief> };
 
 const ContactContext = createContext<(options?: OpenOptions) => void>(() => {});
 
@@ -56,6 +56,7 @@ export default function ContactProvider({
   const release = useRef<(() => void) | null>(null);
   const closing = useRef(false);
   const [about, setAbout] = useState("");
+  const [brief, setBrief] = useState<OpenOptions["brief"]>();
   // Reset the enquiry context whenever the sheet opens.
   const [session, setSession] = useState(0);
 
@@ -70,6 +71,7 @@ export default function ContactProvider({
 
   const open = useCallback((options?: OpenOptions) => {
     setAbout(options?.about ?? "");
+    if (options?.brief) setBrief(options.brief);
     setSession((n) => n + 1);
   }, []);
 
@@ -162,7 +164,7 @@ export default function ContactProvider({
               />
             </svg>
           </button>
-          <ContactPanel key={session} about={about} />
+          <ContactPanel about={about} initialBrief={brief} />
         </div>
       </dialog>
     </ContactContext.Provider>

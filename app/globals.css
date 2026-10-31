@@ -6,6 +6,7 @@
 @import "./greeting.css";
 @import "./showcase.css";
 @import "./polished-controls.css";
+@import "./navigation.css";
 @import "./image-surfaces.css";
 
 /* Shared monochrome design system. Dark by default; no user theme switch. */
@@ -362,7 +363,6 @@ body:has(.era-landing) .site-footer a:hover {
   outline-offset: 4px;
 }
 [data-ai-drawer] select { color-scheme: dark; }
-html:has(#mega-menu:not([inert])) [data-floating-island] { visibility: hidden; }
 @media (max-width: 767px) {
   .site-header { height: 80px; padding-inline: 24px; }
   .site-header .header-actions { gap: 0.75rem; }
@@ -904,13 +904,18 @@ html:has(#mega-menu:not([inert])) [data-floating-island] { visibility: hidden; }
    * PAGE TRANSITION — each page rises in.
    * ---------------------------------------------------------------- */
   .page-enter {
-    animation: page-in 0.7s var(--ease-out) backwards;
+    animation: page-in 0.42s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    will-change: opacity, transform;
   }
 
   @keyframes page-in {
     from {
       opacity: 0;
-      transform: translateY(22px);
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
     }
   }
 

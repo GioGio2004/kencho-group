@@ -5,18 +5,16 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
 const nextConfig: NextConfig = {
   devIndicators: false,
-  /*
-   * Build stamp, inlined at compile time (config `env` values always
-   * are). The sitemap uses it as <lastmod> for the hand-written routes:
-   * before this it emitted `new Date()` on every request, and a lastmod
-   * that changes with every fetch is one search engines learn to ignore
-   * — Google says so outright, Bing behaves the same. A deploy is the
-   * moment page copy can actually change, so the deploy time is the
-   * honest lower bound. Convex galleries carry their own dates.
-   */
-  env: {
-    NEXT_PUBLIC_BUILD_TIME: new Date().toISOString(),
-  },
+  // Next 16 blocks dev assets/HMR for unlisted tunnel hosts, leaving the
+  // server-rendered page visible but its buttons unable to hydrate.
+  allowedDevOrigins: [
+    "*.ngrok-free.app",
+    "*.ngrok-free.dev",
+    "*.ngrok.app",
+    "*.ngrok.dev",
+    "*.ngrok.io",
+    "d4e6-185-70-54-176.ngrok-free.app",
+  ],
   images: {
     // Gallery photos are served from Convex file storage; "**" because
     // deployment hosts carry a region segment (e.g. name.eu-west-1).

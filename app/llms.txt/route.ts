@@ -1,5 +1,4 @@
-import { fetchQuery } from "convex/nextjs";
-import { galleriesApi } from "@/lib/convex-gallery";
+import { listLocalGallerySlugs } from "@/lib/catalogue";
 import { SITE } from "@/lib/site";
 import en from "@/messages/en.json";
 
@@ -25,23 +24,19 @@ export async function GET() {
     return `- **${item.name}** — ${item.line}`;
   }).join("\n");
 
-  let galleriesSection = "";
-  try {
-    const galleries = await fetchQuery(galleriesApi.listPublishedSlugs, {});
-    if (galleries.length > 0) {
-      galleriesSection = [
-        "",
-        "## Catalogue chapters",
-        "",
-        ...galleries.map((g) => {
-          const line = g.description?.en ? `: ${g.description.en}` : "";
-          return `- [${g.title.en}](${SITE.url}/en/gallery/${g.slug})${line}`;
-        }),
-      ].join("\n");
-    }
-  } catch {
-    // Convex unreachable — ship the static half rather than a 500.
-  }
+  const galleries = listLocalGallerySlugs();
+  const galleriesSection =
+    galleries.length > 0
+      ? [
+          "",
+          "## Catalogue chapters",
+          "",
+          ...galleries.map((g) => {
+            const line = g.description?.en ? `: ${g.description.en}` : "";
+            return `- [${g.title.en}](${SITE.url}/en/gallery/${g.slug})${line}`;
+          }),
+        ].join("\n")
+      : "";
 
   const hours = SITE.openingHours
     .map((spec) => `${spec.days.join(", ")}: ${spec.opens}–${spec.closes}`)

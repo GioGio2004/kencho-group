@@ -4,14 +4,55 @@ import type { Locale } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import type { Chapter, CataloguePage } from "@/lib/catalogue";
 import { SITE } from "@/lib/site";
+import { JOURNEY_COPY } from "@/lib/journey-copy";
 
-/*
- * The catalogue page frame, shared by /gallery (everything) and
- * /gallery/[slug] (one chapter): the title, the chapter tabs, the grid.
- *
- * Tabs are real links to real pages, not a client-side filter — each
- * chapter is its own URL with its own title and description.
- */
+// Bold editorial opening and crawlable category navigation above the masonry.
+
+const SHELL_COPY: Record<
+  Locale,
+  {
+    eyebrow: string;
+    enquireCta: string;
+    allMaterials: string;
+    loadMore: string;
+    showing: string;
+    gridEditorial: string;
+    gridIndex: string;
+    plate: string;
+  }
+> = {
+  ka: {
+    eyebrow: "KENCHO GROUP · ნამუშევრების კატალოგი",
+    enquireCta: "პროექტის შეკვეთა ↗",
+    allMaterials: "ყველა მასალა",
+    loadMore: "მეტი ნამუშევრის ჩვენება",
+    showing: "ნაჩვენებია",
+    gridEditorial: "3 სვეტი",
+    gridIndex: "4 სვეტი",
+    plate: "ნამუშევარი",
+  },
+  ru: {
+    eyebrow: "KENCHO GROUP · КАТАЛОГ РАБОТ",
+    enquireCta: "Заказать проект ↗",
+    allMaterials: "Все материалы",
+    loadMore: "Показать ещё работы",
+    showing: "Показано",
+    gridEditorial: "3 колонки",
+    gridIndex: "4 колонки",
+    plate: "Работа",
+  },
+  en: {
+    eyebrow: "KENCHO GROUP · EXHIBITION CATALOGUE",
+    enquireCta: "Request a project ↗",
+    allMaterials: "All materials",
+    loadMore: "Load more works",
+    showing: "Showing",
+    gridEditorial: "3 columns",
+    gridIndex: "4 columns",
+    plate: "Plate",
+  },
+};
+
 export default async function CatalogueShell({
   locale,
   chapters,
@@ -31,43 +72,50 @@ export default async function CatalogueShell({
   children?: React.ReactNode;
 }) {
   const t = await getTranslations({ locale, namespace: "catalogue" });
+  const copy = SHELL_COPY[locale];
+  const totalAll = chapters.reduce((sum, c) => sum + c.count, 0) || pages.length;
+
   const tabs = [
-    { href: "/gallery", label: t("all"), slug: undefined as string | undefined },
-    ...chapters.map((c) => ({ href: `/gallery/${c.slug}`, label: c.title, slug: c.slug as string | undefined })),
+    {
+      href: "/gallery",
+      label: t("all"),
+      count: totalAll,
+      slug: undefined as string | undefined,
+    },
+    ...chapters.map((c) => ({
+      href: `/gallery/${c.slug}`,
+      label: c.title,
+      count: c.count,
+      slug: c.slug as string | undefined,
+    })),
   ];
   const shareBase = `${SITE.url}/${locale}/gallery${active ? `/${active}` : ""}`;
+  const displayTitle = active ? chapters.find(chapter => chapter.slug === active)?.title ?? title : title;
 
-  /* The site's light palette: the title on a powder-sky band, the
-   * photographs on alabaster with ice-blue placeholders, and the sky
-   * again in the footer below. */
   return (
     <main className="catalogue-page">
-      <header className="catalogue-head px-5 pt-28 pb-12 sm:px-8 lg:px-10 lg:pt-40 lg:pb-16">
-        <p className="catalogue-meta">
-          <span className="catalogue-rule" aria-hidden="true" />
-          {SITE.name} · {t("count", { count: pages.length })}
-        </p>
-        <h1 className="u-display catalogue-title">{title}</h1>
-        <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,40rem)_1fr] lg:items-end lg:gap-16">
-          <p className="catalogue-lede">{lede}</p>
-          <p className="catalogue-note lg:justify-self-end">{t("designerNote")}</p>
+      <header className="catalogue-head gallery-hero">
+        <div className="catalogue-shell-inner">
+          <p className="gallery-hero-prelude">{JOURNEY_COPY[locale].galleryPrelude}</p>
+          <h1 className="catalogue-title" data-category={Boolean(active)}>{displayTitle}</h1>
+          <div className="gallery-hero-bottom">
+            <div><p className="catalogue-lede">{lede}</p><p className="catalogue-count-badge">{t("count", { count: pages.length })}</p></div>
+            <Link href="/contact#project-request" className="details-primary-link">{copy.enquireCta}</Link>
+          </div>
         </div>
       </header>
 
-      <nav aria-label={t("chapters")} className="catalogue-tabs sticky z-40">
-        <ul className="no-bar flex gap-7 overflow-x-auto px-5 sm:px-8 lg:px-10">
-          {tabs.map((tab) => (
-            <li key={tab.href} className="shrink-0">
-              <Link href={tab.href} aria-current={tab.slug === active ? "page" : undefined} className="tab" scroll={false}>
-                {tab.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      <div className="catalogue-stage px-2.5 pt-4 pb-20 sm:px-8 sm:pt-8 sm:pb-28 lg:px-10">
-        <Catalogue key={active ?? "all"} pages={pages} shareBase={shareBase} />
+      <div className="catalogue-stage">
+        <div className="catalogue-shell-inner">
+          <Catalogue
+            key={active ?? "all"}
+            pages={pages}
+            shareBase={shareBase}
+            locale={locale}
+            labels={copy}
+            categories={tabs.map(tab => ({ ...tab, active: tab.slug === active }))}
+          />
+        </div>
       </div>
       {children}
     </main>

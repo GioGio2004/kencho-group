@@ -77,8 +77,8 @@ export default async function Footer({
           <div>
             <h2>{t("enquiries")}</h2>
             <address>
-              <ContactLink method="phone">{SITE.phone}</ContactLink>
-              <ContactLink method="whatsapp">WhatsApp ↗</ContactLink>
+              <ContactLink direct method="phone">{SITE.phone}</ContactLink>
+              <ContactLink direct method="whatsapp">WhatsApp ↗</ContactLink>
               <span>{c("address")}</span>
               <a href={SITE.mapsUrl} target="_blank" rel="noopener noreferrer">
                 {c("mapCta")} ↗

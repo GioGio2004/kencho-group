@@ -61,6 +61,7 @@ export type Gallery = {
 };
 
 export type GallerySlugEntry = {
+  updatedAt?: number;
   slug: string;
   title: Localized;
   description?: Localized;

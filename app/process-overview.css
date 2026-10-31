@@ -1,0 +1,127 @@
+.process-overview {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: clamp(28px, 4vw, 64px) clamp(20px, 4vw, 64px) clamp(48px, 6vw, 88px);
+  color: var(--site-text);
+  background: var(--site-canvas);
+}
+.process-overview-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: clamp(28px, 4vw, 56px);
+  border: 1px solid var(--site-rule);
+  border-radius: 24px;
+  background: linear-gradient(120deg, var(--site-surface), var(--site-canvas));
+  box-shadow: 0 12px 30px rgb(0 0 0 / .08);
+}
+.showcase-home .process-overview-summary h2 {
+  margin: 0;
+  font-size: clamp(32px, 4.6vw, 66px);
+  font-weight: 650;
+  line-height: 1.12;
+  letter-spacing: -.045em;
+}
+.process-overview-summary h2 > span { display: block; }
+.process-overview-timing {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin: 0;
+  text-align: center;
+  font-size: clamp(26px, 3.4vw, 48px);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -.04em;
+}
+.process-overview-timing > span { max-width: 5ch; }
+.process-overview-timing strong { font-weight: 650; }
+.process-overview-timing strong span { white-space: nowrap; }
+.process-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 40px);
+  list-style: none;
+  margin: clamp(24px, 3vw, 40px) 0 0;
+  padding: 0;
+}
+.process-overview-grid > li { min-width: 0; }
+.process-overview-grid > li:last-child { grid-column: 1 / -1; }
+.process-overview-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 2.5;
+  padding: clamp(18px, 2.4vw, 36px);
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 18px;
+  background: #222;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+}
+.process-overview-card-5 { aspect-ratio: 5.2; }
+.process-overview-card img {
+  object-fit: cover;
+  transition: transform .6s cubic-bezier(.22, 1, .36, 1);
+}
+.process-overview-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / .43);
+  transition: background .3s;
+}
+.process-overview-card-2::after { background: rgb(0 0 0 / .14); }
+.process-overview-card h3 {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  max-width: 26ch;
+  font-size: clamp(18px, 2.1vw, 30px);
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -.03em;
+  text-wrap: balance;
+  text-shadow: 0 1px 8px rgb(0 0 0 / .25);
+}
+.process-overview-card-1 h3 { font-size: clamp(24px, 3vw, 42px); }
+.process-overview-card-5 h3 { max-width: none; }
+.process-overview-card:focus-visible { outline: 3px solid var(--site-text); outline-offset: 5px; }
+.process-overview-footer {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 24px;
+  color: var(--site-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.process-overview-footer p { max-width: 66ch; margin: 0; }
+.process-overview-footer a { flex-shrink: 0; color: var(--site-text); text-decoration: underline; text-underline-offset: 4px; }
+@media (hover: hover) {
+  .process-overview-card:hover img { transform: scale(1.035); }
+}
+@media (max-width: 600px) {
+  .process-overview-summary { border-radius: 18px; gap: 16px; padding: 26px 20px; }
+  .showcase-home .process-overview-summary h2 { font-size: clamp(25px, 6.6vw, 38px); }
+  .process-overview-timing { font-size: clamp(22px, 5.7vw, 34px); gap: 10px; }
+  .process-overview-card { aspect-ratio: auto; min-height: 142px; padding: 14px 10px; border-radius: 14px; }
+  .process-overview-card h3 { font-size: 15px; line-height: 1.3; }
+  .process-overview-card-1 h3 { font-size: 19px; }
+  .process-overview-card-5 { min-height: 118px; }
+  .process-overview-card-5 h3 { font-size: 20px; max-width: 28ch; }
+  .process-overview-footer { flex-direction: column; gap: 12px; font-size: 12px; }
+  :lang(ka) .process-overview-summary h2 { font-size: 23px; }
+  :lang(ru) .process-overview-summary h2 { font-size: 26px; }
+}
+@layer components {
+  @media (prefers-reduced-motion: reduce) {
+    .process-overview-card img, .process-overview-card::after { transition-duration: 0s !important; }
+  }
+}

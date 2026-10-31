@@ -2,14 +2,67 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useContact } from "@/app/_components/ContactProvider";
+import type { Locale } from "@/i18n/routing";
 import { containDialogTab, lockPage } from "@/lib/modal-lock";
 import { GREETING_END_EVENT } from "@/lib/greeting";
 import type { CataloguePage } from "@/lib/catalogue";
 
-/** A full photograph beside an immersive detail view. Each record is one
- * photograph; we never pretend that separate CMS images are one project. */
+const VIEWER_SPECS: Record<
+  Locale,
+  {
+    specLabel: string;
+    timelineLabel: string;
+    timelineValue: string;
+    designLabel: string;
+    designValue: string;
+    coverageLabel: string;
+    coverageValue: string;
+    askAi: string;
+    aiPromptPrefix: string;
+  }
+> = {
+  ka: {
+    specLabel: "მასალა და სპეციფიკაცია",
+    timelineLabel: "დამზადების ვადა",
+    timelineValue: "~6–8 კვირა (დაახლოებით 2 თვე)",
+    designLabel: "3D დიზაინი და ახაზვა",
+    designValue: "30 ₾ / მ² (წინხედით)",
+    coverageLabel: "მიწოდება და მონტაჟი",
+    coverageValue: "თბილისი და მთელი საქართველო",
+    askAi: "ჰკითხეთ Kencho AI-ს",
+    aiPromptPrefix: "მომწონს ეს ნამუშევარი კატალოგიდან: ",
+  },
+  ru: {
+    specLabel: "Материалы и спецификация",
+    timelineLabel: "Срок изготовления",
+    timelineValue: "~6–8 недель (около 2 месяцев)",
+    designLabel: "3D-дизайн и чертежи",
+    designValue: "30 GEL / м² (по фасаду)",
+    coverageLabel: "Доставка и монтаж",
+    coverageValue: "Тбилиси и вся Грузия",
+    askAi: "Спросить Kencho AI",
+    aiPromptPrefix: "Мне нравится эта работа из каталога: ",
+  },
+  en: {
+    specLabel: "Materials & Specification",
+    timelineLabel: "Production Lead Time",
+    timelineValue: "~6–8 weeks (approx. 2 months)",
+    designLabel: "3D Design & Drawings",
+    designValue: "30 GEL / m² (front elevation)",
+    coverageLabel: "Delivery & Installation",
+    coverageValue: "Tbilisi & all of Georgia",
+    askAi: "Ask Kencho AI",
+    aiPromptPrefix: "I'm interested in a piece like this from the catalogue: ",
+  },
+};
+
+/**
+ * OPERA GALLERY–INSPIRED VIEWING ROOM
+ * A split museum-catalog viewing room: uncropped high-resolution stage
+ * beside a curatorial specification dossier and direct enquiry actions.
+ */
 export default function CatalogueViewer({
   pages,
   index,
@@ -24,13 +77,18 @@ export default function CatalogueViewer({
 }) {
   const t = useTranslations("catalogue");
   const h = useTranslations("home");
+  const request = useTranslations("request");
+  const rawLocale = useLocale();
+  const locale: Locale =
+    rawLocale === "ka" || rawLocale === "ru" ? rawLocale : "en";
+  const spec = VIEWER_SPECS[locale];
   const openContact = useContact();
   const dialog = useRef<HTMLDialogElement>(null);
   const cursor = useRef<HTMLSpanElement>(null);
   const touch = useRef<{ x: number; y: number } | null>(null);
-  const [fullOn, setFullOn] = useState<string | null>(null);
+  const [fullOn, setFullOn] = useState(true);
   const page = pages[index];
-  const full = fullOn === page?.id;
+  const full = fullOn;
   const total = pages.length;
   const next = index < total - 1;
   const prev = index > 0;
@@ -48,8 +106,6 @@ export default function CatalogueViewer({
       release = lockPage();
       el.showModal();
     };
-    // Native dialogs occupy the top layer, so a direct photo link waits for
-    // the greeting to finish before taking over focus and the scroll lock.
     if (document.documentElement.dataset.greeting)
       window.addEventListener(GREETING_END_EVENT, open, { once: true });
     else open();
@@ -63,6 +119,7 @@ export default function CatalogueViewer({
   if (!page) return null;
   const title = page.heading || page.chapterTitle;
   const about = page.chapterTitle + " — " + (page.heading || page.ref);
+
   return (
     <dialog
       ref={dialog}
@@ -100,6 +157,7 @@ export default function CatalogueViewer({
           />
         </svg>
       </button>
+
       <div className="gallery-overview">
         <div className="gallery-topline">
           <span>{page.chapterTitle}</span>
@@ -108,29 +166,70 @@ export default function CatalogueViewer({
             {String(total).padStart(2, "0")}
           </span>
         </div>
+
         <div className="gallery-overview-photo" key={page.id}>
           <Image
             src={page.url}
             alt={page.alt}
             fill
-            sizes="(max-width: 767px) 1px, 48vw"
+            sizes="(max-width: 767px) 1px, 42vw"
             loading="eager"
           />
         </div>
+
         <div className="gallery-info">
-          <div>
+          <div className="gallery-dossier">
             <h2 id="gallery-title">{title}</h2>
-            {page.caption && <p>{page.caption}</p>}
+            <dl className="gallery-spec-list">
+              {page.caption && (
+                <div className="gallery-spec-row">
+                  <dt>{spec.specLabel}</dt>
+                  <dd>{page.caption}</dd>
+                </div>
+              )}
+              <div className="gallery-spec-row">
+                <dt>{spec.timelineLabel}</dt>
+                <dd>{spec.timelineValue}</dd>
+              </div>
+              <div className="gallery-spec-row">
+                <dt>{spec.designLabel}</dt>
+                <dd>{spec.designValue}</dd>
+              </div>
+              <div className="gallery-spec-row">
+                <dt>{spec.coverageLabel}</dt>
+                <dd>{spec.coverageValue}</dd>
+              </div>
+            </dl>
           </div>
-          <button
-            type="button"
-            className="gallery-enquire"
-            onClick={() => openContact({ about })}
-          >
-            {h("start")} <span aria-hidden="true">↗</span>
-          </button>
+
+          <div className="gallery-actions-row">
+            <button
+              type="button"
+              className="gallery-enquire"
+              onClick={() => openContact({ about })}
+            >
+              {request("cta")} <span aria-hidden="true">↗</span>
+            </button>
+            <button
+              type="button"
+              className="gallery-ai-btn"
+              onClick={() => {
+                onClose();
+                window.dispatchEvent(
+                  new CustomEvent("kencho:ai-open", {
+                    detail: {
+                      prompt: `${spec.aiPromptPrefix}${title} (${page.caption || page.chapterTitle})`,
+                    },
+                  }),
+                );
+              }}
+            >
+              {spec.askAi}
+            </button>
+          </div>
         </div>
       </div>
+
       <div
         className="gallery-detail"
         onTouchStart={(e) => {
@@ -169,19 +268,21 @@ export default function CatalogueViewer({
             </div>
           ))}
         </div>
+
         <button
           type="button"
           className="gallery-view-toggle"
           aria-pressed={full}
-          onClick={() => setFullOn(full ? null : page.id)}
+          onClick={() => setFullOn(!full)}
         >
           <span className="gallery-desktop-label">
             {full ? h("viewerDetail") : h("viewerFull")}
           </span>
           <span className="gallery-mobile-label">
-            {full ? h("viewerFull") : h("viewerDetail")}
+            {full ? h("viewerDetail") : h("viewerFull")}
           </span>
         </button>
+
         {next && (
           <button
             type="button"
@@ -232,6 +333,7 @@ export default function CatalogueViewer({
           </button>
         </div>
       </div>
+
       <p className="gallery-live" aria-live="polite" aria-atomic="true">
         {h("viewerCount", { current: index + 1, total })}: {title}
       </p>

@@ -1,0 +1,255 @@
+/* Reference typography and frosted chrome follow the shared application theme. */
+.showcase-home:has(.brand-hero) {
+  padding-top: 0;
+}
+.brand-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 46.5% 53.5%;
+  align-content: start;
+  padding: 12.7vw 3.1vw 7vw 8.1vw;
+  min-height: 51.15vw;
+  background: var(--site-canvas);
+  color: var(--site-text);
+  font-family: var(--font-body-en), Arial, Helvetica, sans-serif;
+  overflow-wrap: normal;
+  transition: background-color .25s, color .25s;
+}
+.brand-hero-heading {
+  display: contents;
+  font-family: var(--font-body-en), Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  letter-spacing: -.035em;
+}
+.brand-hero-name {
+  grid-column: 1 / -1;
+  display: block;
+  font-size: 21.5vw;
+  line-height: .762;
+  letter-spacing: -.035em;
+}
+.brand-hero-prelude {
+  grid-column: 1 / -1;
+  margin-bottom: 2.2vw;
+  font-size: 7vw;
+  line-height: .95;
+  letter-spacing: -.045em;
+}
+.brand-hero-group {
+  grid-column: 1;
+  display: block;
+  margin-top: .8vw;
+  font-size: 10.8vw;
+  line-height: .98;
+  letter-spacing: -.025em;
+}
+.brand-hero-tagline {
+  grid-column: 2;
+  align-self: center;
+  margin: .6vw 0 0;
+  font-size: 2.86vw;
+  line-height: 1.2;
+  font-weight: 400;
+  letter-spacing: -.03em;
+  white-space: nowrap;
+}
+.brand-hero-tagline strong { font-weight: 700; }
+:lang(ka) .brand-hero-tagline,
+:lang(ru) .brand-hero-tagline { font-size: 2.35vw; }
+
+html .site-header.reference-header {
+  --header-height: clamp(88px, 10.2vw, 138px);
+  --header-shrink: 22px;
+  height: var(--header-height);
+  min-height: 0;
+  padding-inline: 3.75vw 3.2vw;
+  justify-content: space-between;
+  color: var(--site-text);
+  background: transparent;
+  border: 1px solid transparent;
+  border-top: 0;
+  border-radius: 0 0 64px 64px;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: height .65s cubic-bezier(.22, 1, .36, 1), background .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+html .site-header.reference-header[data-compact="true"] {
+  height: calc(var(--header-height) - var(--header-shrink));
+}
+/* Keep the glass on its own layer so the popup can blur the page independently. */
+html .site-header.reference-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+}
+html .site-header.reference-header[data-scrolled="true"]::before {
+  background: linear-gradient(115deg, rgb(250 249 246 / .38), rgb(255 255 255 / .22));
+  border-color: rgb(255 255 255 / .4);
+  box-shadow: 0 10px 26px rgb(0 0 0 / .055), inset 0 -1px 0 rgb(255 255 255 / .3);
+  -webkit-backdrop-filter: blur(9px);
+  backdrop-filter: blur(9px);
+}
+.reference-header .editorial-wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  color: var(--site-text);
+  font-family: var(--font-body-en), Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -.035em;
+  transform-origin: left center;
+  transition: transform .65s cubic-bezier(.22, 1, .36, 1);
+}
+.reference-header .editorial-wordmark-sub {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .24em;
+}
+.reference-header[data-compact="true"] .editorial-wordmark {
+  transform: scale(.9);
+}
+html .site-header.reference-header .header-actions { gap: 18px; }
+html .site-header.reference-header :is(.header-catalogue-cta, .site-menu-trigger) {
+  display: inline-flex;
+  min-height: 44px;
+  height: 44px;
+  padding: 4px 6px 4px 20px;
+  gap: 10px;
+  border: 0;
+  box-shadow: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html .site-header.reference-header .header-catalogue-cta {
+  background: #111113;
+  color: #fff;
+  min-width: 128px;
+}
+html .site-header.reference-header .header-catalogue-badge {
+  background: transparent;
+  color: #fff;
+  width: 22px;
+  height: 30px;
+  font-size: 20px;
+  font-weight: 400;
+}
+html .site-header.reference-header .site-menu-trigger {
+  min-width: 112px;
+  background: #ecebea;
+  color: #000;
+}
+html .site-header.reference-header .menu-trigger-dots {
+  width: 32px;
+  height: 32px;
+  background: #dedddd;
+  gap: 4px;
+}
+html .site-header.reference-header :is(a, button):focus-visible {
+  outline: 2px solid #767676;
+  outline-offset: 4px;
+}
+html:not([data-theme="light"]) .site-header.reference-header[data-scrolled="true"]::before {
+  background: linear-gradient(115deg, rgb(19 19 22 / .38), rgb(7 7 8 / .22));
+  border-color: rgb(255 255 255 / .12);
+  box-shadow: 0 10px 26px rgb(0 0 0 / .18), inset 0 -1px 0 rgb(255 255 255 / .08);
+}
+html:not([data-theme="light"]) .site-header.reference-header .header-catalogue-cta {
+  background: #f5f5f5;
+  color: #111113;
+}
+html:not([data-theme="light"]) .site-header.reference-header .header-catalogue-badge {
+  color: #111113;
+}
+html:not([data-theme="light"]) .site-header.reference-header .site-menu-trigger {
+  background: #242426;
+  color: #f5f5f5;
+}
+html:not([data-theme="light"]) .site-header.reference-header .menu-trigger-dots {
+  background: #363638;
+}
+/* The arrow shares its pill's contrast in every theme and interaction state. */
+html .site-header.reference-header .header-actions .header-catalogue-cta .header-catalogue-badge,
+html .site-header.reference-header .header-actions .header-catalogue-cta:is(:hover, :focus-visible, :active) .header-catalogue-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+}
+@media (hover: hover) {
+  html .site-header.reference-header .header-catalogue-cta:hover { background: #303030; }
+  html .site-header.reference-header .site-menu-trigger:hover { background: #dedddd; }
+  html:not([data-theme="light"]) .site-header.reference-header .header-catalogue-cta:hover { background: #dedddd; }
+  html:not([data-theme="light"]) .site-header.reference-header .site-menu-trigger:hover { background: #363638; }
+}
+@media (min-width: 1440px) {
+  .brand-hero { min-height: min(780px, 100svh); }
+}
+.menu-catalogue-label { display: none; }
+@media (max-width: 767px) {
+  html .site-header.reference-header {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    transition: transform .35s cubic-bezier(.22, 1, .36, 1), height .65s cubic-bezier(.22, 1, .36, 1);
+    transform: translateY(0);
+  }
+  html .site-header.reference-header::before { display: none; }
+  html .site-header.reference-header[data-mobile-hidden="true"] {
+    transform: translateY(-100%);
+    pointer-events: none;
+  }
+  html .site-header.reference-header .header-actions .header-catalogue-cta { display: none; }
+  .menu-gallery-label { display: none; }
+  .menu-catalogue-label { display: inline; }
+}
+@media (max-width: 600px) {
+  html .site-header.reference-header {
+    --header-height: 84px;
+    --header-shrink: 14px;
+    padding-inline: 20px;
+    border-radius: 0 0 40px 40px;
+  }
+  .reference-header .editorial-wordmark { font-size: 14px; }
+  .reference-header .editorial-wordmark-sub { font-size: 9px; }
+  html .site-header.reference-header .header-actions { gap: 8px; }
+  html .site-header.reference-header :is(.header-catalogue-cta, .site-menu-trigger) {
+    min-height: 42px;
+    height: 42px;
+    padding-left: 14px;
+    font-size: 10px;
+    gap: 5px;
+  }
+  html .site-header.reference-header .header-catalogue-cta { min-width: 108px; }
+  html .site-header.reference-header .site-menu-trigger { min-width: 94px; }
+  .brand-hero {
+    padding: 142px 5vw 94px;
+    min-height: 420px;
+    grid-template-columns: 1fr;
+  }
+  .brand-hero-name { font-size: 22.1vw; }
+  .brand-hero-prelude { font-size: 10vw; margin-bottom: 20px; }
+  .brand-hero-group { font-size: 14vw; margin-top: 8px; }
+  .brand-hero-tagline {
+    grid-column: 1;
+    margin-top: 24px;
+    font-size: 4.2vw;
+  }
+  :lang(ka) .brand-hero-tagline,
+  :lang(ru) .brand-hero-tagline { font-size: 3.8vw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-hero { transition: none; }
+  html .site-header.reference-header { transition: none; }
+  .reference-header .editorial-wordmark { transition: none; }
+}

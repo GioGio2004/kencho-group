@@ -28,14 +28,14 @@
 
 .catalogue-page .mtile {
   padding: 0;
-  overflow: hidden;
+  overflow: visible;
   border: none;
-  border-radius: 20px;
+  border-radius: 0;
   background: transparent;
   box-shadow: none;
 }
 .catalogue-page .mtile img {
-  border-radius: inherit;
+  border-radius: 0;
   scale: 1;
   transition:
     transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
@@ -68,7 +68,6 @@
 .about-page .about-film-caption { border: none; background: transparent; }
 @media (max-width: 767px) {
   .glass-media { --media-radius: 16px; }
-  .catalogue-page .mtile,
   .gallery-overview-photo,
   .about-page .about-film,
   .about-page .about-film video { border-radius: 16px; }

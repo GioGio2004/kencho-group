@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import { usePathname } from "@/i18n/navigation";
 type Menu = { open: boolean; setOpen: (open: boolean) => void };
 const MenuContext = createContext<Menu>({ open: false, setOpen: () => {} });
@@ -14,9 +14,10 @@ export default function MenuProvider({
   const pathname = usePathname();
   const [openedOn, setOpenedOn] = useState<string | null>(null);
   const open = openedOn === pathname;
+  const setOpen = useCallback((next: boolean) => setOpenedOn(next ? pathname : null), [pathname]);
   return (
     <MenuContext.Provider
-      value={{ open, setOpen: (next) => setOpenedOn(next ? pathname : null) }}
+      value={{ open, setOpen }}
     >
       {children}
     </MenuContext.Provider>

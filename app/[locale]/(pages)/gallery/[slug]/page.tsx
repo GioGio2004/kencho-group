@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import CatalogueShell from "@/app/_components/CatalogueShell";
 import CategoryBuyerGuide from "@/app/_components/CategoryBuyerGuide";
-import { hasCategoryGuide } from "@/lib/category-guides";
+import { CATEGORY_SLUGS, hasCategoryGuide } from "@/lib/category-guides";
 import { routing, type Locale } from "@/i18n/routing";
 import { loadChapters, loadGallery, loadPages } from "@/lib/catalogue";
 import { pick } from "@/lib/convex-gallery";
@@ -20,6 +20,13 @@ import { creativeWorkLd, galleryBreadcrumbLd } from "@/lib/structured-data";
  */
 
 export const revalidate = 300;
+export const dynamicParams = true;
+
+export function generateStaticParams() {
+  return routing.locales.flatMap((locale) =>
+    CATEGORY_SLUGS.map((slug) => ({ locale, slug })),
+  );
+}
 
 export async function generateMetadata({
   params,

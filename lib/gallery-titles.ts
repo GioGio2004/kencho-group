@@ -1,7 +1,6 @@
 import type { Locale } from "@/i18n/routing";
 
-// Translations of the existing catalogue's photograph names. CMS copy takes
-// precedence; these keep the published collection readable in every locale.
+// Translations of the catalogue's photograph names across all three locales.
 const titles: Record<string, [string, string]> = {
   "Green island kitchen": [
     "მწვანე სამზარეულო კუნძულით",
@@ -196,6 +195,34 @@ const titles: Record<string, [string, string]> = {
   "White wood kitchen corner": [
     "თეთრი სამზარეულოს კუთხე ხის დეტალებით",
     "Угол белой кухни с деревянными деталями",
+  ],
+  "Backlit slat wall mirror": [
+    "განათებული სარკე ხის რეიკების კედელზე",
+    "Зеркало с подсветкой на реечной стене",
+  ],
+  "Cafe arched shelving": [
+    "კაფეს თაღოვანი თაროები",
+    "Арочные стеллажи для кафе",
+  ],
+  "Cafe fluted counter": [
+    "კაფეს რელიეფური ბარის დახლი",
+    "Рельефная барная стойка для кафе",
+  ],
+  "Office fit out in progress": [
+    "საოფისე ავეჯის მონტაჟის პროცესი",
+    "Процесс монтажа офисной мебели",
+  ],
+  "Walnut upper cabinets kitchen": [
+    "სამზარეულო კაკლისფერი ზედა კარადებით",
+    "Кухня с верхними шкафами под орех",
+  ],
+  "White oven column walnut kitchen": [
+    "თეთრი ღუმელის სვეტი და კაკლისფერი სამზარეულო",
+    "Белая колонна с духовкой и кухня под орех",
+  ],
+  "Wine rack glass door": [
+    "ღვინის სათავსო მინის კარით",
+    "Винный шкаф со стеклянной дверцей",
   ],
 };
 
