@@ -12,7 +12,7 @@ const errors = [];
 let failed = 0;
 async function fits(page) {
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
-  const overflow = await page.locator("dialog[open], .chat-context, .chat-composer, [data-ai-details]").evaluateAll(elements => elements.filter(el => {
+  const overflow = await page.locator(".chat-page, .chat-context, .chat-composer, [data-ai-details]").evaluateAll(elements => elements.filter(el => {
     const r = el.getBoundingClientRect();
     return r.width && (r.left < -1 || r.right > innerWidth + 1 || el.scrollWidth > el.clientWidth + 2);
   }).map(el => el.className));
@@ -42,7 +42,7 @@ try {
     try {
       await page.goto(`${base}/${locale}`, { waitUntil: "load" });
       await page.locator("[data-ai-trigger]").click();
-      await page.locator("dialog.chat-modal[open] .chat-composer").waitFor();
+      await page.locator(".chat-page .chat-composer").waitFor();
       await fits(page);
       await page.locator("[data-ai-details-toggle]").click();
       await page.locator("[data-ai-request-form]:visible").waitFor();
@@ -69,45 +69,63 @@ try {
       await page.locator(".chat-composer button[type=submit]").click();
       await page.locator(".chat-error").waitFor();
       mode = "success";
+      await page.locator(".chat-composer textarea").fill("Draft while retrying");
       await page.locator(".chat-error button").click();
       await page.waitForFunction(() => document.querySelectorAll("[role=log] .is-assistant strong").length === 3);
       assert.equal(await page.locator("[role=log] .is-user").count(), 3);
+      assert.equal(await page.locator(".chat-composer textarea").inputValue(), "Draft while retrying", "Retry preserves a new draft");
       mode = "pending";
       await page.locator(".chat-composer textarea").fill("Stop this question");
       await page.locator(".chat-composer button[type=submit]").click();
       await page.locator("[data-ai-stop]").click();
       await page.locator("[data-ai-stop]").waitFor({ state: "hidden" });
       assert.equal(await page.locator(".chat-error").count(), 0);
+      await page.waitForFunction(() => {
+        const thread = document.querySelector(".chat-conversation");
+        return thread.scrollHeight - thread.scrollTop - thread.clientHeight < 4;
+      });
       await fits(page);
-      await page.screenshot({ path: join(output, `${locale}-${width}.png`) });
-      await page.locator("dialog.chat-modal [data-theme-toggle]").click();
+      await page.screenshot({ caret: "initial", path: join(output, `${locale}-${width}.png`) });
+      await page.locator(".chat-page [data-theme-toggle]").click();
       assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
       const labels = await page.locator("[data-theme-toggle]").evaluateAll(elements => elements.map(el => el.getAttribute("aria-label")));
       assert.equal(new Set(labels).size, 1, "Theme controls disagree");
       await page.locator(".chat-header [data-ai-request]").click();
       await page.locator("[data-ai-request-form]:visible").waitFor();
       assert.equal(await page.locator("[data-ai-request-form] input[name=city]").inputValue(), "Batumi");
-      assert.equal(await page.locator("dialog[open]").count(), 1, "Request review must stay in the AI window");
-      assert.equal(await page.locator("dialog.sheet").count(), 0, "No extra contact sidebar");
+      assert.equal(await page.locator("dialog[open]").count(), 0, "Chat and request review are full page");
       await page.keyboard.press("Escape");
       await page.locator("[data-ai-request-form]:visible").waitFor({ state: "hidden" });
-      await page.keyboard.press("Escape");
-      await page.locator("dialog.chat-modal[open]").waitFor({ state: "hidden" });
-      await page.waitForFunction(() => document.documentElement.style.overflow !== "hidden");
+      await page.locator(".chat-composer textarea").fill("My unsent draft");
       await page.reload({ waitUntil: "load" });
-      await page.locator("[data-ai-trigger]").click();
-      await page.locator("dialog.chat-modal[open]").waitFor();
+      await page.waitForFunction(() => document.querySelector(".chat-composer textarea")?.value === "My unsent draft");
+      assert.equal(await page.locator("[role=log] .is-user").count(), 4, "Conversation survives reload");
       assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
       await fits(page);
-      for (let i = 0; i < 12; i++) {
-        await page.keyboard.press("Tab");
-        assert.ok(await page.evaluate(() => !!document.activeElement?.closest("dialog.chat-modal[open]")));
-      }
-      await page.keyboard.press("Escape");
-      await page.locator("dialog.chat-modal[open]").waitFor({ state: "hidden" });
-      assert.ok(await page.locator("[data-ai-trigger]").evaluate(el => el === document.activeElement));
-      console.log(`PASS ${locale}/${width}: opening, full questions, session renewal, retry, stop, photos, handoff, themes, focus and layout`);
-    } catch (error) { await page.screenshot({ path: join(output, `failure-${locale}-${width}.png`) }).catch(() => {}); failed++; console.error(`FAIL ${locale}/${width}: ${error.message}`); }
+      // Approximate the reduced visual viewport when a phone keyboard opens.
+      await page.setViewportSize({ width, height: 440 });
+      await page.locator(".chat-composer textarea").focus();
+      await page.waitForFunction(() => {
+        const r = document.querySelector(".chat-composer").getBoundingClientRect();
+        return r.top >= 0 && r.bottom <= innerHeight;
+      });
+      await fits(page);
+      await page.screenshot({ caret: "initial", path: join(output, `${locale}-${width}-keyboard.png`) });
+      await page.setViewportSize({ width, height: 900 });
+      await page.locator("[data-ai-exit]").click();
+      await page.locator("[data-ai-trigger]").waitFor();
+      await page.locator("[data-ai-trigger]").click();
+      await page.waitForFunction(() => document.querySelector(".chat-composer textarea")?.value === "My unsent draft");
+      assert.equal(await page.locator("[role=log] .is-user").count(), 4, "Conversation survives navigation");
+      await page.locator("[data-ai-new-chat]").click();
+      await page.locator(".chat-welcome").waitFor();
+      assert.equal(await page.locator(".chat-composer textarea").inputValue(), "");
+      await page.reload({ waitUntil: "load" });
+      await page.locator(".chat-welcome").waitFor();
+      await page.waitForFunction(() => !document.querySelector(".chat-composer textarea")?.disabled);
+      await page.screenshot({ caret: "initial", path: join(output, `${locale}-${width}-welcome.png`) });
+      console.log(`PASS ${locale}/${width}: opening, full questions, session renewal, retry, stop, photos, handoff, themes, persistence, keyboard resizing and layout`);
+    } catch (error) { await page.screenshot({ caret: "initial", path: join(output, `failure-${locale}-${width}.png`) }).catch(() => {}); failed++; console.error(`FAIL ${locale}/${width}: ${error.message}`); }
     finally { await context.close(); }
   }
   assert.deepEqual([...new Set(errors)], [], "Browser runtime/hydration errors");

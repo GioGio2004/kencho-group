@@ -3,7 +3,13 @@ let readyAt = 0;
 export async function ensureEnquirySession(signal?: AbortSignal) {
   signal?.throwIfAborted();
   if (Date.now() - readyAt < 20 * 60 * 60 * 1000) return;
-  pending ??= fetch("/api/project-request/session", { method: "POST", signal: AbortSignal.timeout(15000) }).then(async response => {
+  pending ??= (async () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    try {
+      return await fetch("/api/project-request/session", { method: "POST", signal: controller.signal });
+    } finally { clearTimeout(timeout); }
+  })().then(async response => {
     if (!response.ok) { const data = await response.json(); throw new Error(data.error || "unavailable"); }
     readyAt = Date.now();
   }).finally(() => { pending = null; });

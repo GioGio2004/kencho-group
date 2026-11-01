@@ -9,6 +9,8 @@
     "lint": "eslint",
     "verify:landing": "node scripts/verify-landing.mjs",
     "verify:chat": "node scripts/verify-chat.mjs",
+    "verify:chat:recovery": "node scripts/verify-chat-recovery.mjs",
+    "verify:chat:navigation": "node scripts/verify-chat-navigation.mjs",
     "verify:launch": "node --experimental-transform-types --import ./scripts/alias-hook.mjs scripts/verify-launch.mjs",
     "verify:seo": "node scripts/verify-seo.mjs",
     "verify:commercial": "node --import ./scripts/alias-hook.mjs scripts/verify-commercial.mjs",

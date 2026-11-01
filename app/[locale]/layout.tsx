@@ -11,6 +11,7 @@ import SiteHeader from "@/app/_components/SiteHeader";
 import ButtonHoverSound from "@/app/_components/ButtonHoverSound";
 import SmoothScroll from "@/app/_components/SmoothScroll";
 import Greeting from "@/app/_components/Greeting";
+import SiteChrome from "@/app/_components/SiteChrome";
 import FloatingIslandBar from "@/src/components/FloatingIslandBar";
 import { routing, type Locale } from "@/i18n/routing";
 import { navigationChapters } from "@/lib/navigation-chapters";
@@ -137,12 +138,14 @@ export default async function LocaleLayout({
             <ContactProvider>
               <Greeting fontClass={brandFontClass} />
               <div data-site-content>
-                <SmoothScroll />
-                <ScrollRail />
-                <SiteHeader />
-                <ButtonHoverSound src="/dragon-studio-pop-402322.mp3" />
+                <SiteChrome>
+                  <SmoothScroll />
+                  <ScrollRail />
+                  <SiteHeader />
+                  <ButtonHoverSound src="/dragon-studio-pop-402322.mp3" />
+                </SiteChrome>
                 <div id="main-content" tabIndex={-1}>{children}</div>
-                <Footer locale={locale as Locale} chapters={chapterLinks} />
+                <SiteChrome><Footer locale={locale as Locale} chapters={chapterLinks} /></SiteChrome>
                 <FloatingIslandBar />
               </div>
             </ContactProvider>
